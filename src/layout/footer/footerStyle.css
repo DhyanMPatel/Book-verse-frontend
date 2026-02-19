@@ -1,0 +1,152 @@
+/* Bottom Navigation Responsive Styles */
+
+.bottom-nav {
+  display: none;
+  color: #6b7280;
+}
+
+.bottom-nav.thumb-nav {
+  display: none;
+}
+
+/* Tablet View (768px – 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .bottom-nav,
+  .bottom-nav.thumb-nav {
+    display: flex !important;
+  }
+
+  .thumb-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0.5rem 0;
+    gap: 0.5rem;
+    color: #6b7280;
+  }
+
+  .thumb-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    gap: 0.25rem;
+    padding: 0.5rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: all 200ms ease-out;
+    text-decoration: none;
+    color: #6b7280;
+    border-radius: 0.25rem;
+    position: relative;
+  }
+
+  .thumb-nav-item:hover {
+    color: #0284c7;
+  }
+
+  .thumb-nav-item.thumb-nav-item-active {
+    color: #0369a1;
+  }
+
+  .thumb-nav-item span {
+    font-size: 0.7rem;
+    display: block;
+    color: inherit;
+  }
+}
+
+/* Mobile View (0 – 767px) */
+@media (max-width: 767px) {
+  .bottom-nav,
+  .bottom-nav.thumb-nav {
+    display: flex !important;
+  }
+
+  .thumb-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0.5rem 0;
+    gap: 0.25rem;
+    color: #6b7280;
+  }
+
+  .thumb-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    gap: 0.25rem;
+    padding: 0.5rem 0.25rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    transition: all 200ms ease-out;
+    text-decoration: none;
+    color: #6b7280;
+    border-radius: 0.25rem;
+    position: relative;
+  }
+
+  .thumb-nav-item:hover {
+    color: #0284c7;
+  }
+
+  .thumb-nav-item.thumb-nav-item-active {
+    color: #0369a1;
+  }
+
+  .thumb-nav-item span {
+    font-size: 0.65rem;
+    display: block;
+    color: inherit;
+  }
+}
+
+/* Laptop View (1024px+) */
+@media (min-width: 1024px) {
+  .bottom-nav,
+  .bottom-nav.thumb-nav {
+    display: none !important;
+  }
+
+  .lg\:hidden {
+    display: none;
+  }
+}
+
+/* Touch-friendly sizing */
+@media (hover: none) and (pointer: coarse) {
+  .thumb-nav-item {
+    padding: 0.75rem 0.5rem;
+    min-height: 48px;
+  }
+}
+
+/* Icons and labels alignment */
+.thumb-nav-item svg {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 0.25rem;
+}
+
+/* Active indicator */
+.thumb-nav-item-active::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: currentColor;
+  border-radius: 50%;
+}
+
+/* Prevent text selection on touch */
+.thumb-nav {
+  -webkit-user-select: none;
+  user-select: none;
+}

@@ -1,0 +1,321 @@
+/* Main Layout Responsive Structure */
+
+.layout-wrapper {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+}
+
+/* Laptop View (1024px+) */
+/* Sidebar (250px fixed) + Main Content */
+@media (min-width: 1024px) {
+  .layout-wrapper {
+    flex-direction: row;
+  }
+
+  .sidebar-section {
+    width: 250px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    background: white;
+    border-right: 1px solid #e5e7eb;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
+    z-index: 40;
+    color: #1f2937;
+  }
+
+  .main-content-laptop {
+    flex: 1;
+    margin-left: 250px;
+    overflow-y: auto;
+    background: #f9fafb;
+    color: #1f2937;
+  }
+
+  .main-content-mobile {
+    display: none !important;
+  }
+
+  .bottom-nav {
+    display: none !important;
+  }
+
+  .sidebar-drawer {
+    display: none !important;
+  }
+
+  .sidebar-drawer-content {
+    display: none !important;
+  }
+}
+
+/* Tablet & Mobile View (<1024px) */
+/* Main Content + Bottom Navigation (Footer) */
+@media (max-width: 1023px) {
+  .layout-wrapper {
+    flex-direction: column;
+    color: #1f2937;
+  }
+
+  .sidebar-section {
+    display: none !important;
+  }
+
+  .main-content-laptop {
+    display: none !important;
+  }
+
+  .main-content-mobile {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem 1rem;
+    padding-bottom: 100px;
+    background: #f9fafb;
+    color: #1f2937;
+  }
+
+  .bottom-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+    height: 70px;
+    z-index: 40;
+    color: #6b7280;
+  }
+}
+
+/* Tablet Specific (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .main-content-mobile {
+    padding: 1.5rem;
+    padding-bottom: 110px;
+  }
+
+  .bottom-nav {
+    height: 80px;
+  }
+}
+
+/* Mobile Specific (<768px) */
+@media (max-width: 767px) {
+  .main-content-mobile {
+    padding: 1rem;
+    padding-bottom: 100px;
+  }
+
+  .bottom-nav {
+    height: 70px;
+  }
+}
+
+/* Mobile/Tablet Header (REMOVED - now header-less) */
+
+/* Floating Menu Button for Mobile/Tablet */
+.floating-menu-btn {
+  display: none;
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: white;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 200ms ease-out;
+  align-items: center;
+  justify-content: center;
+  z-index: 35;
+  color: #0369a1;
+}
+
+@media (max-width: 1023px) {
+  .floating-menu-btn {
+    display: flex;
+  }
+}
+
+.floating-menu-btn:hover {
+  background: #f9fafb;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.floating-menu-btn:active {
+  transform: scale(0.95);
+}
+
+.floating-menu-btn svg {
+  color: #0369a1;
+}
+
+/* Sidebar Navigation Styles */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: white;
+}
+
+.sidebar-nav nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 200ms ease-out;
+  text-decoration: none;
+  color: #4b5563;
+}
+
+.sidebar-nav a:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+.sidebar-nav a.active {
+  background-color: #eff6ff;
+  color: #0369a1;
+}
+
+/* Bottom Navigation Styles */
+.bottom-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.bottom-nav a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 0.25rem;
+  padding: 0.5rem 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 200ms ease-out;
+  text-decoration: none;
+  color: #6b7280;
+  border-radius: 0.25rem;
+}
+
+.bottom-nav a:hover {
+  color: #0284c7;
+}
+
+.bottom-nav a.active {
+  color: #0369a1;
+}
+
+.bottom-nav a span {
+  font-size: 0.7rem;
+}
+
+/* Close Drawer Button */
+.close-drawer-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  transition: color 200ms ease-out;
+  z-index: 51;
+}
+
+.close-drawer-btn:hover {
+  color: #1f2937;
+}
+
+/* Drawer/Sidebar Overlay for Mobile */
+.sidebar-drawer {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 45;
+  transition: opacity 300ms ease-out;
+}
+
+.sidebar-drawer.hidden {
+  display: none;
+}
+
+.sidebar-drawer-content {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 250px;
+  height: 100vh;
+  background: white;
+  z-index: 50;
+  overflow-y: auto;
+  transform: translateX(-100%);
+  transition: transform 300ms ease-out;
+}
+
+.sidebar-drawer-content.open {
+  transform: translateX(0);
+}
+
+/* Scrollbar Styling */
+.sidebar-nav::-webkit-scrollbar,
+.main-content-laptop::-webkit-scrollbar,
+.main-content-mobile::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track,
+.main-content-laptop::-webkit-scrollbar-track,
+.main-content-mobile::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb,
+.main-content-laptop::-webkit-scrollbar-thumb,
+.main-content-mobile::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover,
+.main-content-laptop::-webkit-scrollbar-thumb:hover,
+.main-content-mobile::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Animation for smooth transitions */
+@media (prefers-reduced-motion: no-preference) {
+  .sidebar-section,
+  .main-content-laptop,
+  .main-content-mobile,
+  .bottom-nav,
+  .sidebar-drawer-content {
+    transition: all 200ms ease-out;
+  }
+}

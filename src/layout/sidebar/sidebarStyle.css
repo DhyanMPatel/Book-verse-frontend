@@ -1,0 +1,122 @@
+/* Sidebar Navigation Responsive Styles */
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: white;
+  color: #1f2937;
+}
+
+.sidebar-nav > div:first-child {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sidebar-nav a {
+  display: inline-flex;
+  text-decoration: none;
+  color: #4b5563;
+}
+
+.sidebar-nav nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.sidebar-nav nav .space-y-1 {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sidebar-nav p {
+  padding: 0.75rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-nav a.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  margin: 0 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 200ms ease-out;
+  color: #4b5563;
+  text-decoration: none;
+}
+
+.sidebar-nav a.nav-link:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+.sidebar-nav a.nav-link.active {
+  background-color: #eff6ff;
+  color: #0369a1;
+}
+
+/* User Menu Bottom Section */
+.sidebar-nav > div:last-child {
+  padding: 1rem;
+  border-top: 1px solid #e5e7eb;
+  margin-top: auto;
+}
+
+.sidebar-nav button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 200ms ease-out;
+  background: transparent;
+  text-decoration: none;
+  color: #6b7280;
+}
+
+.sidebar-nav button:hover {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+/* Mobile Drawer Sidebar */
+@media (max-width: 1023px) {
+  .sidebar-drawer-content .sidebar-nav {
+    width: 260px;
+  }
+}
+
+/* Scrollbar Styling */
+.sidebar-nav::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
