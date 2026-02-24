@@ -1,17 +1,15 @@
 // PrivateRoute.tsx
 import { Navigate, useLocation } from "react-router-dom";
-
-const isAuthenticated = () => {
-  // Replace this logic with your real auth check (e.g., from Redux, Context, or localStorage)
-  return localStorage.getItem("token") !== null;
-};
+import { useAuth } from "../hooks/useAuth";
+import RouteConstants from "../utils/routeConstants";
 
 const PrivateRoute = ({ children }) => {
   const location = useLocation();
+  const { isAuthenticated } = useAuth();
 
-  if (!isAuthenticated()) {
+  if (!isAuthenticated) {
     // Redirect to login and preserve attempted path
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to={RouteConstants.login} state={{ from: location }} replace />;
   }
 
   return <>{children}</>;
