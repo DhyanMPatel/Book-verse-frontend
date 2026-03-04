@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { FooterContainer, SidebarContainer } from "../layoutIndex";
+import { FooterContainer } from "../layoutIndex";
+import DesktopNavbarContainer from "../navbar/DesktopNavbarContainer";
 import "./mainLayoutStyle.css";
 
 const MainLayoutView = ({ isLaptop }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [adminSidebarOpen, setAdminSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -14,16 +16,18 @@ const MainLayoutView = ({ isLaptop }) => {
     setSidebarOpen(false);
   };
 
+  const toggleAdminSidebar = () => {
+    setAdminSidebarOpen(!adminSidebarOpen);
+  };
+
   return (
     <div className="layout-wrapper">
+      {/* Desktop Navbar - Only shown on 1024px+ */}
+      <DesktopNavbarContainer onToggleAdminSidebar={toggleAdminSidebar} />
+
       {/* Laptop: Sidebar (250px fixed) + Main Content */}
       {isLaptop ? (
         <>
-          Sidebar
-          <aside className="sidebar-section">
-            <SidebarContainer />
-          </aside>
-
           {/* Main Content */}
           <main className="main-content-laptop">
             <Outlet />
@@ -90,9 +94,9 @@ const MainLayoutView = ({ isLaptop }) => {
                 />
               </svg>
             </button>
-            <div className="pt-12">
-              <SidebarContainer onNavigate={closeSidebar} />
-            </div>
+            {/* <div className="pt-12">
+              <AdminSidebar onClose={closeSidebar} />
+            </div> */}
           </div>
         </>
       )}

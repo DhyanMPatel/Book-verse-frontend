@@ -32,3 +32,11 @@ export const navItems = [
   { href: "/cart", icon: ShoppingCart, label: "Cart" },
   { href: "/profile", icon: User, label: "Profile" },
 ];
+
+// Desktop Navbar Item
+export const mainDesktopNavItems = [
+    { href: "/", icon: Home, label: "Home" },
+    { href: "/search", icon: Search, label: "Search" },
+    { href: "/cart", icon: ShoppingCart, label: "Cart" },
+    { href: "/library", icon: Library, label: "Library" },
+  ];

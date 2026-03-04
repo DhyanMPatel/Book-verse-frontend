@@ -69,9 +69,13 @@ const authReducer = (state, action) => {
 };
 
 const initialState = {
-  user: null,
+  user: localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : null,
   token: localStorage.getItem("token"),
-  isAuthenticated: localStorage.getItem("token") !== null,
+  isAuthenticated:
+    localStorage.getItem("token") !== null &&
+    localStorage.getItem("user") !== null,
   loading: false,
   error: null,
 };
@@ -87,6 +91,14 @@ export const AuthProvider = ({ children }) => {
     }
   }, [state.token]);
 
+  useEffect(() => {
+    if (state.user) {
+      localStorage.setItem("user", JSON.stringify(state.user));
+    } else {
+      localStorage.removeItem("user");
+    }
+  }, [state.user]);
+
   const login = async (email, password) => {
     try {
       dispatch({ type: "LOGIN_START" });
@@ -99,9 +111,20 @@ export const AuthProvider = ({ children }) => {
       const { data } = response.data;
       const { user, authToken: token, refreshToken } = data;
 
+      // Store refreshToken in sessionStorage for future use
+      if (refreshToken) {
+        sessionStorage.setItem("refreshToken", refreshToken);
+      }
+
+      // Add role to user object (default to 'user' if not specified)
+      const userWithRole = {
+        ...user,
+        role: user.role || "user",
+      };
+
       dispatch({
         type: "LOGIN_SUCCESS",
-        payload: { user, token },
+        payload: { user: userWithRole, token },
       });
 
       return { success: true, user, token, data };
@@ -132,12 +155,23 @@ export const AuthProvider = ({ children }) => {
       const { data } = response.data;
       const { user, authToken: token, refreshToken } = data;
 
+      // Store refreshToken in sessionStorage for future use
+      if (refreshToken) {
+        sessionStorage.setItem("refreshToken", refreshToken);
+      }
+
+      // Add role to user object (default to 'user' if not specified)
+      const userWithRole = {
+        ...user,
+        role: user.role || "user",
+      };
+
       dispatch({
         type: "REGISTER_SUCCESS",
-        payload: { user, token },
+        payload: { user: userWithRole, token },
       });
 
-      return { success: true, user, token, data };
+      return { success: true, user: userWithRole, token, data };
     } catch (error) {
       const errorMessage =
         error.response?.data?.message ||
@@ -155,10 +189,17 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     dispatch({ type: "LOGOUT" });
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    sessionStorage.removeItem("refreshToken");
   };
 
   const clearError = () => {
     dispatch({ type: "CLEAR_ERROR" });
+  };
+
+  // Helper function to check if user is admin
+  const isAdmin = () => {
+    return state.user?.role === "admin";
   };
 
   const value = {
@@ -167,6 +208,7 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     clearError,
+    isAdmin,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

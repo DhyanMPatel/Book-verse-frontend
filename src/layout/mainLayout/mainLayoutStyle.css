@@ -8,18 +8,21 @@
 }
 
 /* Laptop View (1024px+) */
-/* Sidebar (250px fixed) + Main Content */
+/* Desktop Navbar (64px fixed) + Sidebar (250px fixed) + Main Content */
 @media (min-width: 1024px) {
   .layout-wrapper {
     flex-direction: row;
+    /* Account for desktop navbar */
   }
 
   .sidebar-section {
     width: 250px;
     position: fixed;
     left: 0;
-    top: 0;
-    height: 100vh;
+    top: 64px;
+    /* Start below desktop navbar */
+    height: calc(100vh - 64px);
+    /* Account for navbar height */
     overflow-y: auto;
     background: white;
     border-right: 1px solid #e5e7eb;
@@ -30,10 +33,11 @@
 
   .main-content-laptop {
     flex: 1;
-    margin-left: 250px;
     overflow-y: auto;
     background: #f9fafb;
     color: #1f2937;
+    min-height: calc(100vh - 64px);
+    /* Account for navbar height */
   }
 
   .main-content-mobile {
@@ -311,6 +315,7 @@
 
 /* Animation for smooth transitions */
 @media (prefers-reduced-motion: no-preference) {
+
   .sidebar-section,
   .main-content-laptop,
   .main-content-mobile,

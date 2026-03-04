@@ -89,7 +89,7 @@ const InputField = ({
           <button
             type="button"
             onClick={togglePasswordVisibility}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white transition-colors duration-200"
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white transition-colors duration-200 rounded-tl-none rounded-bl-none"
             disabled={disabled}
           >
             {showPassword ? (

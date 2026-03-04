@@ -40,9 +40,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-a:hover {
+/* a:hover {
   color: #535bf2;
-}
+} */
 
 h1 {
   font-size: 3.2em;
