@@ -1,26 +1,23 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import axiosInstance from "../../services/axiosInstance";
 
 const HomeView = () => {
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const response = await axiosInstance.get("/books/all");
+
+        console.log(response.data); // check API response
+
+        setBooks(response.data.data.books);
+      } catch (error) {
+        console.error("Error fetching books:", error);
+      }
+    };
     fetchBooks();
   }, []);
-
-  const fetchBooks = async () => {
-  try {
-    const response = await axiosInstance.get("/books/all");
-
-    console.log(response.data); // check API response
-
-    setBooks(response.data.data.books);
-
-  } catch (error) {
-    console.error("Error fetching books:", error);
-  }
-};
 
   const featuredBooks = books.filter((book) => book.featured);
   const discountedBooks = books.filter((book) => book.discount > 0);
@@ -45,7 +42,10 @@ const HomeView = () => {
               inspiring reads for every kind of reader.
             </p>
 
-            <button className="border text-gray-200 border-gray-500 px-9 py-3 text-sm tracking-wider hover:bg-gray-300 hover:text-white transition duration-300 w-fit active:scale-95"> Explore Books </button>
+            <button className="border text-gray-200 border-gray-500 px-9 py-3 text-sm tracking-wider hover:bg-gray-300 hover:text-white transition duration-300 w-fit active:scale-95">
+              {" "}
+              Explore Books{" "}
+            </button>
           </div>
 
           <div className="relative h-[500px] md:h-auto">
@@ -66,10 +66,7 @@ const HomeView = () => {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 overflow-visible">
             {featuredBooks.map((book) => (
-              <BookCard 
-              key={book.id} 
-              book={book} 
-              />
+              <BookCard key={book.id} book={book} />
             ))}
           </div>
         </section>
@@ -105,10 +102,7 @@ const HomeView = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 overflow-visible">
             {discountedBooks.map((book) => (
-              <BookCard 
-              key={book.id} 
-              book={book} 
-              showDiscount />
+              <BookCard key={book.id} book={book} showDiscount />
             ))}
           </div>
         </section>

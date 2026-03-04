@@ -28,7 +28,7 @@ const DesktopNavbarView = (props) => {
       <div className="navbar-container">
         {/* Left: Company Logo */}
         <div className="navbar-brand">
-          <NavLink to="/" className="brand-link">
+          <NavLink to={RouteConstants.home} className="brand-link">
             <div className="brand-logo">
               <BookOpen className="logo-icon" size={32} />
             </div>

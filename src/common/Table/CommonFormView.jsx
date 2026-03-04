@@ -149,7 +149,7 @@ const CommonFormView = ({
                           className="text-blue-400 hover:text-blue-300 transition-colors duration-200"
                           onClick={(e) => {
                             e.preventDefault();
-                            onLinkClick?.(RouteConstants.login);
+                            onLinkClick?.(RouteConstants.home);
                           }}
                         >
                           Sign In

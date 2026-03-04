@@ -43,13 +43,13 @@ export const AppRoutes = [
       {
         path: RouteConstants.home,
         element: (
-          <PublicRoute>
+          // <PublicRoute>
             <Suspense fallback="loading">
               <div className="pt-[64px]">
                 <HomeContainer />
               </div>
             </Suspense>
-          </PublicRoute>
+          // </PublicRoute>
         ),
       },
       // Search route
