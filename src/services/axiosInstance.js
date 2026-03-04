@@ -9,6 +9,8 @@ const axiosInstance = axios.create({
     'Content-Type': 'application/json',
   },
 });
+ 
+
 
 axiosInstance.interceptors.request.use(
   (config) => {
@@ -37,4 +39,4 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-export default axiosInstance;
+export default axiosInstance ;

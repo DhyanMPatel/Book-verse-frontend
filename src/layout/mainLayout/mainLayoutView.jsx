@@ -19,7 +19,7 @@ const MainLayoutView = ({ isLaptop }) => {
       {/* Laptop: Sidebar (250px fixed) + Main Content */}
       {isLaptop ? (
         <>
-          {/* Sidebar */}
+          Sidebar
           <aside className="sidebar-section">
             <SidebarContainer />
           </aside>
