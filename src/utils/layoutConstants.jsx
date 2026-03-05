@@ -7,6 +7,7 @@ import {
   User,
   Settings,
 } from "lucide-react";
+import RouteConstants from "./routeConstants";
 
 // Main navigation items - displayed on sidebar
 export const mainNavItems = [
@@ -35,8 +36,8 @@ export const navItems = [
 
 // Desktop Navbar Item
 export const mainDesktopNavItems = [
-    { href: "/", icon: Home, label: "Home" },
-    { href: "/search", icon: Search, label: "Search" },
-    { href: "/cart", icon: ShoppingCart, label: "Cart" },
-    { href: "/library", icon: Library, label: "Library" },
+    { href: RouteConstants.home, icon: Home, label: "Home" },
+    { href: RouteConstants.search, icon: Search, label: "Search" },
+    { href: RouteConstants.cart, icon: ShoppingCart, label: "Cart" },
+    { href: RouteConstants.library, icon: Library, label: "Library" },
   ];
