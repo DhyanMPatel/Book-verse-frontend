@@ -1,168 +1,119 @@
-import { useEffect, useState } from "react";
-import axiosInstance from "../../services/axiosInstance";
+// src/views/HomeView.jsx
+import React from "react";
+import { motion } from "framer-motion";
 
 const HomeView = () => {
-  const [books, setBooks] = useState([]);
-
-  useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        const response = await axiosInstance.get("/books/all");
-
-        console.log(response.data); // check API response
-
-        setBooks(response.data.data.books);
-      } catch (error) {
-        console.error("Error fetching books:", error);
-      }
-    };
-    fetchBooks();
-  }, []);
-
-  const featuredBooks = books.filter((book) => book.featured);
-  const discountedBooks = books.filter((book) => book.discount > 0);
-  const categories = [...new Set(books.map((book) => book.category))];
-
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* HERO SECTION */}
-      <section className="w-full min-h-[90vh] flex items-center">
-        <div className="grid md:grid-cols-2 w-full">
-          <div className="flex flex-col justify-center px-8 md:px-20 py-20">
-            <p className="text-sm uppercase tracking-[0.3em] text-gray-500 mb-6">
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        className="relative w-full min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50"
+      >
+        {/* Background Glow */}
+        <div className="absolute top-[-200px] right-[-200px] w-[450px] h-[450px] bg-blue-300 opacity-20 rounded-full blur-3xl" />
+        <div className="absolute bottom-[-200px] left-[-200px] w-[450px] h-[450px] bg-purple-300 opacity-20 rounded-full blur-3xl" />
+
+        <div className="max-w-7xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-12 items-center">
+          {/* LEFT CONTENT */}
+          <motion.div
+            initial={{ opacity: 0, x: -80 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-sm uppercase tracking-[0.25em] text-blue-600 mb-6"
+            >
               Curated Collection
-            </p>
+            </motion.p>
 
-            <h1 className="text-5xl md:text-6xl font-semibold leading-tight text-gray-900 mb-8">
-              Discover Stories <br /> That Stay With You
-            </h1>
+            <motion.h1
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gray-900 mb-6"
+            >
+              Discover Stories
+              <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Unlock Your Next Adventure
+              </span>
+            </motion.h1>
 
-            <p className="text-lg text-gray-600 max-w-md mb-10">
-              A refined collection of timeless literature, modern thinking, and
-              inspiring reads for every kind of reader.
-            </p>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="text-lg text-gray-600 max-w-md mb-8"
+            >
+              Explore timeless classics, inspiring stories, and modern insights
+              carefully curated for passionate readers.
+            </motion.p>
 
-            <button className="border text-gray-200 border-gray-500 px-9 py-3 text-sm tracking-wider hover:bg-gray-300 hover:text-white transition duration-300 w-fit active:scale-95">
-              {" "}
-              Explore Books{" "}
-            </button>
-          </div>
+            {/* CTA BUTTONS */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="flex flex-wrap gap-4"
+            >
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium shadow-lg hover:shadow-xl"
+                onClick={() => {
+                  // example navigation handler - replace with router navigation if you use react-router / next/link etc.
+                  window.location.href = "/books";
+                }}
+              >
+                Explore Books
+              </motion.button>
 
-          <div className="relative h-[500px] md:h-auto">
-            <img
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-6 py-3 rounded-xl border border-gray-300 bg-white text-gray-700 hover:border-blue-500 hover:text-blue-600"
+                onClick={() => {
+                  window.location.href = "/categories";
+                }}
+              >
+                Browse Categories
+              </motion.button>
+            </motion.div>
+          </motion.div>
+
+          {/* HERO IMAGE */}
+          <motion.div
+            initial={{ opacity: 0, x: 80 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="relative flex justify-center"
+          >
+            <motion.img
               src="https://images.unsplash.com/photo-1507842217343-583bb7270b66"
-              alt="Library Interior"
-              className="w-full h-full object-cover"
+              alt="Library"
+              className="rounded-2xl shadow-2xl w-full max-w-lg object-cover"
+              animate={{ y: [0, -15, 0] }}
+              transition={{
+                duration: 6,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              whileHover={{ scale: 1.03 }}
             />
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
-      <div className="max-w-7xl mx-auto px-6 py-16">
-        {/* FEATURED BOOKS */}
-        <section className="mb-20">
-          <h2 className="text-3xl font-bold mb-8 text-gray-800">
-            Featured Books
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 overflow-visible">
-            {featuredBooks.map((book) => (
-              <BookCard key={book.id} book={book} />
-            ))}
-          </div>
-        </section>
-
-        {/* CATEGORY BOOKS */}
-        <section className="mb-20">
-          <h2 className="text-3xl font-bold mb-8 text-gray-800">
-            Browse By Category
-          </h2>
-
-          {categories.map((category) => (
-            <div key={category} className="mb-12">
-              <h3 className="text-xl font-semibold mb-6 text-indigo-600">
-                {category}
-              </h3>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 overflow-visible">
-                {books
-                  .filter((book) => book.category === category)
-                  .map((book) => (
-                    <BookCard key={book.id} book={book} />
-                  ))}
-              </div>
-            </div>
-          ))}
-        </section>
-
-        {/* DISCOUNTED BOOKS */}
-        <section>
-          <h2 className="text-3xl font-bold mb-8 text-gray-800">
-            🔥 Discounted Books
-          </h2>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 overflow-visible">
-            {discountedBooks.map((book) => (
-              <BookCard key={book.id} book={book} showDiscount />
-            ))}
-          </div>
-        </section>
-      </div>
+      {/* (No book cards or book sections here) */}
 
       <footer className="bg-gray-900 text-gray-300 text-center py-6 mt-16">
         <p>© 2026 BookVerse. All rights reserved.</p>
       </footer>
-    </div>
-  );
-};
-const BookCard = ({ book, showDiscount }) => {
-  const finalPrice = showDiscount
-    ? Math.round(book.price - (book.price * book.discount) / 100)
-    : book.price;
-
-  return (
-    <div className="relative group">
-      <div className="bg-white rounded-xl shadow-md overflow-hidden cursor-pointer transition-all duration-300">
-        {/* IMAGE AREA */}
-        <div className="relative h-60 overflow-hidden">
-          {/* IMAGE (blur on hover) */}
-          <img
-            src={book.coverImage}
-            alt={book.title}
-            className="w-full h-full object-cover transition-all duration-300 md:group-hover:blur-md md:group-hover:scale-105"
-          />
-
-          {/* OVERLAY */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 bg-black/50 p-4 text-center">
-            <div className="text-white">
-              <h4 className="font-semibold text-lg mb-2">{book.title}</h4>
-              <p className="text-sm">{book.description}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* BOTTOM CONTENT */}
-        <div className="p-4">
-          <h4 className="font-semibold text-lg text-gray-800">{book.title}</h4>
-
-          <p className="text-sm text-gray-500 mb-2">{book.author}</p>
-
-          {/* Mobile Description */}
-          <p className="text-sm text-gray-600 mb-3 md:hidden">
-            {book.description}
-          </p>
-
-          {showDiscount ? (
-            <div>
-              <span className="text-gray-400 line-through mr-2">
-                ₹{book.price}
-              </span>
-              <span className="text-red-600 font-bold">₹{finalPrice}</span>
-            </div>
-          ) : (
-            <p className="font-bold text-indigo-600">₹{book.price}</p>
-          )}
-        </div>
-      </div>
     </div>
   );
 };
