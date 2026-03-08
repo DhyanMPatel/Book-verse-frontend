@@ -5,7 +5,6 @@ const BooksDetailContainer = () => {
   return (
     <div>
       <BookDetailView />
-      {/* BooksDetailContainer */}
     </div>
   )
 }

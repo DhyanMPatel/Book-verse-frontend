@@ -42,7 +42,6 @@ function AuthProvider({ children }) {
   };
 
   const logout = () => {
-    console.log("AuthContext: Logging out user");
     setToken(null);
     setUser(null);
     localStorage.removeItem("token");

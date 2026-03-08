@@ -21,8 +21,6 @@ const DesktopNavbarView = (props) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  console.log(location.pathname, "path Name");
-
   return (
     <header className="desktop-navbar">
       <div className="navbar-container">

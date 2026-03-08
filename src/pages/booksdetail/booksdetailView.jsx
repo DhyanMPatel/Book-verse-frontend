@@ -13,31 +13,17 @@ export default function BookDetailView() {
 
   // Fetch book data
   useEffect(() => {
-
   const fetchBook = async () => {
-
     try {
-
       const response = await axiosInstance.get(`/books/details/${id}`);
       console.log("response from the books details");
-      setBook(response.data.data);
-      // console.log(response.data.data)
-      
+      setBook(response?.data?.data?.bookDetailData);
     } catch (error) {
-
       console.error("Error fetching book:", error);
-
     }
-
   };
-
   fetchBook();
-
-  
-
 }, [id]);
-
-console.log("bookkkkkllllllllllllllllllllllllllllllllllllk",book)
 // console.log(book.)
 
   const checkDelivery = () => {
