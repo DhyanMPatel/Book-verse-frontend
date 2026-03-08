@@ -120,15 +120,17 @@
 
 // export default HomeView;
 
-
-import React, { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
 import axiosInstance from "../../services/axiosInstance";
-import { useNavigate } from "react-router-dom";
+import "./homeStyle.css";
 
-import "slick-carousel/slick/slick.css";
+import { ChevronsLeft, ChevronsRight, MoveRight } from "lucide-react";
 import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
 
 /**
  * HomeView
@@ -158,6 +160,33 @@ const HomeView = () => {
   // Double click function
   const handleDoubleClick = (id) => {
     navigate(`/book/${id}`);
+  };
+
+  // Get category icon function
+  const getCategoryIcon = (category) => {
+    const icons = {
+      Fiction: "",
+      "Non-Fiction": "",
+      Science: "",
+      Technology: "",
+      Business: "",
+      History: "",
+      Biography: "",
+      "Self-Help": "",
+      Romance: "",
+      Mystery: "",
+      Fantasy: "",
+      Horror: "",
+      Poetry: "",
+      Drama: "",
+      Adventure: "",
+      Children: "",
+      Cooking: "",
+      Travel: "",
+      Art: "",
+      Music: "",
+    };
+    return icons[category] || "";
   };
 
   // FETCH BOOKS
@@ -193,7 +222,9 @@ const HomeView = () => {
   }, []);
 
   // FILTER BOOKS BY CATEGORY
-  const filteredBooks = books.filter((book) => book.category === selectedCategory);
+  const filteredBooks = books.filter(
+    (book) => book.category === selectedCategory,
+  );
 
   // BOOK SLIDER SETTINGS (kept mostly same; you can increase slidesToShow to show more)
   const bookSettings = {
@@ -210,10 +241,11 @@ const HomeView = () => {
 
   // CATEGORY SLIDER SETTINGS
   const categorySettings = {
-    slidesToShow: 5,
+    slidesToShow: 3,
     slidesToScroll: 1,
     arrows: false,
-    swipeToSlide: true,
+    // swipeToSlide: true,
+    centerMode: true,
     focusOnSelect: true,
     responsive: [
       { breakpoint: 768, settings: { slidesToShow: 4 } },
@@ -221,8 +253,38 @@ const HomeView = () => {
     ],
   };
 
-  if (loading) return <div className="text-center p-10">Loading...</div>;
-  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (loading)
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <div className="loading-text">Loading amazing books...</div>
+      </div>
+    );
+  if (error)
+    return (
+      <div className="error-container">
+        <div className="error-icon">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <line x1="15" y1="9" x2="9" y2="15" />
+            <line x1="9" y1="9" x2="15" y2="15" />
+          </svg>
+        </div>
+        <h2 className="error-title">Oops! Something went wrong</h2>
+        <p className="error-message">{error}</p>
+        <button
+          className="error-retry-btn"
+          onClick={() => window.location.reload()}
+        >
+          Try Again
+        </button>
+      </div>
+    );
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -234,10 +296,12 @@ const HomeView = () => {
         className="relative w-full min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50"
       >
         <div className="absolute top-[-200px] right-[-200px] w-[450px] h-[450px] bg-blue-300 opacity-20 rounded-full blur-3xl" />
+
         <div className="absolute bottom-[-200px] left-[-200px] w-[450px] h-[450px] bg-purple-300 opacity-20 rounded-full blur-3xl" />
 
         <div className="max-w-7xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-12 items-center">
           {/* LEFT TEXT */}
+
           <motion.div
             initial={{ opacity: 0, x: -80 }}
             animate={{ opacity: 1, x: 0 }}
@@ -269,7 +333,7 @@ const HomeView = () => {
             </div>
           </motion.div>
 
-          {/* HERO IMAGE */}
+          {/* HERO VISUAL */}
           <motion.div
             initial={{ opacity: 0, x: 80 }}
             animate={{ opacity: 1, x: 0 }}
@@ -291,106 +355,223 @@ const HomeView = () => {
         </div>
       </motion.section>
 
-      {/* BOOKS BY CATEGORY */}
-      <div className="max-w-7xl mx-auto p-6">
-        <h2 className="text-2xl font-bold mb-6">Books by Category</h2>
+      {/* BOOKS BY CATEGORY - PROFESSIONAL DESIGN */}
+      <section className="books-by-category-section">
+        <div className="category-header">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="header-content"
+          >
+            <div className="header-badge">
+              <span className="badge-text">Explore Collection</span>
+            </div>
+            <h2 className="section-title">
+              Books by <span className="title-gradient">Category</span>
+            </h2>
+            <p className="section-subtitle">
+              Discover your next favorite read from our carefully curated
+              categories
+            </p>
+          </motion.div>
+        </div>
 
-        {/* BOOK SLIDER */}
-        <Slider {...bookSettings} ref={sliderRef1}>
-          {filteredBooks.map((book) => {
-            // <<-- MERGED: percentage calculation placed here as requested
-            const discountPercent = book.originalPrice
-              ? Math.round(
-                  ((book.originalPrice - book.price) / book.originalPrice) * 100
-                )
-              : 0;
-
-            const safeKey =
-              book._id ||
-              book.id ||
-              `${book.title}-${Math.random().toString(36).slice(2, 9)}`;
-
-            return (
-              <div key={safeKey} className="p-3">
+        {/* CATEGORY TABS */}
+        <div className="category-tabs-container">
+          <div className="tabs-wrapper">
+            <Slider
+              {...categorySettings}
+              ref={sliderRef2}
+              className="category-slider"
+            >
+              {categories.map((cat, index) => (
                 <motion.div
-                  onClick={() => handleDoubleClick(book._id)}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  whileHover={{ y: -8 }}
-                  transition={{ duration: 0.20 }}
-                  className="bg-white rounded-xl shadow-md hover:shadow-xl transition overflow-hidden cursor-pointer"
+                  key={index}
+                  className="category-tab-item"
+                  onClick={() => setSelectedCategory(cat)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  {/* Image */}
-                  <motion.img
-                    src={book.image || book.cover || book.photo}
-                    alt={book.title}
-                    whileHover={{ scale: 1.08 }}
-                    transition={{ duration: 0.3 }}
-                    className="w-full h-48 object-contain p-3"
-                  />
-
-                  <div className="px-3 pb-3">
-                    {/* Title */}
-                    <h3 className="font-semibold text-sm line-clamp-2">{book.title}</h3>
-
-                    {/* Author */}
-                    <p className="text-gray-500 text-xs mt-1">{book.author}</p>
-
-                    {/* Price Section */}
-                    <div className="flex items-center gap-2 mt-3">
-                      <span className="text-gray-400 line-through text-xs">
-                        ₹ {book.originalPrice}
-                      </span>
-
-                      <span className="font-bold text-base">₹ {book.price}</span>
-
-                      {/* Animated Discount Badge */}
-                      <motion.span
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ type: "spring", stiffness: 200 }}
-                        className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-md font-semibold"
-                      >
-                        {discountPercent}% OFF
-                      </motion.span>
-                    </div>
-
-                    {/* Add to Cart Button */}
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.9 }}
-                      className="mt-3 w-full bg-yellow-400 hover:bg-yellow-500 text-white text-sm py-1.5 rounded-lg flex items-center justify-center gap-2"
-                    >
-                      🛍 Add to Cart
-                    </motion.button>
+                  <div
+                    className={`category-tab ${selectedCategory === cat ? "active" : ""}`}
+                  >
+                    <div className="tab-icon">{getCategoryIcon(cat)}</div>
+                    <span className="tab-name">{cat}</span>
+                    <div className="tab-indicator"></div>
                   </div>
                 </motion.div>
-              </div>
-            );
-          })}
-        </Slider>
+              ))}
+            </Slider>
+          </div>
+        </div>
 
-        {/* CATEGORY SLIDER */}
-        <div className="mt-10">
-          <Slider {...categorySettings} ref={sliderRef2}>
-            {categories.map((cat, index) => (
-              <div
-                key={index}
-                className="p-2 cursor-pointer"
-                onClick={() => setSelectedCategory(cat)}
+        {/* BOOKS GRID WITH ENHANCED DESIGN */}
+        <div className="books-showcase">
+          <div className="showcase-header">
+            <h3 className="category-title">
+              {selectedCategory}{" "}
+              <span className="book-count">({filteredBooks.length} books)</span>
+            </h3>
+            <div className="navigation-buttons">
+              <button
+                onClick={() => sliderRef1.current?.slickPrev()}
+                className="nav-btn prev-btn"
               >
-                <div
-                  className={`p-3 rounded-lg text-center font-medium transition ${
-                    selectedCategory === cat ? "bg-blue-600 text-white" : "bg-gray-200"
-                  }`}
+                <ChevronsLeft size={20} />
+              </button>
+              <button
+                onClick={() => sliderRef1.current?.slickNext()}
+                className="nav-btn next-btn"
+              >
+                <ChevronsRight size={20} />
+              </button>
+            </div>
+          </div>
+
+          <Slider {...bookSettings} ref={sliderRef1} className="books-slider">
+            {filteredBooks.map((book, index) => {
+              const discountPercent = book.originalPrice
+                ? Math.round(
+                    ((book.originalPrice - book.price) / book.originalPrice) *
+                      100,
+                  )
+                : 0;
+
+              const safeKey =
+                book._id ||
+                book.id ||
+                `${book.title}-${Math.random().toString(36).slice(2, 9)}`;
+
+              return (
+                <motion.div
+                  key={safeKey}
+                  className="book-card-container"
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  whileHover={{ y: -10 }}
                 >
-                  {cat}
-                </div>
-              </div>
-            ))}
+                  <div
+                    className="premium-book-card"
+                    onClick={() => handleDoubleClick(book.id)}
+                  >
+                    {/* Book Cover with Effects */}
+                    <div className="book-cover-container">
+                      <motion.img
+                        src={book.image || book.cover || book.photo}
+                        alt={book.title}
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ duration: 0.3 }}
+                        className="book-cover"
+                      />
+                      <div className="cover-overlay">
+                        <button className="quick-view-btn">
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                            <circle cx="12" cy="12" r="3" />
+                          </svg>
+                          Quick View
+                        </button>
+                      </div>
+                      {discountPercent > 0 && (
+                        <div className="discount-badge">
+                          -{discountPercent}%
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Book Details */}
+                    <div className="book-details">
+                      <div className="book-category-tag">{book.category}</div>
+
+                      <h4 className="book-title">{book.title}</h4>
+
+                      <p className="book-author">by {book.author}</p>
+
+                      <div className="book-rating">
+                        <div className="stars">
+                          {[...Array(5)].map((_, i) => (
+                            <svg
+                              key={i}
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill={i < 4 ? "currentColor" : "none"}
+                              stroke="currentColor"
+                              strokeWidth="1"
+                            >
+                              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                            </svg>
+                          ))}
+                        </div>
+                        <span className="rating-text">(4.0)</span>
+                      </div>
+
+                      <div className="price-section">
+                        <div className="price-row">
+                          <span className="current-price">₹{book.price}</span>
+                          {book.originalPrice && (
+                            <span className="original-price">
+                              ₹{book.originalPrice}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="add-to-cart-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Add to cart logic here
+                        }}
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <circle cx="9" cy="21" r="1" />
+                          <circle cx="20" cy="21" r="1" />
+                          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                        </svg>
+                        Add to Cart
+                      </motion.button>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
           </Slider>
         </div>
-      </div>
+
+        {/* View All Button */}
+        <motion.div
+          className="view-all-container"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          viewport={{ once: true }}
+        >
+          <button className="view-all-btn">
+            <span className="fill-white">View All {selectedCategory} Books</span>
+            <MoveRight size={20} />
+          </button>
+        </motion.div>
+      </section>
 
       {/* FOOTER */}
       <footer className="bg-gray-900 text-gray-300 text-center py-6 mt-16">
