@@ -10,6 +10,7 @@ import {
   RegisterContainer,
   SearchContainer,
   WishlistContainer,
+  BooksDetailContainer
 } from "../pages/pageIndex";
 import RouteConstants from "../utils/routeConstants";
 import PrivateRoute from "./privateRoutes";
@@ -117,6 +118,18 @@ export const AppRoutes = [
           </PrivateRoute>
         ),
       },
+        {
+        path: RouteConstants.booksdetails,
+        element: (
+          <PrivateRoute>
+            <Suspense fallback="loading">
+              <div className="pt-[64px]">
+                <BooksDetailContainer />
+              </div>
+            </Suspense>
+          </PrivateRoute>
+        ),
+      }, 
     ],
   },
 ];

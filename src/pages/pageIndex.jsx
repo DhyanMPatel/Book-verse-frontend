@@ -7,6 +7,9 @@ import LibraryContainer from "./library/libraryContainer";
 import CartContainer from "./cart/cartContainer";
 import ProfileContainer from "./profile/profileContainer";
 import WishlistContainer from "./wishlist/wishlistContainer";
+import BooksDetailContainer from "./booksdetail/booksdetailContainer";
+
+
 
 export {
   HomeContainer,
@@ -18,4 +21,6 @@ export {
   CartContainer,
   ProfileContainer,
   WishlistContainer,
+  BooksDetailContainer,
+
 };
