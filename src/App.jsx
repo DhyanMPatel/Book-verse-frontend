@@ -2,9 +2,10 @@ import { StrictMode } from "react";
 import "./App.css";
 import { BrowserRouter } from "react-router-dom";
 import Router from "./routes/routesIndex";
-import { AuthProvider, } from "./contexts/AuthContext";
-import { BooksProvider } from "./contexts/BooksContext";
-
+import { AuthProvider } from "./contexts/AuthContext";
+import { BooksProvider } from "./contexts/BookContext";
+import { ReviewProvider } from "./contexts/ReviewContext";
+import { ToastContainer } from "react-toastify";
 function App() {
   return (
     <>
@@ -12,11 +13,14 @@ function App() {
         <BrowserRouter>
           <AuthProvider>
             <BooksProvider>
-              <Router />
+              <ReviewProvider>
+                <Router />
+              </ReviewProvider>
             </BooksProvider>
           </AuthProvider>
         </BrowserRouter>
       </StrictMode>
+      <ToastContainer />
     </>
   );
 }

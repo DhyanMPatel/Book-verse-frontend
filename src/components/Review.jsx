@@ -1,6 +1,8 @@
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Star, ThumbsUp } from "lucide-react";
-import { useState } from "react";
+import Rating from "@mui/material/Rating";
+import { useReviews } from "../contexts/ReviewContext";
 
 const containerVariants = {
   hidden: { opacity: 0, y: 40 },
@@ -19,49 +21,87 @@ const itemVariants = {
 };
 
 function Stars({ rating }) {
+  return <Rating value={rating} precision={1} readOnly size="small" />;
+}
+
+function RatingInput({ rating, setRating, defaultValue }) {
+  const handleRating = (event, newValue) => {
+    const value = newValue ?? defaultValue;
+    setRating(value);
+  };
+
   return (
-    <div className="flex items-center gap-1">
-      {[...Array(5)].map((_, i) => (
-        <Star
-          key={i}
-          size={16}
-          className={
-            i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
-          }
-        />
-      ))}
+    <div>
+      <Rating value={rating} precision={1} onChange={handleRating} />
     </div>
   );
 }
 
-export default function Reviews() {
+function formatTime(isoOrDate) {
+  if (!isoOrDate) return "just now";
 
-  const [reviews, setReviews] = useState([
-    {
-      name: "Amit Sharma",
-      rating: 5,
-      comment:
-        "Amazing book! The concepts are explained very clearly and it helped me improve my skills.",
-      time: "2 days ago",
-    },
-    {
-      name: "Priya Patel",
-      rating: 4,
-      comment:
-        "Great read with lots of practical insights. Highly recommend for beginners.",
-      time: "5 days ago",
-    },
-    {
-      name: "Rahul Mehta",
-      rating: 5,
-      comment:
-        "One of the best books I've purchased this year. Worth every rupee!",
-      time: "1 week ago",
-    },
-  ]);
+  const now = Date.now();
+  const date =
+    typeof isoOrDate === "string" ? new Date(isoOrDate) : new Date(isoOrDate);
+  const diff = Math.floor((now - date.getTime()) / 1000);
 
+  if (diff < 10) return "just now";
+  if (diff < 60) return `${diff} seconds ago`;
+
+  const minutes = Math.floor(diff / 60);
+  if (minutes < 60) return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days} day${days > 1 ? "s" : ""} ago`;
+
+  return date.toLocaleDateString();
+}
+
+export default function Reviews({ bookId }) {
+  const { reviews, fetchReviews, addReview } = useReviews();
   const [showReviewBox, setShowReviewBox] = useState(false);
-  const [newReview, setNewReview] = useState("");
+  const [reviewText, setReviewText] = useState("");
+
+  const defaultUserRating = 2;
+  const [rating, setRating] = useState(defaultUserRating);
+
+  useEffect(() => {
+    if (bookId) {
+      fetchReviews(bookId);
+    }
+  }, [bookId, fetchReviews]);
+
+  const avgRating =
+    reviews.length > 0
+      ? Number(
+          (
+            reviews.reduce(
+              (acc, r) => acc + (r.rating ?? defaultUserRating),
+              0,
+            ) / reviews.length
+          ).toFixed(1),
+        )
+      : defaultUserRating;
+
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+
+    const trimmed = reviewText.trim();
+    if (!trimmed) return;
+
+    try {
+      await addReview(bookId, rating, trimmed);
+    } catch (error) {
+      console.error("Failed to add review:", error);
+    }
+
+    setReviewText("");
+    setShowReviewBox(false);
+    setRating(defaultUserRating);
+  };
 
   return (
     <motion.section
@@ -71,125 +111,140 @@ export default function Reviews() {
       className="max-w-3xl mx-auto mt-12 px-4"
     >
       <div className="bg-white rounded-3xl shadow-xl p-6 md:p-8">
-
-        {/* Header */}
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
             Customer Reviews
           </h2>
 
           <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Stars rating={5} />
-            <span className="ml-2">{reviews.length} reviews</span>
+            <Stars rating={avgRating} />
+            <span className="ml-2">
+              {reviews.length} review{reviews.length !== 1 ? "s" : ""}
+            </span>
           </div>
         </div>
 
-        {/* Reviews List */}
-        <motion.div variants={containerVariants} className="space-y-2">
-
-          {reviews.map((review, index) => (
-
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-2"
+        >
+          {reviews.length === 0 && (
             <motion.div
-              key={index}
               variants={itemVariants}
-              className="p-5 rounded-2xl border-b last:border-none hover:bg-gray-50 transition"
+              className="p-1 rounded-2xl border-b last:border-none hover:bg-gray-50 transition"
             >
+              <div className="text-gray-500">
+                No reviews yet — be the first to write one.
+              </div>
+            </motion.div>
+          )}
 
+          {reviews.map((review) => (
+            <motion.div
+              initial={false}
+              key={review.id}
+              variants={itemVariants}
+              className="p-1 rounded-2xl border-b last:border-none hover:bg-gray-50 transition"
+            >
               <div className="flex items-start gap-4">
-
-                {/* Avatar */}
                 <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 font-semibold">
-                  {review.name?.charAt(0)}
+                  {review.userId?.name?.charAt(0) || "U"}
                 </div>
 
                 <div className="flex-1">
-
-                  {/* Name + rating */}
                   <div className="flex flex-wrap items-center gap-3">
                     <h4 className="font-semibold text-gray-800">
-                      {review.name}
+                      {review.userId?.name || "User"}
                     </h4>
 
-                    <Stars rating={review.rating} />
+                    <Stars rating={review.rating ?? defaultUserRating} />
 
                     <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-600 font-medium">
                       Verified Purchase
                     </span>
                   </div>
 
-                  {/* Comment */}
                   <p className="text-gray-600 mt-2 text-sm leading-relaxed">
-                    {review.comment}
+                    {review.reviewText}
                   </p>
 
-                  {/* Footer */}
                   <div className="flex items-center justify-between mt-3 text-sm text-gray-500">
+                    <span>{formatTime(review.createdAt)}</span>
 
-                    <span>{review.time}</span>
-
-                    <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-white hover:bg-gray-100 hover:text-blue-400 transition-all duration-200">
+                    <button className="flex items-center gap-1 hover:text-blue-600 transition">
                       <ThumbsUp size={16} />
+                      Helpful
                     </button>
-
                   </div>
-
                 </div>
               </div>
-
             </motion.div>
           ))}
-
         </motion.div>
 
-        {/* Review Textbox */}
-        {showReviewBox && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-4"
-          >
-            <textarea
-              value={newReview}
-              onChange={(e) => setNewReview(e.target.value)}
-              placeholder="Write your review..."
-              className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
-              rows={4}
-            />
-          </motion.div>
-        )}
-
-        {/* Write Review Button */}
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
-          onClick={() => {
-            if (!showReviewBox) {
-              setShowReviewBox(true);
-            } else {
-
-              if (newReview.trim() === "") return;
-
-              setReviews([
-                ...reviews,
-                {
-                  name: "You",
-                  rating: 5,
-                  comment: newReview,
-                  time: "Just now",
-                },
-              ]);
-
-              setNewReview("");
-              setShowReviewBox(false);
-            }
-          }}
-          className="mt-6 w-full py-3 rounded-xl font-semibold text-white
-          bg-gradient-to-r from-blue-500 to-purple-600
-          shadow-md hover:shadow-lg transition"
+          onClick={() => setShowReviewBox((s) => !s)}
+          className="mt-6 w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-blue-500 to-purple-600 shadow-md hover:shadow-lg transition"
         >
-          {showReviewBox ? "Submit Review" : "Write a Review"}
+          Write a Review
         </motion.button>
 
+        {showReviewBox && (
+          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="bg-white rounded-2xl p-6 w-[90%] max-w-md shadow-xl"
+            >
+              <h3 className="text-lg font-semibold mb-4">Write a Review</h3>
+
+              <form onSubmit={handleSubmitReview}>
+                <div className="mb-3">
+                  <div className="text-sm mb-1">Your Rating</div>
+                  <RatingInput
+                    rating={rating}
+                    setRating={setRating}
+                    defaultValue={defaultUserRating}
+                  />
+                </div>
+
+                <textarea
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                  placeholder="Write your review..."
+                  className="w-full p-3 border rounded-lg"
+                  rows={4}
+                />
+
+                <div className="flex justify-end gap-3 mt-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowReviewBox(false);
+                      setReviewText("");
+                      setRating(defaultUserRating);
+                    }}
+                    className="px-4 py-2 bg-gray-200 rounded-lg text-gray-700"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    disabled={!reviewText.trim()}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
       </div>
     </motion.section>
   );

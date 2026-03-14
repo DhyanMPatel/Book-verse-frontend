@@ -3,8 +3,8 @@ import axiosInstance from "../../services/axiosInstance";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Reviews from "../../components/Review";
-import { useBooks } from "../../contexts/BooksContext";
-
+import { useBooks } from "../../contexts/BookContext";
+import { useReviews } from "../../contexts/ReviewContext";
 
 export default function BookDetailView() {
   const [book, setBook] = useState(null);
@@ -16,10 +16,10 @@ export default function BookDetailView() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [relatedBooks, setRelatedBooks] = useState([]);
-  const [reviews, setReviews] = useState([]);
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const { fetchReviews } = useReviews();
 
   // Fetch book data
   useEffect(() => {
@@ -27,28 +27,13 @@ export default function BookDetailView() {
       try {
         setLoading(true);
         const response = await axiosInstance.get(`/books/details/${id}`);
+        if (id) {
+          fetchReviews(id);
+        }
         console.log("response from the books details");
         const bookData = response?.data?.data?.bookDetailData;
         setBook(bookData);
         setError(null);
-
-        // Fetch related books from same category
-        if (bookData?.category) {
-          try {
-            const relatedResponse = await axiosInstance.get(`/books/category/${bookData.category}`);
-            const related = relatedResponse?.data?.data?.books || [];
-            // Filter out the current book and limit to 8 books
-            const filteredRelated = related
-              .filter(b => b.id !== bookData.id)
-              .slice(0, 8);
-            setRelatedBooks(filteredRelated);
-          } catch (err) {
-            console.log("Error fetching related books:", err);
-          }
-        }
-
-        // Set sample reviews if no reviews from API
-
       } catch (error) {
         console.error("Error fetching book:", error);
         setError("Failed to load book details");
@@ -58,14 +43,31 @@ export default function BookDetailView() {
     };
     fetchBook();
   }, [id]);
-const bookDetails = {
-  Author: book?.author,
-  Publisher: book?.publisher,
-  Pages: book?.pages,
-  Language: book?.language,
-  ISBN: book?.isbn,
-  Genre: book?.category
-};
+
+  // Fetch related books from same category
+  // if (bookData?.category) {
+  //   try {
+  //     const relatedResponse = await axiosInstance.get(`/books/category/${bookData.category}`);
+  //     const related = relatedResponse?.data?.data?.books || [];
+  //     // Filter out the current book and limit to 8 books
+  //     const filteredRelated = related
+  //       .filter(b => b.id !== bookData.id)
+  //       .slice(0, 8);
+  //     setRelatedBooks(filteredRelated);
+  //   } catch (err) {
+  //     console.log("Error fetching related books:", err);
+  //   }
+  // }
+
+  const bookDetails = {
+    Author: book?.author,
+    Publisher: book?.publisher,
+    Pages: book?.pages,
+    Language: book?.language,
+    ISBN: book?.isbn,
+    "Publication Date": book?.publicationDate,
+    Genre: book?.genre,
+  };
 
   const checkDelivery = () => {
     if (pincode.length === 6) {
@@ -136,8 +138,18 @@ const bookDetails = {
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors duration-300 mb-6"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
           </svg>
           <span className="font-medium">Back to Books</span>
         </motion.button>
@@ -174,7 +186,11 @@ const bookDetails = {
                     whileTap={{ scale: 0.9 }}
                     className="bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg cursor-pointer"
                   >
-                    <svg className="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                    <svg
+                      className="w-6 h-6 text-red-500"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
                       <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
                     </svg>
                   </motion.div>
@@ -197,10 +213,16 @@ const bookDetails = {
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setSelectedImage(index)}
                     className={`flex-shrink-0 w-20 h-28 rounded-lg overflow-hidden cursor-pointer border-2 ${
-                      selectedImage === index ? 'border-blue-500' : 'border-transparent'
+                      selectedImage === index
+                        ? "border-blue-500"
+                        : "border-transparent"
                     }`}
                   >
-                    <img src={img} alt={`Book view ${index + 1}`} className="w-full h-full object-cover" />
+                    <img
+                      src={img}
+                      alt={`Book view ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
                   </motion.div>
                 ))}
               </motion.div>
@@ -224,14 +246,15 @@ const bookDetails = {
               >
                 {book.title}
               </motion.h1>
-              
+
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 }}
                 className="text-lg sm:text-xl text-gray-600 mb-4"
               >
-                by <span className="font-medium text-gray-800">{book.author}</span>
+                by{" "}
+                <span className="font-medium text-gray-800">{book.author}</span>
               </motion.p>
 
               {/* Rating */}
@@ -256,7 +279,9 @@ const bookDetails = {
                     </motion.svg>
                   ))}
                 </div>
-                <span className="text-gray-600 font-medium">({book.reviewsCount || 0} reviews)</span>
+                <span className="text-gray-600 font-medium">
+                  ({book.reviewsCount || 0} reviews)
+                </span>
               </motion.div>
 
               {/* Price Section */}
@@ -269,13 +294,13 @@ const bookDetails = {
                 <span className="text-3xl sm:text-4xl font-bold text-green-600">
                   ₹{book.price}
                 </span>
-                
+
                 {book.oldPrice && (
                   <span className="text-xl sm:text-2xl text-gray-400 line-through">
                     ₹{book.oldPrice}
                   </span>
                 )}
-                
+
                 {book.discount && (
                   <motion.span
                     whileHover={{ scale: 1.05 }}
@@ -295,7 +320,9 @@ const bookDetails = {
                   className="flex items-center gap-2 mb-6"
                 >
                   <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-                  <span className="text-green-600 font-semibold">In Stock - Ready to ship</span>
+                  <span className="text-green-600 font-semibold">
+                    In Stock - Ready to ship
+                  </span>
                 </motion.div>
               )}
 
@@ -312,15 +339,19 @@ const bookDetails = {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 hover:from-blue-200 hover:to-purple-200 flex items-center justify-center">
+                    className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 hover:from-blue-200 hover:to-purple-200 flex items-center justify-center"
+                  >
                     -
                   </motion.button>
-                  <span className="w-12 text-center font-semibold">{quantity}</span>
+                  <span className="w-12 text-center font-semibold">
+                    {quantity}
+                  </span>
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setQuantity(quantity + 1)}
-                    className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 hover:from-blue-200 hover:to-purple-200 flex items-center justify-center">
+                    className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 hover:from-blue-200 hover:to-purple-200 flex items-center justify-center"
+                  >
                     +
                   </motion.button>
                 </div>
@@ -340,8 +371,18 @@ const bookDetails = {
                   className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   <span className="flex items-center justify-center gap-2">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                      />
                     </svg>
                     Add to Cart
                   </span>
@@ -354,8 +395,18 @@ const bookDetails = {
                   className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   <span className="flex items-center justify-center gap-2">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 10V3L4 14h7v7l9-11h-7z"
+                      />
                     </svg>
                     Buy Now
                   </span>
@@ -373,20 +424,26 @@ const bookDetails = {
               <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Book Details
               </h3>
-              
+
               <div className="space-y-4">
-                {Object.entries(bookDetails || {}).map(([key, value], index) => (
-                  <motion.div
-                    key={key}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 1.2 + index * 0.05 }}
-                    className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0"
-                  >
-                    <span className="font-semibold text-gray-700 capitalize">{key}</span>
-                    <span className="text-gray-600 font-medium">{value || 'N/A'}</span>
-                  </motion.div>
-                ))}
+                {Object.entries(bookDetails || {}).map(
+                  ([key, value], index) => (
+                    <motion.div
+                      key={key}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 1.2 + index * 0.05 }}
+                      className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0"
+                    >
+                      <span className="font-semibold text-gray-700 capitalize">
+                        {key}
+                      </span>
+                      <span className="text-gray-600 font-medium">
+                        {value || "N/A"}
+                      </span>
+                    </motion.div>
+                  ),
+                )}
               </div>
             </motion.div>
           </motion.div>
@@ -403,12 +460,12 @@ const bookDetails = {
             <h2 className="text-2xl sm:text-3xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Description
             </h2>
-            
+
             <AnimatePresence>
               <motion.div
-                key={expanded ? 'expanded' : 'collapsed'}
+                key={expanded ? "expanded" : "collapsed"}
                 initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: expanded ? 'auto' : '120px' }}
+                animate={{ opacity: 1, height: expanded ? "auto" : "120px" }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3 }}
                 className={`${expanded ? "" : "overflow-hidden"}`}
@@ -418,20 +475,11 @@ const bookDetails = {
                 </p>
               </motion.div>
             </AnimatePresence>
-            
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setExpanded(!expanded)}
-              className="mt-4 text-blue-600 font-semibold hover:text-blue-700 transition-colors duration-300"
-            >
-              {expanded ? "Read Less ▲" : "Read More ▼"}
-            </motion.button>
           </div>
         </motion.div>
 
         {/* REVIEWS SECTION */}
-        <Reviews reviews={reviews} />
+        <Reviews bookId={id} />
 
         {/* RELATED BOOKS */}
         {relatedBooks && relatedBooks.length > 0 && (
@@ -455,7 +503,7 @@ const bookDetails = {
                   View All →
                 </motion.button>
               </div>
-              
+
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
                 {relatedBooks.map((relatedBook, index) => (
                   <motion.div
@@ -482,31 +530,44 @@ const bookDetails = {
                           </div>
                         )}
                       </div>
-                      
+
                       <h3 className="font-semibold text-sm text-gray-800 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
                         {relatedBook.title}
                       </h3>
-                      
-                      <p className="text-xs text-gray-600 mb-2">by {relatedBook.author}</p>
-                      
+
+                      <p className="text-xs text-gray-600 mb-2">
+                        by {relatedBook.author}
+                      </p>
+
                       <div className="flex items-center justify-center gap-1 mb-3">
                         <div className="flex text-yellow-400">
                           {[...Array(5)].map((_, i) => (
-                            <svg key={i} className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                            <svg
+                              key={i}
+                              className="w-3 h-3"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
                               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                             </svg>
                           ))}
                         </div>
-                        <span className="text-xs text-gray-500">({relatedBook.reviewsCount || 0})</span>
+                        <span className="text-xs text-gray-500">
+                          ({relatedBook.reviewsCount || 0})
+                        </span>
                       </div>
-                      
+
                       <div className="flex items-center justify-between mb-3">
-                        <p className="text-lg font-bold text-green-600">₹{relatedBook.price}</p>
+                        <p className="text-lg font-bold text-green-600">
+                          ₹{relatedBook.price}
+                        </p>
                         {relatedBook.oldPrice && (
-                          <p className="text-sm text-gray-400 line-through">₹{relatedBook.oldPrice}</p>
+                          <p className="text-sm text-gray-400 line-through">
+                            ₹{relatedBook.oldPrice}
+                          </p>
                         )}
                       </div>
-                      
+
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -538,7 +599,7 @@ const bookDetails = {
               <h2 className="text-2xl sm:text-3xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Special Offers
               </h2>
-              
+
               <div className="grid gap-4">
                 {book.offers.map((offer, index) => (
                   <motion.div
@@ -550,8 +611,18 @@ const bookDetails = {
                     className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 p-4 rounded-2xl flex items-center gap-3"
                   >
                     <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                      <svg
+                        className="w-6 h-6 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
+                        />
                       </svg>
                     </div>
                     <span className="text-gray-700 font-medium">{offer}</span>
@@ -573,17 +644,19 @@ const bookDetails = {
             <h2 className="text-2xl sm:text-3xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Check Delivery
             </h2>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 mb-4">
               <motion.input
                 type="text"
                 value={pincode}
-                onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                onChange={(e) =>
+                  setPincode(e.target.value.replace(/\D/g, "").slice(0, 6))
+                }
                 placeholder="Enter 6-digit Pincode"
                 className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-2xl focus:border-blue-500 focus:outline-none transition-all duration-300"
                 whileFocus={{ scale: 1.02 }}
               />
-              
+
               <motion.button
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
@@ -593,7 +666,7 @@ const bookDetails = {
                 Check Availability
               </motion.button>
             </div>
-            
+
             <AnimatePresence>
               {deliveryResult && (
                 <motion.div
@@ -601,9 +674,9 @@ const bookDetails = {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   className={`p-4 rounded-2xl ${
-                    deliveryResult.includes('✅') 
-                      ? 'bg-green-50 border-2 border-green-200 text-green-700' 
-                      : 'bg-red-50 border-2 border-red-200 text-red-700'
+                    deliveryResult.includes("✅")
+                      ? "bg-green-50 border-2 border-green-200 text-green-700"
+                      : "bg-red-50 border-2 border-red-200 text-red-700"
                   }`}
                 >
                   {deliveryResult}
@@ -616,4 +689,3 @@ const bookDetails = {
     </div>
   );
 }
-
