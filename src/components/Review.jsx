@@ -61,7 +61,7 @@ function formatTime(isoOrDate) {
 }
 
 export default function Reviews({ bookId }) {
-  const { reviews, fetchReviews, addReview } = useReviews();
+  const { reviews, fetchReviews, addReview, likeReview } = useReviews();
   const [showReviewBox, setShowReviewBox] = useState(false);
   const [reviewText, setReviewText] = useState("");
 
@@ -72,7 +72,7 @@ export default function Reviews({ bookId }) {
     if (bookId) {
       fetchReviews(bookId);
     }
-  }, [bookId, fetchReviews]);
+  }, [bookId]);
 
   const avgRating =
     reviews.length > 0
@@ -123,7 +123,6 @@ export default function Reviews({ bookId }) {
             </span>
           </div>
         </div>
-
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -173,9 +172,12 @@ export default function Reviews({ bookId }) {
                   <div className="flex items-center justify-between mt-3 text-sm text-gray-500">
                     <span>{formatTime(review.createdAt)}</span>
 
-                    <button className="flex items-center gap-1 hover:text-blue-600 transition">
+                    <button
+                      onClick={() => likeReview(review.id)}
+                      className="flex items-center gap-1 px-3 py-1 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition"
+                    >
                       <ThumbsUp size={16} />
-                      Helpful
+                      <span>{review.likes || 0}</span>
                     </button>
                   </div>
                 </div>
@@ -183,7 +185,7 @@ export default function Reviews({ bookId }) {
             </motion.div>
           ))}
         </motion.div>
-
+        ``
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
@@ -192,7 +194,6 @@ export default function Reviews({ bookId }) {
         >
           Write a Review
         </motion.button>
-
         {showReviewBox && (
           <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
             <motion.div
@@ -228,7 +229,7 @@ export default function Reviews({ bookId }) {
                       setReviewText("");
                       setRating(defaultUserRating);
                     }}
-                    className="px-4 py-2 bg-gray-200 rounded-lg text-gray-700"
+                    className="px-4 py-2 bg-gray-200 rounded-lg text-gray-700 active:scale-95"
                   >
                     Cancel
                   </button>
@@ -236,7 +237,7 @@ export default function Reviews({ bookId }) {
                   <button
                     type="submit"
                     disabled={!reviewText.trim()}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+                    className="px-4 py-2 bg-blue-500 text-white rounded-lg active:scale-95 "
                   >
                     Submit
                   </button>

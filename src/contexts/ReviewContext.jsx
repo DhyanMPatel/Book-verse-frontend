@@ -16,7 +16,6 @@ export const ReviewProvider = ({ children }) => {
       setLoading(true);
 
       const res = await axiosInstance.get(`/reviews/book/${bookId}`);
-
       const reviewList = res?.data?.data?.reviews || [];
 
       setReviews(reviewList);
@@ -34,7 +33,7 @@ export const ReviewProvider = ({ children }) => {
         rating,
         reviewText,
       });
-toast.success(res.data?.message)
+      toast.success(res.data?.message);
       const newReview = res?.data?.data;
 
       setReviews((prev) => [newReview, ...prev]);
@@ -46,11 +45,31 @@ toast.success(res.data?.message)
     }
   };
 
+  // LIKE REVIEW
+  const likeReview = async (reviewId) => {
+    try {
+      const res = await axiosInstance.post(`/reviews/${reviewId}/like`);
+
+      const updatedLikes = res?.data?.data?.likes;
+
+      setReviews((prevReviews) =>
+        prevReviews.map((review) =>
+          String(review.id) === String(reviewId)
+            ? { ...review, likes: updatedLikes }
+            : review,
+        ),
+      );
+    } catch (error) {
+      console.error("Like review error:", error);
+    }
+  };
+
   return (
     <ReviewContext.Provider
       value={{
         reviews,
         fetchReviews,
+        likeReview,
         addReview,
         loading,
       }}

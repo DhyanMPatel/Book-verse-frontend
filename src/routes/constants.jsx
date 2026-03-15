@@ -10,7 +10,7 @@ import {
   RegisterContainer,
   SearchContainer,
   WishlistContainer,
-  BooksDetailContainer
+  BooksDetailContainer,
 } from "../pages/pageIndex";
 import RouteConstants from "../utils/routeConstants";
 import PrivateRoute from "./privateRoutes";

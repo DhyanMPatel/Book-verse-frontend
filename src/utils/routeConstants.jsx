@@ -12,7 +12,6 @@ const RouteConstants = {
   wishlist: "/wishlist",
   profile: "/profile",
   settings: "/settings",
- 
   
 };
 
