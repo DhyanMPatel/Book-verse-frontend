@@ -1,6 +1,7 @@
 import React, { createContext, useReducer, useEffect } from "react";
 import axiosInstance from "../services/axiosInstance";
 import { toast } from "react-toastify";
+import { log } from "three/src/utils.js";
 
 const AuthContext = createContext();
 
@@ -134,8 +135,9 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "Login failed. Please try again.";
-      // toast.error(error.message);
-      toast.error("Login failed. Please try again.");
+        console.log(error.response?.data?.message)
+      toast.error(error.response?.data?.message);
+
 
       dispatch({
         type: "LOGIN_FAILURE",

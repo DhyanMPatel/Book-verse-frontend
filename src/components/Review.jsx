@@ -108,10 +108,10 @@ export default function Reviews({ bookId }) {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="max-w-3xl mx-auto mt-12 px-4"
+       className="max-w-6xl mx-auto mt-12 px-6"
     >
       <div className="bg-white rounded-3xl shadow-xl p-6 md:p-8">
-        <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
           <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
             Customer Reviews
           </h2>
@@ -165,7 +165,7 @@ export default function Reviews({ bookId }) {
                     </span>
                   </div>
 
-                  <p className="text-gray-600 mt-2 text-sm leading-relaxed">
+                  <p className="text-gray-700 mt-2 text-base leading-relaxed">
                     {review.reviewText}
                   </p>
 
@@ -185,7 +185,6 @@ export default function Reviews({ bookId }) {
             </motion.div>
           ))}
         </motion.div>
-        ``
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}

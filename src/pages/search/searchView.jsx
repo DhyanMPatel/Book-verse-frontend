@@ -141,9 +141,9 @@ export default function SearchView() {
               >
                 <div className="overflow-hidden">
                   <img
-                    src={book?.cover}
+                    src={book?.coverImage}
                     alt={book?.title}
-                    className="w-full h-36 object-cover hover:scale-110 transition"
+  className="w-full h-48 object-contain bg-gray-50 p-2 transition"
                   />
                 </div>
 

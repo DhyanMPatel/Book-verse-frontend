@@ -1,5 +1,3 @@
-
-
 import { useEffect, useRef, useState } from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
@@ -205,8 +203,8 @@ const HomeView = () => {
 
             <div className="flex gap-4">
               <button
-                className="px-7 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium shadow-lg"
-                onClick={() => (window.location.href = "/books")}
+                className="px-7 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium shadow-lg active:scale-95 cursor-pointer"
+                onClick={() => navigate("/search")}
               >
                 Explore Books
               </button>
@@ -340,11 +338,16 @@ const HomeView = () => {
                     {/* Book Cover with Effects */}
                     <div className="book-cover-container">
                       <motion.img
-                        src={book.image || book.cover || book.photo}
+                        src={
+                          book.image ||
+                          book.cover ||
+                          book.photo ||
+                          book.coverImage
+                        }
                         alt={book.title}
                         whileHover={{ scale: 1.1 }}
                         transition={{ duration: 0.3 }}
-                        className="book-cover"
+                        className="book-cover object-cover"
                       />
                       <div className="cover-overlay">
                         <button className="quick-view-btn">
@@ -446,8 +449,17 @@ const HomeView = () => {
           transition={{ delay: 0.3 }}
           viewport={{ once: true }}
         >
-          <button className="view-all-btn">
-            <span className="fill-white">View All {selectedCategory} Books</span>
+          <button
+            className="view-all-btn"
+            onClick={() =>
+              navigate(
+                `/search?category=${encodeURIComponent(selectedCategory)}`,
+              )
+            }
+          >
+            <span className="fill-white">
+              View All {selectedCategory} Books
+            </span>
             <MoveRight size={20} />
           </button>
         </motion.div>

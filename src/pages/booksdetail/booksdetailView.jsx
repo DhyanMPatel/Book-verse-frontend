@@ -65,8 +65,8 @@ export default function BookDetailView() {
     Pages: book?.pages,
     Language: book?.language,
     ISBN: book?.isbn,
-    "Publication Date": book?.publicationDate,
-    Genre: book?.genre,
+    "Publication Date": book?.publishedDate,
+    Genre: book?.category,
   };
 
   const reviewCount = reviews?.length || 0;
@@ -180,12 +180,13 @@ export default function BookDetailView() {
             className="space-y-6"
           >
             {/* Main Image */}
-            <div className="bg-white rounded-3xl shadow-2xl p-6 lg:p-8">
-              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100">
+            <div className="bg-white rounded-2xl shadow-xl p-6 flex justify-center">
+
+                <div className="w-[320px] h-[460px] flex items-center justify-center bg-gray-50 rounded-xl overflow-hidden">
                 <motion.img
-                  src={book.image}
+                  src={book.coverImage}
                   alt={book.title}
-                  className="w-full h-[400px] sm:h-[450px] lg:h-[500px] object-cover"
+                  className="w-full h-[350px] sm:h-[400px] lg:h-[450px] object-cover"
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.5 }}
                 />
