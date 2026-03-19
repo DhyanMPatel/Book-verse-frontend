@@ -720,3 +720,191 @@ const ProfileView = () => {
 
 export default ProfileView
 
+
+
+// import React, { useState } from 'react'
+// import { motion, AnimatePresence } from 'framer-motion'
+// import { User, ShoppingBag, Heart, Settings, LogOut, Check } from 'lucide-react'
+
+// // import ProfileSidebar from './ProfileSidebar'
+// // import PersonalInfo from './PersonalInfo'
+// // import OrderHistory from './OrderHistory'
+// // import Wishlist from './Wishlist'
+
+// import PersonalInfo from './components/PersonalInfo'
+// import ProfileSidebar from './components/ProfileSidebar'
+// import OrderHistory from './components/OrderHistory'
+// import Wishlist from './components/Wishlist'
+
+
+// const ProfileView = () => {
+//   const [activeTab, setActiveTab] = useState('personal')
+//   const [isEditing, setIsEditing] = useState(false)
+//   const [showSuccess, setShowSuccess] = useState(false)
+//   const [profileImage, setProfileImage] = useState('/api/placeholder/150/150')
+
+//   const [profileData, setProfileData] = useState({
+//     firstName: 'John',
+//     lastName: 'Doe',
+//     email: 'john.doe@example.com',
+//     phone: '+91 98765 43210',
+//     dateOfBirth: '1995-06-15',
+//     address: {
+//       street: '123 Main Street',
+//       city: 'Mumbai',
+//       state: 'Maharashtra',
+//       pincode: '400001',
+//       country: 'India'
+//     },
+//     preferences: {
+//       newsletter: true,
+//       notifications: true,
+//       darkMode: false
+//     }
+//   })
+
+//   const [tempProfileData, setTempProfileData] = useState(profileData)
+
+//   const userStats = {
+//     totalOrders: 24,
+//     totalBooks: 47,
+//     wishlistItems: 12,
+//     memberSince: '2022-01-15'
+//   }
+
+//   const orderHistory = [
+//     {
+//       id: 'ORD001',
+//       date: '2024-03-10',
+//       total: 1299,
+//       status: 'Delivered',
+//       books: []
+//     },
+//     {
+//       id: 'ORD002',
+//       date: '2024-02-28',
+//       total: 899,
+//       status: 'Delivered',
+//       books: []
+//     }
+//   ]
+
+//   const tabs = [
+//     { id: 'personal', label: 'Personal Info', icon: User },
+//     { id: 'orders', label: 'Order History', icon: ShoppingBag },
+//     { id: 'wishlist', label: 'Wishlist', icon: Heart },
+//     { id: 'settings', label: 'Settings', icon: Settings }
+//   ]
+
+//   // Handlers
+//   const handleEdit = () => {
+//     setTempProfileData(profileData)
+//     setIsEditing(true)
+//   }
+
+//   const handleSave = () => {
+//     setProfileData(tempProfileData)
+//     setIsEditing(false)
+//     setShowSuccess(true)
+//     setTimeout(() => setShowSuccess(false), 3000)
+//   }
+
+//   const handleCancel = () => {
+//     setTempProfileData(profileData)
+//     setIsEditing(false)
+//   }
+
+//   const handleInputChange = (field, value) => {
+//     setTempProfileData(prev => ({
+//       ...prev,
+//       [field]: value
+//     }))
+//   }
+
+//   const handleImageUpload = (e) => {
+//     const file = e.target.files[0]
+//     if (file) {
+//       const reader = new FileReader()
+//       reader.onloadend = () => {
+//         setProfileImage(reader.result)
+//       }
+//       reader.readAsDataURL(file)
+//     }
+//   }
+
+//   return (
+//     <div className="min-h-screen bg-gray-50">
+      
+//       {/* Header */}
+//       <div className="bg-white shadow-sm border-b p-4 flex justify-between">
+//         <h1 className="text-2xl font-bold">My Profile</h1>
+//         <button className="flex items-center gap-2 text-red-500">
+//           <LogOut className="w-5 h-5" /> Logout
+//         </button>
+//       </div>
+
+//       <div className="max-w-7xl mx-auto p-6 grid lg:grid-cols-4 gap-8">
+        
+//         {/* Sidebar */}
+//         <ProfileSidebar
+//           profileImage={profileImage}
+//           setProfileImage={setProfileImage}
+//           profileData={profileData}
+//           userStats={userStats}
+//           tabs={tabs}
+//           activeTab={activeTab}
+//           setActiveTab={setActiveTab}
+//           handleImageUpload={handleImageUpload}
+//         />
+
+//         {/* Main Content */}
+//         <div className="lg:col-span-3">
+//           <AnimatePresence mode="wait">
+            
+//             {activeTab === 'personal' && (
+//               <PersonalInfo
+//                 isEditing={isEditing}
+//                 profileData={profileData}
+//                 tempProfileData={tempProfileData}
+//                 handleEdit={handleEdit}
+//                 handleSave={handleSave}
+//                 handleCancel={handleCancel}
+//                 handleInputChange={handleInputChange}
+//               />
+//             )}
+
+//             {activeTab === 'orders' && (
+//               <OrderHistory orderHistory={orderHistory} />
+//             )}
+
+//             {activeTab === 'wishlist' && <Wishlist />}
+
+//             {activeTab === 'settings' && (
+//               <div className="bg-white p-6 rounded-xl shadow">
+//                 Settings (same as before — you can extract later)
+//               </div>
+//             )}
+
+//           </AnimatePresence>
+//         </div>
+//       </div>
+
+//       {/* Success Toast */}
+//       <AnimatePresence>
+//         {showSuccess && (
+//           <motion.div
+//             initial={{ opacity: 0, y: -50 }}
+//             animate={{ opacity: 1, y: 0 }}
+//             exit={{ opacity: 0, y: -50 }}
+//             className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-xl"
+//           >
+//             <Check className="inline mr-2" />
+//             Profile updated successfully!
+//           </motion.div>
+//         )}
+//       </AnimatePresence>
+//     </div>
+//   )
+// }
+
+// export default ProfileView
