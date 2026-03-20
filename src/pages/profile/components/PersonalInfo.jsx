@@ -65,20 +65,23 @@ const PersonalInfo = ({
 
         {/* Basic Info */}
         <div className="space-y-4">
-          <h3 className="font-semibold text-gray-700 mb-4">Basic Information</h3>
+                      <h3 className="font-semibold text-gray-700 mb-4">Basic Information</h3>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-600 mb-2">First Name</label>
+                        <input
+                          type="text"
+                          value={isEditing ? tempProfileData.firstName : profileData.firstName}
+                          onChange={(e) => handleInputChange('firstName', e.target.value)}
+                          disabled={!isEditing}
+                          className={`w-full px-4 py-2 rounded-xl border-2 transition-colors ${
+                            isEditing 
+                              ? 'border-blue-200 focus:border-blue-500 bg-white' 
+                              : 'border-gray-200 bg-gray-50'
+                          }`}
+                        />
+                      </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">First Name</label>
-            <input
-              type="text"
-              value={isEditing ? tempProfileData.firstName : profileData.firstName}
-              onChange={(e) => handleInputChange('firstName', e.target.value)}
-              disabled={!isEditing}
-              className={`w-full px-4 py-2 rounded-xl border-2 ${
-                isEditing ? 'border-blue-200 focus:border-blue-500' : 'border-gray-200 bg-gray-50'
-              }`}
-            />
-          </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-2">Last Name</label>
@@ -143,40 +146,91 @@ const PersonalInfo = ({
         </div>
 
         {/* Address */}
-        <div className="space-y-4">
-          <h3 className="font-semibold text-gray-700 mb-4">Address Information</h3>
+         <div className="space-y-4">
+                      <h3 className="font-semibold text-gray-700 mb-4">Address Information</h3>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-600 mb-2">Street Address</label>
+                        <div className="relative">
+                          <MapPin className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                          <input
+                            type="text"
+                            value={isEditing ? tempProfileData.address.street : profileData.address.street}
+                            onChange={(e) => handleAddressChange('street', e.target.value)}
+                            disabled={!isEditing}
+                            className={`w-full pl-10 pr-4 py-2 rounded-xl border-2 transition-colors ${
+                              isEditing 
+                                ? 'border-blue-200 focus:border-blue-500 bg-white' 
+                                : 'border-gray-200 bg-gray-50'
+                            }`}
+                          />
+                        </div>
+                      </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">Street Address</label>
-            <div className="relative">
-              <MapPin className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                value={isEditing ? tempProfileData.address.street : profileData.address.street}
-                onChange={(e) => handleAddressChange('street', e.target.value)}
-                disabled={!isEditing}
-                className={`w-full pl-10 pr-4 py-2 rounded-xl border-2 ${
-                  isEditing ? 'border-blue-200 focus:border-blue-500' : 'border-gray-200 bg-gray-50'
-                }`}
-              />
-            </div>
-          </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-600 mb-2">City</label>
+                          <input
+                            type="text"
+                            value={isEditing ? tempProfileData.address.city : profileData.address.city}
+                            onChange={(e) => handleAddressChange('city', e.target.value)}
+                            disabled={!isEditing}
+                            className={`w-full px-4 py-2 rounded-xl border-2 transition-colors ${
+                              isEditing 
+                                ? 'border-blue-200 focus:border-blue-500 bg-white' 
+                                : 'border-gray-200 bg-gray-50'
+                            }`}
+                          />
+                        </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <input
-              value={isEditing ? tempProfileData.address.city : profileData.address.city}
-              onChange={(e) => handleAddressChange('city', e.target.value)}
-              disabled={!isEditing}
-              className="px-4 py-2 rounded-xl border-2"
-            />
-            <input
-              value={isEditing ? tempProfileData.address.state : profileData.address.state}
-              onChange={(e) => handleAddressChange('state', e.target.value)}
-              disabled={!isEditing}
-              className="px-4 py-2 rounded-xl border-2"
-            />
-          </div>
-        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-600 mb-2">State</label>
+                          <input
+                            type="text"
+                            value={isEditing ? tempProfileData.address.state : profileData.address.state}
+                            onChange={(e) => handleAddressChange('state', e.target.value)}
+                            disabled={!isEditing}
+                            className={`w-full px-4 py-2 rounded-xl border-2 transition-colors ${
+                              isEditing 
+                                ? 'border-blue-200 focus:border-blue-500 bg-white' 
+                                : 'border-gray-200 bg-gray-50'
+                            }`}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-600 mb-2">Pincode</label>
+                          <input
+                            type="text"
+                            value={isEditing ? tempProfileData.address.pincode : profileData.address.pincode}
+                            onChange={(e) => handleAddressChange('pincode', e.target.value)}
+                            disabled={!isEditing}
+                            className={`w-full px-4 py-2 rounded-xl border-2 transition-colors ${
+                              isEditing 
+                                ? 'border-blue-200 focus:border-blue-500 bg-white' 
+                                : 'border-gray-200 bg-gray-50'
+                            }`}
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-600 mb-2">Country</label>
+                          <input
+                            type="text"
+                            value={isEditing ? tempProfileData.address.country : profileData.address.country}
+                            onChange={(e) => handleAddressChange('country', e.target.value)}
+                            disabled={!isEditing}
+                            className={`w-full px-4 py-2 rounded-xl border-2 transition-colors ${
+                              isEditing 
+                                ? 'border-blue-200 focus:border-blue-500 bg-white' 
+                                : 'border-gray-200 bg-gray-50'
+                            }`}
+                          />
+                        </div>
+                      </div>
+                    </div>
       </div>
     </motion.div>
   )
