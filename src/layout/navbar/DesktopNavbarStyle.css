@@ -124,9 +124,11 @@
   border: none;
   background: #f3f4f6;
   border-radius: 8px;
-  color: #6b7280;
+  color: #001030;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  padding: 0;
 }
 
 .admin-settings-btn:hover {

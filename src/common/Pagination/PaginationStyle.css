@@ -1,0 +1,68 @@
+.common-pagination {
+    display: flex;
+    justify-content: end;
+    margin-right: 1rem;
+}
+
+/* =========================
+   LIGHT MODE (Default)
+========================= */
+
+/* Normal */
+.custom-pagination .page-link {
+    color: #002d62;
+    background-color: #fff;
+}
+
+/* Hover */
+.custom-pagination .page-link:hover {
+    background-color: #002d62;
+    border-color: #002d62;
+    color: #fff;
+}
+
+/* Active */
+.custom-pagination .page-item.active .page-link {
+    background-color: #002d62;
+    border-color: #002d62;
+    color: #fff;
+}
+
+
+/* =========================
+   DARK MODE ONLY
+========================= */
+
+[data-bs-theme="dark"] .custom-pagination .page-link {
+    background-color: #2b3035;
+    color: #cfd6e4;
+    border-color: #3a3f44;
+}
+
+[data-bs-theme="dark"] .custom-pagination .page-link:hover {
+    background-color: #fff;
+    border-color: #fff;
+    color: #0f172a;
+}
+
+[data-bs-theme="dark"] .custom-pagination .page-item.active .page-link {
+    background-color: #fff;
+    border-color: #fff;
+    color: #0f172a;
+}
+
+[data-bs-theme="dark"] .custom-pagination .page-item.disabled .page-link {
+    background-color: #2b3035;
+    color: #6c757d;
+    border-color: #3a3f44;
+}
+
+
+/* Responsive */
+@media (min-width: 320px) and (max-width: 600px) {
+    .common-pagination {
+        justify-content: center;
+        align-items: center;
+        margin-right: 0;
+    }
+}

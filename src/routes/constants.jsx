@@ -11,9 +11,16 @@ import {
   SearchContainer,
   WishlistContainer,
 } from "../pages/pageIndex";
+import {
+  AdminDashboardContainer,
+  AdminUsersContainer,
+  AdminBooksContainer,
+  AdminOrdersContainer,
+} from "../pages/admin/pageIndex";
 import RouteConstants from "../utils/routeConstants";
 import PrivateRoute from "./privateRoutes";
 import PublicRoute from "./publicRoutes";
+import AdminRoute from "./adminRoutes";
 
 export const AppRoutes = [
   {
@@ -43,13 +50,11 @@ export const AppRoutes = [
       {
         path: RouteConstants.home,
         element: (
-          // <PublicRoute>
-            <Suspense fallback="loading">
-              <div className="pt-[64px]">
-                <HomeContainer />
-              </div>
-            </Suspense>
-          // </PublicRoute>
+          <Suspense fallback="loading">
+            <div className="page-content">
+              <HomeContainer />
+            </div>
+          </Suspense>
         ),
       },
       // Search route
@@ -58,7 +63,7 @@ export const AppRoutes = [
         element: (
           <PrivateRoute>
             <Suspense fallback="loading">
-              <div className="pt-[64px]">
+              <div className="page-content">
                 <SearchContainer />
               </div>
             </Suspense>
@@ -71,7 +76,7 @@ export const AppRoutes = [
         element: (
           <PrivateRoute>
             <Suspense fallback="loading">
-              <div className="pt-[64px]">
+              <div className="page-content">
                 <LibraryContainer />
               </div>
             </Suspense>
@@ -84,7 +89,7 @@ export const AppRoutes = [
         element: (
           <PrivateRoute>
             <Suspense fallback="loading">
-              <div className="pt-[64px]">
+              <div className="page-content">
                 <CartContainer />
               </div>
             </Suspense>
@@ -97,7 +102,7 @@ export const AppRoutes = [
         element: (
           <PrivateRoute>
             <Suspense fallback="loading">
-              <div className="pt-[64px]">
+              <div className="page-content">
                 <ProfileContainer />
               </div>
             </Suspense>
@@ -110,11 +115,74 @@ export const AppRoutes = [
         element: (
           <PrivateRoute>
             <Suspense fallback="loading">
-              <div className="pt-[64px]">
+              <div className="page-content">
                 <WishlistContainer />
               </div>
             </Suspense>
           </PrivateRoute>
+        ),
+      },
+      // {
+      //   path: RouteConstants.booksdetails,
+      //   element: (
+      //     <PrivateRoute>
+      //       <Suspense fallback="loading">
+      //         <div className="page-content">
+      //           <BooksDetailContainer />
+      //         </div>
+      //       </Suspense>
+      //     </PrivateRoute>
+      //   ),
+      // },
+
+      
+      // Admin routes
+      {
+        path: RouteConstants.adminDashboard,
+        element: (
+          <AdminRoute>
+            <Suspense fallback="loading">
+              <div className="page-content">
+                <AdminDashboardContainer />
+              </div>
+            </Suspense>
+          </AdminRoute>
+        ),
+      },
+      {
+        path: RouteConstants.adminUsers,
+        element: (
+          <AdminRoute>
+            <Suspense fallback="loading">
+              <div className="page-content">
+                <AdminUsersContainer />
+              </div>
+            </Suspense>
+          </AdminRoute>
+        ),
+      },
+      {
+        path: RouteConstants.adminBooks,
+        element: (
+          <AdminRoute>
+            <Suspense fallback="loading">
+              <div className="page-content">
+                <AdminBooksContainer />
+              </div>
+            </Suspense>
+          </AdminRoute>
+        ),
+      },
+      {
+        path: RouteConstants.adminOrders,
+        element: (
+          <AdminRoute>
+            <Suspense fallback="loading">
+              <div className="page-content">
+                <AdminOrdersContainer />
+              </div>
+            </Suspense>
+          </AdminRoute>
         ),
       },
     ],
