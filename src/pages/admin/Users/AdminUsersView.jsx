@@ -1,22 +1,11 @@
-import React from "react";
 import { Button } from "react-bootstrap";
 import { FaEye, FaPenToSquare, FaPlus } from "react-icons/fa6";
 import { FcFullTrash } from "react-icons/fc";
 import DataTableContainer from "../../../common/DataTable/DataTableContainer";
 import "./AdminUsersStyle.css";
 
-const AdminUsersView = ({ userList }) => {
-  const handleView = (row) => {
-    console.log("View user:", row);
-  };
-
-  const handleEdit = (row) => {
-    console.log("Edit user:", row);
-  };
-
-  const handleDelete = (row) => {
-    console.log("Delete user:", row);
-  };
+const AdminUsersView = (props) => {
+  const { handleView, handleEdit, handleDelete, userList } = props;
 
   const columns = [
     {
