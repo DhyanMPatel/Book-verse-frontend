@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
+import AdminSidebar from "../../components/AdminSidebar";
+import { useAuth } from "../../hooks/useAuth";
 import { FooterContainer } from "../layoutIndex";
 import DesktopNavbarContainer from "../navbar/DesktopNavbarContainer";
 import "./mainLayoutStyle.css";
@@ -7,6 +9,7 @@ import "./mainLayoutStyle.css";
 const MainLayoutView = ({ isLaptop }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [adminSidebarOpen, setAdminSidebarOpen] = useState(false);
+  const { isAuthenticated, isAdmin } = useAuth();
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -24,6 +27,11 @@ const MainLayoutView = ({ isLaptop }) => {
     <div className="layout-wrapper">
       {/* Desktop Navbar - Only shown on 1024px+ */}
       <DesktopNavbarContainer onToggleAdminSidebar={toggleAdminSidebar} />
+
+      {/* Admin Sidebar */}
+      {isAdmin() && (
+        <AdminSidebar isOpen={adminSidebarOpen} onClose={toggleAdminSidebar} />
+      )}
 
       {/* Laptop: Sidebar (250px fixed) + Main Content */}
       {isLaptop ? (
@@ -46,39 +54,11 @@ const MainLayoutView = ({ isLaptop }) => {
           </nav>
 
           {/* Floating Menu Toggle Button */}
-          <button
-            onClick={toggleSidebar}
-            className="floating-menu-btn"
-            aria-label="Toggle menu"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
-
-          {/* Sidebar Drawer Overlay */}
-          {sidebarOpen && (
-            <div className="sidebar-drawer" onClick={closeSidebar} />
-          )}
-
-          {/* Sidebar Drawer Content */}
-          <div
-            className={`sidebar-drawer-content ${sidebarOpen ? "open" : ""}`}
-          >
+          {isAdmin() && (
             <button
-              onClick={closeSidebar}
-              className="close-drawer-btn p-2 absolute top-4 right-4"
-              aria-label="Close sidebar"
+              onClick={toggleSidebar}
+              className="floating-menu-btn"
+              aria-label="Toggle menu"
             >
               <svg
                 className="w-6 h-6"
@@ -90,13 +70,28 @@ const MainLayoutView = ({ isLaptop }) => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
+                  d="M4 6h16M4 12h16M4 18h16"
                 />
               </svg>
             </button>
-            {/* <div className="pt-12">
-              <AdminSidebar onClose={closeSidebar} />
-            </div> */}
+          )}
+
+          {/* Sidebar Drawer Overlay */}
+          {sidebarOpen && (
+            <div className="sidebar-drawer" onClick={closeSidebar} />
+          )}
+
+          {/* Sidebar Drawer Content */}
+          <div
+            className={`sidebar-drawer-content ${sidebarOpen ? "open" : ""}`}
+          >
+            {isAuthenticated && isAdmin() && (
+              <AdminSidebar
+                isOpen={true}
+                onClose={closeSidebar}
+                mobile={true}
+              />
+            )}
           </div>
         </>
       )}

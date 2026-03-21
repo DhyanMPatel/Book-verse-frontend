@@ -1,15 +1,21 @@
-import React from "react";
-import { navItems } from "../../utils/layoutConstants";
-import { Link } from "react-router-dom";
 import { motion as Motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { navItems } from "../../utils/layoutConstants";
 import "./footerStyle.css";
+import { useAuth } from "../../hooks/useAuth";
+import RouteConstants from "../../utils/routeConstants";
+import { LogIn, User } from "lucide-react";
 
 const FooterView = (props) => {
   const { pathname } = props;
+  const { isAuthenticated } = useAuth();
+
+  const updatedNav = [...navItems, isAuthenticated ? { href: RouteConstants.profile, icon: User, label: "Profile" } : { href: RouteConstants.login, icon: LogIn, label: "Login" }]
+
   return (
     <nav className="bottom-nav thumb-nav">
       <div className="flex items-center justify-around h-full w-full">
-        {navItems.map((item) => {
+        {updatedNav.map((item) => {
           const isActive =
             pathname === item.href || pathname.startsWith(`${item.href}/`);
           const Icon = item.icon;

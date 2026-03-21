@@ -3,6 +3,9 @@
 .bottom-nav {
   display: none;
   color: #6b7280;
+  background: transparent;
+  backdrop-filter: blur(10px);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
 
 .bottom-nav.thumb-nav {
