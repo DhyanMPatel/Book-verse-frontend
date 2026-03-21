@@ -1,3 +1,6 @@
+import { Table } from "react-bootstrap";
+import "./DataTableStyle.css";
+
 const DataTableView = (props) => {
   const {
     // data,
