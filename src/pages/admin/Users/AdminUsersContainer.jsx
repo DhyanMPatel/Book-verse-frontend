@@ -1,20 +1,100 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../services/axiosInstance";
 import AdminUsersView from "./AdminUsersView";
+import CreateUser from "./component/CreateUser";
+import UpdateUser from "./component/UpdateUser";
+import Swal from "sweetalert2";
 
 const AdminUsersContainer = () => {
-  const [userList, setUserList] = useState([]);
+  const [userList, setUserList] = useState([]); // ✅
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const handleView = (row) => {
     console.log("View user:", row);
   };
 
-  const handleEdit = (row) => {
-    console.log("Edit user:", row);
+  const handleAddUserModal = () => {
+    setIsModalOpen(true);
   };
 
-  const handleDelete = (row) => {
-    console.log("Delete user:", row);
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCreateUser = async (formData) => {
+    try {
+      const response = await axiosInstance.post("/user/create", formData);
+
+      const newUser = response?.data?.data?.user;
+
+      console.log("User created:", newUser);
+
+      setUserList((prev) => [newUser, ...prev]);
+    } catch (error) {
+      console.error("Create user failed:", error);
+    }
+  };
+
+ 
+  const handleEdit = (row) => {
+    setSelectedUser({
+      ...row,
+      id: row.id || row._id, // handle Mongo _id
+    });
+    setIsEditModalOpen(true);
+  };
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedUser(null);
+  };
+ //edit user info
+  const handleUpdateUser = async (formData) => {
+    try {
+      const userId = selectedUser?.id;
+
+      const response = await axiosInstance.patch(
+        `/user/update/${userId}`,
+        formData,
+      );
+
+      const updatedUser = response?.data?.data?.user;
+
+      // ✅ update UI instantly
+      setUserList((prev) =>
+        prev.map((user) =>
+          (user.id || user._id) === userId ? { ...user, ...updatedUser } : user,
+        ),
+      );
+    } catch (error) {
+      console.error("Update failed:", error);
+    }
+  };
+
+  //Delete user
+  const handleDelete = async (row) => {
+    try {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!",
+      });
+
+      if (!result.isConfirmed) return;
+
+      await axiosInstance.delete(`/user/delete/${row.id}`);
+
+      // ✅ Update UI without reload
+      setUserList((prev) => prev.filter((u) => u.id !== row.id));
+    } catch (error) {
+      console.error("Delete failed:", error);
+    }
   };
 
   useEffect(() => {
@@ -36,6 +116,18 @@ const AdminUsersContainer = () => {
         handleView={handleView}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
+        handleAddUserModal={handleAddUserModal}
+      />
+      <CreateUser
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleCreateUser}
+      />
+      <UpdateUser
+        isOpen={isEditModalOpen}
+        onClose={handleCloseEditModal}
+        onSubmit={handleUpdateUser}
+        userData={selectedUser}
       />
     </>
   );

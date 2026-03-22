@@ -5,7 +5,10 @@ import Router from "./routes/routesIndex";
 import { AuthProvider } from "./contexts/AuthContext";
 import { BooksProvider } from "./contexts/BookContext";
 import { ReviewProvider } from "./contexts/ReviewContext";
+// import { UserProvider } from "./contexts/UserContext";
 import { ToastContainer } from "react-toastify";
+
+
 function App() {
   return (
     <>
@@ -14,7 +17,9 @@ function App() {
           <AuthProvider>
             <BooksProvider>
               <ReviewProvider>
-                <Router />
+              
+                  <Router />
+                
               </ReviewProvider>
             </BooksProvider>
           </AuthProvider>

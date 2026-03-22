@@ -5,7 +5,8 @@ import DataTableContainer from "../../../common/DataTable/DataTableContainer";
 import "./AdminUsersStyle.css";
 
 const AdminUsersView = (props) => {
-  const { handleView, handleEdit, handleDelete, userList } = props;
+  const { handleView, handleEdit, handleDelete, userList, handleAddUserModal } =
+    props;
 
   const columns = [
     {
@@ -13,7 +14,7 @@ const AdminUsersView = (props) => {
       label: "Actions",
       cell: (row) => (
         <div className="d-flex justify-content-center table-section-btn">
-          <Button
+          {/* <Button
             title="View"
             className="ms-2 common-btn-secondary action-btn"
             size="sm"
@@ -21,7 +22,7 @@ const AdminUsersView = (props) => {
             onClick={() => handleView(row)}
           >
             <FaEye size={19} color="#1a237e" />
-          </Button>
+          </Button> */}
           <Button
             title="Edit"
             className="ms-2 common-btn-secondary action-btn"
@@ -104,7 +105,7 @@ const AdminUsersView = (props) => {
             <Button
               type="button"
               className="btn-add-user"
-              // onClick={() => handleAddUserModal()}
+              onClick={handleAddUserModal}
             >
               <FaPlus />
               Add User
