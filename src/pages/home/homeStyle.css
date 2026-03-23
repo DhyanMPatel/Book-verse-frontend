@@ -10,6 +10,20 @@
   overflow: hidden;
 }
 
+.error-container {
+  display: flex;
+  height: calc(100vh - 6rem);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.error-icon {
+  width: 100%;
+  max-width: 20rem;
+}
+
 .books-by-category-section::before {
   content: '';
   position: absolute;
