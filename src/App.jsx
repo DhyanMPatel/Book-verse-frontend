@@ -1,28 +1,19 @@
 import { StrictMode } from "react";
-import "./App.css";
 import { BrowserRouter } from "react-router-dom";
+import "./App.css";
 import Router from "./routes/routesIndex";
-import { AuthProvider } from "./contexts/AuthContext";
-import { BooksProvider } from "./contexts/BookContext";
-import { ReviewProvider } from "./contexts/ReviewContext";
 // import { UserProvider } from "./contexts/UserContext";
 import { ToastContainer } from "react-toastify";
-
+import AppContext from "./contexts/AppContext";
 
 function App() {
   return (
     <>
       <StrictMode>
         <BrowserRouter>
-          <AuthProvider>
-            <BooksProvider>
-              <ReviewProvider>
-              
-                  <Router />
-                
-              </ReviewProvider>
-            </BooksProvider>
-          </AuthProvider>
+          <AppContext>
+            <Router />
+          </AppContext>
         </BrowserRouter>
       </StrictMode>
       <ToastContainer />
