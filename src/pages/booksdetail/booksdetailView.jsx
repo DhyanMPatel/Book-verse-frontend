@@ -44,21 +44,6 @@ export default function BookDetailView() {
     fetchBook();
   }, [id]);
 
-  // Fetch related books from same category
-  // if (bookData?.category) {
-  //   try {
-  //     const relatedResponse = await axiosInstance.get(`/books/category/${bookData.category}`);
-  //     const related = relatedResponse?.data?.data?.books || [];
-  //     // Filter out the current book and limit to 8 books
-  //     const filteredRelated = related
-  //       .filter(b => b.id !== bookData.id)
-  //       .slice(0, 8);
-  //     setRelatedBooks(filteredRelated);
-  //   } catch (err) {
-  //     console.log("Error fetching related books:", err);
-  //   }
-  // }
-
   const bookDetails = {
     Author: book?.author,
     Publisher: book?.publisher,
@@ -181,8 +166,7 @@ export default function BookDetailView() {
           >
             {/* Main Image */}
             <div className="bg-white rounded-2xl shadow-xl p-6 flex justify-center">
-
-                <div className="w-[320px] h-[460px] flex items-center justify-center bg-gray-50 rounded-xl overflow-hidden">
+              <div className="w-[320px] h-[460px] flex items-center justify-center bg-gray-50 rounded-xl overflow-hidden">
                 <motion.img
                   src={book.coverImage}
                   alt={book.title}
@@ -309,16 +293,28 @@ export default function BookDetailView() {
                 transition={{ delay: 0.7 }}
                 className="flex flex-wrap items-center gap-4 mb-6"
               >
-                <span className="text-3xl sm:text-4xl font-bold text-green-600">
-                  ₹{book.price}
-                </span>
-
-                {book.oldPrice && (
-                  <span className="text-xl sm:text-2xl text-gray-400 line-through">
-                    ₹{book.oldPrice}
+                {/* Calculate discounted price */}
+                {book.discount ? (
+                  <span className="text-3xl sm:text-4xl font-bold text-green-600">
+                    ₹
+                    {(book.price - (book.price * book.discount) / 100).toFixed(
+                      2,
+                    )}
+                  </span>
+                ) : (
+                  <span className="text-3xl sm:text-4xl font-bold text-green-600">
+                    ₹{book.price}
                   </span>
                 )}
 
+                {/* Old price */}
+                {book.discount && (
+                  <span className="text-xl sm:text-2xl text-gray-400 line-through">
+                    ₹{book.price}
+                  </span>
+                )}
+
+                {/* Discount badge */}
                 {book.discount && (
                   <motion.span
                     whileHover={{ scale: 1.05 }}
@@ -329,7 +325,7 @@ export default function BookDetailView() {
                 )}
               </motion.div>
 
-              {/* Stock Status */}
+              {/* Stock Status
               {book.stock && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -342,9 +338,9 @@ export default function BookDetailView() {
                     In Stock - Ready to ship
                   </span>
                 </motion.div>
-              )}
+              )} */}
 
-              {/* Quantity Selector */}
+              {/* Quantity Selector
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -373,7 +369,7 @@ export default function BookDetailView() {
                     +
                   </motion.button>
                 </div>
-              </motion.div>
+              </motion.div> */}
 
               {/* Action Buttons */}
               <motion.div
@@ -433,37 +429,37 @@ export default function BookDetailView() {
             </div>
 
             {/* Book Details Table */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.1 }}
-              className="bg-white rounded-3xl shadow-xl p-6 lg:p-8"
-            >
-              <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Book Details
-              </h3>
+         <motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ delay: 1.1 }}
+  className="bg-white rounded-3xl shadow-xl p-4 lg:p-6"  // reduced padding
+>
+  <h3 className="text-xl lg:text-2xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+    Book Details
+  </h3>
 
-              <div className="space-y-4">
-                {Object.entries(bookDetails || {}).map(
-                  ([key, value], index) => (
-                    <motion.div
-                      key={key}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 1.2 + index * 0.05 }}
-                      className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0"
-                    >
-                      <span className="font-semibold text-gray-700 capitalize">
-                        {key}
-                      </span>
-                      <span className="text-gray-600 font-medium">
-                        {value || "N/A"}
-                      </span>
-                    </motion.div>
-                  ),
-                )}
-              </div>
-            </motion.div>
+  <div className="space-y-2"> {/* reduced spacing */}
+    {Object.entries(bookDetails || {}).map(
+      ([key, value], index) => (
+        <motion.div
+          key={key}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 1.2 + index * 0.05 }}
+          className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0" // reduced py
+        >
+          <span className="font-semibold text-gray-700 capitalize text-sm lg:text-base">
+            {key}
+          </span>
+          <span className="text-gray-600 font-medium text-sm lg:text-base">
+            {value || "N/A"}
+          </span>
+        </motion.div>
+      ),
+    )}
+  </div>
+</motion.div>
           </motion.div>
         </motion.div>
 
@@ -651,7 +647,7 @@ export default function BookDetailView() {
           </motion.div>
         )}
 
-        {/* DELIVERY SECTION */}
+        {/* DELIVERY SECTION
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -702,7 +698,7 @@ export default function BookDetailView() {
               )}
             </AnimatePresence>
           </div>
-        </motion.div>
+        </motion.div> */}
       </div>
     </div>
   );

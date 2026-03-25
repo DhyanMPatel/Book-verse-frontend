@@ -6,7 +6,7 @@
 /* -------------------------
    Main Container & Layout
 ------------------------- */
-.admin-users-container {
+.admin-books-container {
     padding: 1.5rem;
     background: #f1f5f9;
     min-height: calc(100vh - 64px);
@@ -15,7 +15,7 @@
 /* -------------------------
    Card Component
 ------------------------- */
-.admin-users-card {
+.admin-books-card {
     background: #ffffff;
     border-radius: 12px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
@@ -26,19 +26,19 @@
     padding: 0;
 }
 
-.admin-users-card:hover {
+.admin-books-card:hover {
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
         0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-.admin-users-card .card-body {
+.admin-books-card .card-body {
     padding: 1.5rem;
 }
 
 /* -------------------------
    Card Header Section
 ------------------------- */
-.admin-users-header {
+.admin-books-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -47,7 +47,7 @@
     border-bottom: 2px solid #e2e8f0;
 }
 
-.admin-users-title {
+.admin-books-title {
     font-size: 1.5rem;
     font-weight: 700;
     color: #1e293b;
@@ -57,7 +57,7 @@
     gap: 0.5rem;
 }
 
-.admin-users-title::before {
+.admin-books-title::before {
     content: "";
     display: inline-block;
     width: 4px;
@@ -69,7 +69,7 @@
 /* -------------------------
    Primary Button (Add User)
 ------------------------- */
-.btn-add-user {
+.btn-add-book {
     background: #0369a1;
     color: #ffffff;
     font-weight: 600;
@@ -84,17 +84,17 @@
     box-shadow: 0 4px 6px -1px rgba(30, 58, 95, 0.3);
 }
 
-.btn-add-user:hover {
+.btn-add-book:hover {
     background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
     transform: translateY(-2px);
     box-shadow: 0 6px 12px -2px rgba(30, 58, 95, 0.4);
 }
 
-.btn-add-user:active {
+.btn-add-book:active {
     transform: translateY(0);
 }
 
-.btn-add-user svg {
+.btn-add-book svg {
     width: 16px;
     height: 16px;
 }
@@ -202,17 +202,17 @@
 /* -------------------------
    Data Display Cells
 ------------------------- */
-.user-name-cell {
+.book-name-cell {
     font-weight: 600;
     color: #1e293b;
 }
 
-.user-email-cell {
+.book-email-cell {
     color: #64748b;
     font-size: 0.875rem;
 }
 
-.user-role-cell {
+.book-role-cell {
     display: inline-flex;
     align-items: center;
     padding: 0.25rem 0.75rem;
@@ -223,15 +223,15 @@
     text-transform: capitalize;
 }
 
-.user-role-cell.admin {
+/* .book-role-cell.admin {
     background: #fef3c7;
     color: #d97706;
 }
 
-.user-role-cell.user {
+.book-role-cell.user {
     background: #dbeafe;
     color: #2563eb;
-}
+} */
 
 /* -------------------------
    Responsive Design

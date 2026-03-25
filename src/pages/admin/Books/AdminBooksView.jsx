@@ -54,7 +54,7 @@ const AdminBooksView = ({
       label: "Book Title",
       cell: (row) => (
         <div
-          className="user-name-cell text-capitalize"
+          className="book-name-cell text-capitalize"
           style={{ textAlign: "left" }}
         >
           {row?.title || "--"}
@@ -65,7 +65,7 @@ const AdminBooksView = ({
       key: "author",
       label: "Author",
       cell: (row) => (
-        <div className="user-email-cell" style={{ textAlign: "left" }}>
+        <div className="book-email-cell" style={{ textAlign: "left" }}>
           {row?.author || "--"}
         </div>
       ),
@@ -75,7 +75,7 @@ const AdminBooksView = ({
       label: "Category",
       cell: (row) => (
         <span
-          className={`user-role-cell ${row?.category?.toLowerCase() || ""}`}
+          className={`book-role-cell ${row?.category?.toLowerCase() || ""}`}
         >
           {row?.category || "--"}
         </span>
@@ -85,7 +85,7 @@ const AdminBooksView = ({
       key: "price",
       label: "Price",
       cell: (row) => (
-        <span className={`user-role-cell ${(row?.price, "")}`}>
+        <span className={`book-role-cell ${(row?.price, "")}`}>
           {row?.price || "--"}
         </span>
       ),
@@ -94,7 +94,7 @@ const AdminBooksView = ({
       key: "discount",
       label: "Discount",
       cell: (row) => (
-        <span className={`user-role-cell ${(row?.discount, "")}`}>
+        <span className={`book-role-cell ${(row?.discount, "")}`}>
           {row?.discount || "--"}
         </span>
       ),
@@ -122,11 +122,11 @@ const AdminBooksView = ({
   ];
 
   return (
-    <div className="admin-users-container">
-      <div className="card admin-users-card">
+    <div className="admin-books-container">
+      <div className="card admin-books-card">
         <div className="card-body">
-          <div className="admin-users-header">
-            <h2 className="admin-users-title">Books List</h2>
+          <div className="admin-books-header">
+            <h2 className="admin-books-title">Books List</h2>
             {/* <Button
               type="button"
               className="btn-add-user"
@@ -138,9 +138,9 @@ const AdminBooksView = ({
             </Button> */}
             <Button
   type="button"
-  className="btn-add-user"
+  className="btn-add-book"
   onClick={() => {
-    console.log("BUTTON CLICKED");
+    
     handleAddBooksModal(); // ✅ correct name
   }}
 >

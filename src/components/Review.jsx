@@ -65,7 +65,7 @@ export default function Reviews({ bookId }) {
   const [showReviewBox, setShowReviewBox] = useState(false);
   const [reviewText, setReviewText] = useState("");
 
-  const defaultUserRating = 2;
+  const defaultUserRating = 0;
   const [rating, setRating] = useState(defaultUserRating);
 
   useEffect(() => {

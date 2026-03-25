@@ -5,9 +5,16 @@ import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
 import axiosInstance from "../../services/axiosInstance";
 import "./homeStyle.css";
-import { ChevronsLeft, ChevronsRight, MoveRight } from "lucide-react";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
+import {
+  Book,
+  DollarSign,
+  Smartphone,
+  ChevronsLeft,
+  ChevronsRight,
+  MoveRight,
+} from "lucide-react";
 
 /**
  * HomeView
@@ -525,47 +532,54 @@ const HomeView = () => {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                icon: "📚",
+                icon: Book,
                 title: "Vast Collection",
                 description:
                   "Thousands of books across multiple genres and categories",
               },
               {
-                icon: "🚚",
-                title: "Fast Delivery",
-                description: "Quick and reliable delivery to your doorstep",
-              },
-              {
-                icon: "💰",
+                icon: DollarSign,
                 title: "Best Prices",
                 description: "Competitive prices and amazing discounts",
               },
               {
-                icon: "⭐",
-                title: "Premium Quality",
-                description: "Handpicked books in excellent condition",
+                icon: Smartphone,
+                title: "Read Anywhere",
+                description: "Access your books on any device anytime",
               },
-            ].map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="text-center p-6 rounded-2xl hover:bg-gray-50 transition-colors"
-              >
-                <div className="text-4xl mb-4">{feature.icon}</div>
+            ].map((feature, index) => {
+              const Icon = feature.icon;
 
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  {feature.title}
-                </h3>
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="text-center p-6 rounded-2xl hover:bg-gray-50 transition-colors"
+                >
+                 <div className="flex justify-center mb-4">
+  <motion.div
+    whileHover={{ scale: 1.15, rotate: 8 }}
+    whileTap={{ scale: 0.95 }}
+    className="p-4 rounded-2xl bg-gradient-to-tr from-indigo-100 to-purple-100 shadow-md group-hover:shadow-xl transition-all duration-300"
+  >
+    <Icon className="w-8 h-8 text-indigo-600 transition-transform duration-300 group-hover:rotate-10" />
+  </motion.div>
+</div>
 
-                <p className="text-gray-600">{feature.description}</p>
-              </motion.div>
-            ))}
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    {feature.title}
+                  </h3>
+
+                  <p className="text-gray-600">{feature.description}</p>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </motion.section>

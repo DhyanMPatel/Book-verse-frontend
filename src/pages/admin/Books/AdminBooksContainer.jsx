@@ -10,12 +10,13 @@ const AdminBooksContainer = () => {
    const [isModalOpen, setIsModalOpen] = useState(false);
    const [deletingId, setDeletingId] = useState(null);
 
+ 
 
   // ✅ Fetch Books
    const fetchBooks = async () => {
   try {
     const response = await axiosInstance.get("/books/all");
-    console.log("ACTUAL DATA:", response?.data?.data?.books);
+    // console.log("ACTUAL DATA:", response?.data?.data?.books);
     const books = response?.data?.data?.books;
     
     // ✅ Ensure it's always an array
@@ -31,11 +32,11 @@ const AdminBooksContainer = () => {
     fetchBooks();
   }, []);
 
-   const handleView = (row) => {
+const handleView = (row) => {
     console.log("View user:", row);
   };
 
-   const handleEdit = (row) => {
+const handleEdit = (row) => {
     console.log("Edit user:", row);
   };
 
@@ -118,15 +119,6 @@ const handleCreateBook = async (formData) => {
     Swal.fire("Error", "Failed to create book", "error");
   }
 };
-  
-
-  //  const handleView = (row) => {
-  //   console.log("View user:", row);
-  // };
-
-  //  const handleView = (row) => {
-  //   console.log("View user:", row);
-  // };
   
   
   return (

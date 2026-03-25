@@ -24,33 +24,51 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
     fetchCategories();
   }, []);
 
+    useEffect(() => {
+  if (isOpen) {
+    formik.resetForm();
+    setCoverImagePreview(null);
+    setFileUrlPreview(null);
+  }
+}, [isOpen]);
   // Validation schema
   const validationSchema = yup.object().shape({
+   
+
     title: yup
-      .string()
-      .required("Title is required")
-      .min(2, "Title must be at least 2 characters")
-      .max(200, "Title must be less than 200 characters"),
+  .string()
+  .required("Title is required")
+  .test(
+    "no-only-spaces",
+    "Cannot be empty or spaces only",
+    (value) => value && value.trim().length > 0
+  ),
     author: yup
-      .string()
-      .required("Author is required")
-      .min(2, "Author must be at least 2 characters")
-      .max(100, "Author must be less than 100 characters"),
-    description: yup
-      .string()
-      .required("Description is required")
-      .min(10, "Description must be at least 10 characters")
-      .max(2000, "Description must be less than 2000 characters"),
-    //    category: yup
-    //       .string()
-    //       .required('Category is required')
-    //       .oneOf(['fiction', 'non-fiction', 'science', 'technology', 'business', 'self-help', 'romance', 'thriller', 'biography', 'history', 'children'], 'Invalid category'),
+  .string()
+  .required("Author is required")
+  .test(
+    "no-only-spaces",
+    "Author cannot be empty or spaces only",
+    (value) => value && value.trim().length > 0
+  ),
+
+description: yup
+  .string()
+  .required("Description is required")
+  .test(
+    "no-only-spaces",
+    "Description cannot be empty or spaces only",
+    (value) => value && value.trim().length > 0
+  ),
     categoryId: yup.string().required("Category is required"),
     isbn: yup
       .string()
       .required("ISBN is required")
-      .matches(/^(?:ISBN(?:-1[03])?:? )?(?=[0-9X]{10}$|(?=(?:[0-9]+[- ]){3})[- 0-9X]{13}$|97[89][0-9]{10}$|(?=(?:[0-9]+[- ]){4})[- 0-9]{17}$)(?:97[89][- ]?)?[0-9]{1,5}[- ]?[0-9]+[- ]?[0-9]+[- ]?[0-9X]$/, 'Invalid ISBN format'),
-      
+      .matches(
+        /^(?:ISBN(?:-1[03])?:? )?(?=[0-9X]{10}$|(?=(?:[0-9]+[- ]){3})[- 0-9X]{13}$|97[89][0-9]{10}$|(?=(?:[0-9]+[- ]){4})[- 0-9]{17}$)(?:97[89][- ]?)?[0-9]{1,5}[- ]?[0-9]+[- ]?[0-9]+[- ]?[0-9X]$/,
+        "Invalid ISBN format",
+      ),
+
     price: yup
       .number()
       .required("Price is required")
@@ -64,7 +82,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
       .number()
       .required("Pages is required")
       .min(1, "Pages must be at least 1")
-      .max(10000, "Pages must be less than 10000"),
+      .max(100000, "Pages must be less than 100000"),
     stock: yup
       .number()
       .required("Stock is required")
@@ -72,11 +90,14 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
       .max(10000, "Stock must be less than 10000"),
     language: yup
       .string()
+      .trim() // ✅ removes leading/trailing spaces
       .required("Language is required")
       .min(2, "Language must be at least 2 characters")
       .max(50, "Language must be less than 50 characters"),
     publisher: yup
       .string()
+      .trim() // ✅ removes leading/trailing spaces
+
       .required("Publisher is required")
       .min(2, "Publisher must be at least 2 characters")
       .max(100, "Publisher must be less than 100 characters"),
@@ -87,20 +108,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
     coverImage: yup
       .mixed()
       .required("Cover image is required")
-      .test("fileType", "Only image files are allowed", (value) => {
-        if (!value) return false;
-        const allowedTypes = [
-          "image/jpeg",
-          "image/jpg",
-          "image/png",
-          "image/webp",
-        ];
-        return allowedTypes.includes(value.type);
-      })
-      .test("fileSize", "File size must be less than 5MB", (value) => {
-        if (!value) return false;
-        return value.size <= 5 * 1024 * 1024; // 5MB
-      }),
+      ,
     fileUrl: yup
       .mixed()
       .test("fileType", "Only PDF files are allowed", (value) => {
@@ -109,7 +117,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
       })
       .test("fileSize", "File size must be less than 10MB", (value) => {
         if (!value) return true; // Optional field
-        return value.size <= 10 * 1024 * 1024; // 10MB
+        return value.size <= 100 * 1024 * 1024; // 10MB
       }),
   });
 
@@ -133,63 +141,74 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-  setIsSubmitting(true);
-  try {
-    const formData = new FormData();
+      setIsSubmitting(true);
+      try {
+        const formData = new FormData();
 
-    // ✅ BASIC FIELDS
-    formData.append("title", values.title);
-    formData.append("author", values.author);
-    formData.append("description", values.description);
+        // ✅ BASIC FIELDS
+        formData.append("title", values.title);
+        formData.append("author", values.author);
+        formData.append("description", values.description);
 
-    // 🔥 DYNAMIC CATEGORY (THIS IS IMPORTANT)
-    const selectedCategory = categories.find(
-      (cat) => cat.id === values.categoryId
-    );
+        // 🔥 DYNAMIC CATEGORY (THIS IS IMPORTANT)
+        const selectedCategory = categories.find(
+          (cat) => cat.id === values.categoryId,
+        );
 
-    formData.append("category", selectedCategory?.categoryName);
+        formData.append("category", selectedCategory?.categoryName);
 
-    // ✅ NUMBERS
-    formData.append("price", values.price);
-    formData.append("discount", values.discount || 0);
-    formData.append("stock", values.stock);
-    formData.append("pages", values.pages);
+        // ✅ NUMBERS
+        formData.append("price", values.price);
+        formData.append("discount", values.discount || 0);
+        formData.append("stock", values.stock);
+        formData.append("pages", values.pages);
 
-    // ✅ OTHER FIELDS
-    formData.append("language", values.language);
-    formData.append("publisher", values.publisher);
-    formData.append("publishedDate", values.publishedDate);
-    formData.append("isbn", values.isbn);
+        // ✅ OTHER FIELDS
+        formData.append("language", values.language);
+        formData.append("publisher", values.publisher);
+        formData.append("publishedDate", values.publishedDate);
+        formData.append("isbn", values.isbn);
 
-    // 🔥 REQUIRED STATIC (backend needs it)
-    formData.append("format", "pdf");
+        // 🔥 REQUIRED STATIC (backend needs it)
+        formData.append("format", "pdf");
 
-    // ✅ FILES
-    formData.append("coverImage", values.coverImage);
+        // ✅ FILES
+        formData.append("coverImage", values.coverImage);
 
-    if (values.file) {
-      formData.append("file", values.file); // ⚠️ rename here
-    }
+        if (values.file) {
+          formData.append("file", values.file); // ⚠️ rename here
+        }
 
-    await onSubmit(formData);
+        await onSubmit(formData);
 
-    formik.resetForm();
-    setCoverImagePreview(null);
-    setFileUrlPreview(null);
-    onClose();
-  } catch (error) {
-    console.error("Create book error:", error);
-  } finally {
-    setIsSubmitting(false);
-  }
-},
+        formik.resetForm();
+        setCoverImagePreview(null);
+        setFileUrlPreview(null);
+        onClose();
+      } catch (error) {
+        console.error("Create book error:", error);
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
   });
 
-  // Handle file changes
+
   const handleCoverImageChange = (event) => {
-    const file = event.currentTarget.files[0];
+    const files = event.currentTarget.files;
+
+    // ❌ Block multiple files
+    if (files.length > 1) {
+      formik.setFieldError("coverImage", "Only one image allowed");
+      return;
+    }
+
+    const file = files[0];
+
     if (file) {
       formik.setFieldValue("coverImage", file);
+      formik.setFieldTouched("coverImage", true);
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setCoverImagePreview(reader.result);
@@ -393,32 +412,32 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Category
                   </label>
-                 <select
-  name="categoryId"
-  value={formik.values.categoryId}
-  onChange={formik.handleChange}
-  onBlur={formik.handleBlur}
-  className={`w-full px-4 py-3 border rounded-lg ${
-    formik.errors.categoryId && formik.touched.categoryId
-      ? "border-red-500"
-      : "border-gray-300"
-  }`}
->
-  <option value="">Select Category</option>
+                  <select
+                    name="categoryId"
+                    value={formik.values.categoryId}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    className={`w-full px-4 py-3 border rounded-lg ${
+                      formik.errors.categoryId && formik.touched.categoryId
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
+                  >
+                    <option value="">Select Category</option>
 
-  {categories.map((cat) => (
-    <option key={cat.id} value={cat.id}>
-      {cat.categoryName}
-    </option>
-  ))}
-</select>
-                 {formik.errors.categoryId && formik.touched.categoryId && (
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.categoryName}
+                      </option>
+                    ))}
+                  </select>
+                  {formik.errors.categoryId && formik.touched.categoryId && (
                     <motion.p
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
                       className="mt-1 text-sm text-red-500"
                     >
-                       {formik.errors.categoryId}
+                      {formik.errors.categoryId}
                     </motion.p>
                   )}
                 </div>
@@ -648,7 +667,8 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                     type="file"
                     name="coverImage"
                     onChange={handleCoverImageChange}
-                    accept="image/*"
+                    accept=".jpg,.jpeg,.png,.webp"
+                    multiple={false}
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                       formik.errors.coverImage && formik.touched.coverImage
                         ? "border-red-500"
@@ -765,7 +785,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
             </div>
 
             {/* Actions */}
-            <div className="flex gap-3 justify-end mt-8">
+              <div className="flex gap-3 justify-end mt-8 sticky bottom-0 z-10 bg-white pt-4 border-gray-200">
               <button
                 type="button"
                 onClick={onClose}
@@ -793,5 +813,3 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
 };
 
 export default CreateBooks;
-
-
