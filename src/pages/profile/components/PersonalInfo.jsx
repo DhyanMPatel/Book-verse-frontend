@@ -61,7 +61,7 @@ const PersonalInfo = ({
         )}
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid  gap-6">
 
         {/* Basic Info */}
         <div className="space-y-4">
@@ -146,7 +146,7 @@ const PersonalInfo = ({
         </div>
 
         {/* Address */}
-         <div className="space-y-4">
+         {/* <div className="space-y-4">
                       <h3 className="font-semibold text-gray-700 mb-4">Address Information</h3>
                       
                       <div>
@@ -230,7 +230,7 @@ const PersonalInfo = ({
                           />
                         </div>
                       </div>
-                    </div>
+                    </div> */}
       </div>
     </motion.div>
   )

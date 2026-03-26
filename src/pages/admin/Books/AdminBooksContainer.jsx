@@ -3,12 +3,15 @@ import axiosInstance from "../../../services/axiosInstance";
 import { useEffect, useState } from "react";
 import CreateBooks from "./Component/CreateBooks";
 import Swal from "sweetalert2";
+import UpdateBooks from "./Component/UpdateBooks";
 // import { Book } from "lucide-react";
 
 const AdminBooksContainer = () => {
    const [bookList, setBookList] = useState([]);
    const [isModalOpen, setIsModalOpen] = useState(false);
    const [deletingId, setDeletingId] = useState(null);
+   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+   const [selectedBook, setSelectedBook] = useState(null);
 
  
 
@@ -37,10 +40,54 @@ const handleView = (row) => {
   };
 
 const handleEdit = (row) => {
-    console.log("Edit user:", row);
-  };
+  console.log("🟢 Selected Book:", row); // debug
+
+  setSelectedBook({ ...row }); // 🔥 force new reference
+  setIsEditModalOpen(true);
+};
+
+const handleCloseEditModal = () => {
+  setIsEditModalOpen(false);
+  setSelectedBook(null);
+};
 
 
+const handleUpdateBook = async (formData) => {
+  try {
+    if (!selectedBook?.id) {
+      console.error("❌ No book selected");
+      return;
+    }
+
+    const response = await axiosInstance.patch(
+      `/books/update/${selectedBook.id}`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
+
+    Swal.fire({
+      icon: "success",
+      title: "Book Updated!",
+      text: response?.data?.message || "Book updated successfully",
+      timer: 1500,
+      showConfirmButton: false,
+    });
+
+    await fetchBooks(); // ✅ important
+    handleCloseEditModal();
+
+  } catch (error) {
+    console.error("❌ Update error:", error);
+
+    Swal.fire(
+      "Error",
+      error?.response?.data?.message || "Failed to update book",
+      "error"
+    );
+  }
+};
 
 const handleDelete = async (row) => {
   try {
@@ -135,6 +182,12 @@ const handleCreateBook = async (formData) => {
     onClose={handleCloseModal}
     onSubmit={handleCreateBook}
   />
+  <UpdateBooks
+  isOpen={isEditModalOpen}
+  onClose={handleCloseEditModal}
+  onSubmit={handleUpdateBook}
+  bookData={selectedBook}
+/>
   </>
     
   );

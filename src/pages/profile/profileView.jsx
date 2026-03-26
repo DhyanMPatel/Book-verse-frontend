@@ -20,9 +20,9 @@ const ProfileView = () => {
   const [profileImage, setProfileImage] = useState('/api/placeholder/150/150')
 
   const [profileData, setProfileData] = useState({
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john.doe@example.com',
+    firstName: 'Nisarg',
+    lastName: 'patel',
+    email: 'nisargpatel@gmail.com',
     phone: '+91 98765 43210',
     dateOfBirth: '1995-06-15',
     address: {
