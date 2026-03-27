@@ -1,62 +1,62 @@
 
 
 
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from 'lucide-react'
+import axiosInstance from '../../services/axiosInstance'
 
 const CartView = () => {
+  const [cart, setCart] = useState([])
+const [loading, setLoading] = useState(true)
   // STATIC CART DATA
-  const [cart, setCart] = useState([
-    {
-      id: 1,
-      title: "Atomic Habits",
-      author: "James Clear",
-      price: 299,
-      oldPrice: 399,
-      quantity: 1,
-      image: "https://covers.openlibrary.org/b/id/10523338-L.jpg"
-    },
-    {
-      id: 2,
-      title: "Rich Dad Poor Dad",
-      author: "Robert Kiyosaki",
-      price: 350,
-      oldPrice: 450,
-      quantity: 2,
-      image: "https://covers.openlibrary.org/b/id/11153277-L.jpg"
-    },
-    {
-      id: 3,
-      title: "The Psychology of Money",
-      author: "Morgan Housel",
-      price: 420,
-      oldPrice: 520,
-      quantity: 1,
-      image: "https://covers.openlibrary.org/b/id/12474325-L.jpg"
-    }
-  ])
+
+useEffect(() => {
+  fetchCart()
+}, [])
+
+const fetchCart = async () => {
+  try {
+    const res = await axiosInstance.get('/cart/get')
+    setCart(res.data.data.items || [])
+    console.log('Cart data:', res.data.data.items)
+  } catch (error) {
+    console.error(error)
+  } finally {
+    setLoading(false)
+  }
+}
 
   const [couponCode, setCouponCode] = useState('')
   const [discount, setDiscount] = useState(0)
   const [showCheckout, setShowCheckout] = useState(false)
 
   // REMOVE ITEM
-  const removeFromCart = (id) => {
-    setCart(prev => prev.filter(item => item.id !== id))
+  const removeFromCart = async (bookId) => {
+  try {
+    await axiosInstance.delete(`/cart/remove/${bookId}`)
+    fetchCart()
+  } catch (error) {
+    console.error(error)
   }
+}
 
   // UPDATE QUANTITY
-  const updateQuantity = (id, newQuantity) => {
-    setCart(prev =>
-      prev.map(item => (item.id === id ? { ...item, quantity: newQuantity } : item))
-    )
+  const updateQuantity = async (bookId, quantity) => {
+  try {
+    await axiosInstance.put('/cart/update', {
+      bookId,
+    })
+    fetchCart()
+  } catch (error) {
+    console.error(error)
   }
+}
 
   // CALCULATE TOTALS
   const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0)
-  const shipping = subtotal > 500 ? 0 : 50
-  const total = subtotal + shipping - discount
+  // const shipping = subtotal > 500 ? 0 : 50
+  const total = subtotal - discount
 
   // APPLY COUPON
   const applyCoupon = () => {
@@ -112,6 +112,9 @@ const CartView = () => {
       </div>
     )
   }
+  if (loading) {
+  return <div className="text-center mt-10">Loading cart...</div>
+}
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -146,7 +149,7 @@ const CartView = () => {
             <AnimatePresence>
               {cart.map((item, index) => (
                 <motion.div
-                  key={item.id}
+                  key={item.bookId}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
@@ -157,7 +160,7 @@ const CartView = () => {
                     {/* Book Image */}
                     <div className="flex-shrink-0">
                       <motion.img
-                        src={item.image || item.cover}
+                        src={item.coverImage}
                         alt={item.title}
                         className="w-24 h-32 object-cover rounded-xl"
                         whileHover={{ scale: 1.05 }}
@@ -178,7 +181,7 @@ const CartView = () => {
                         <motion.button
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
-                          onClick={() => removeFromCart(item.id)}
+                          onClick={() => removeFromCart(item.bookId)}
                           className="text-red-500 hover:text-red-600 transition-colors p-2"
                         >
                           <Trash2 className="w-5 h-5" />
@@ -189,8 +192,8 @@ const CartView = () => {
                       <div className="flex justify-between items-end">
                         <div>
                           <p className="text-2xl font-bold text-green-600">₹{item.price}</p>
-                          {item.oldPrice && (
-                            <p className="text-sm text-gray-400 line-through">₹{item.oldPrice}</p>
+                          {item.price && (
+                            <p className="text-sm text-gray-400 line-through"></p>
                           )}
                         </div>
 
@@ -199,7 +202,7 @@ const CartView = () => {
                       {/* Item Subtotal */}
                       <div className="mt-3 pt-3 border-t border-gray-100">
                         <p className="text-sm text-gray-600">
-                          Subtotal: <span className="font-semibold text-gray-800">₹{item.price * item.quantity}</span>
+                          Subtotal: <span className="font-semibold text-gray-800">₹{item.price}</span>
                         </p>
                       </div>
                     </div>
@@ -228,12 +231,12 @@ const CartView = () => {
                   <span className="font-semibold">₹{subtotal}</span>
                 </div>
 
-                <div className="flex justify-between text-gray-600">
+                {/* <div className="flex justify-between text-gray-600">
                   <span>Shipping</span>
                   <span className="font-semibold">
                     {shipping === 0 ? 'FREE' : `₹${shipping}`}
                   </span>
-                </div>
+                </div> */}
 
                 {discount > 0 && (
                   <div className="flex justify-between text-green-600">
@@ -276,13 +279,13 @@ const CartView = () => {
               </div>
 
               {/* Free Shipping Notice */}
-              {subtotal < 500 && (
+              {/* {subtotal < 500 && (
                 <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
                   <p className="text-sm text-blue-700">
                     Add ₹{500 - subtotal} more for FREE shipping! 🚚
                   </p>
                 </div>
-              )}
+              )} */}
             </div>
 
             {/* Checkout Button */}

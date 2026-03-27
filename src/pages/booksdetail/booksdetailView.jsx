@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Reviews from "../../components/Review";
 import { useBooks } from "../../contexts/BookContext";
 import { useReviews } from "../../contexts/ReviewContext";
+import Swal from "sweetalert2";
 
 export default function BookDetailView() {
   const [book, setBook] = useState(null);
@@ -63,20 +64,54 @@ export default function BookDetailView() {
         ).toFixed(1)
       : 0;
 
-  const checkDelivery = () => {
-    if (pincode.length === 6) {
-      setDeliveryResult("✅ Delivery available in 3-5 days");
-    } else if (pincode.length > 0) {
-      setDeliveryResult("❌ Please enter a valid 6-digit pincode");
-    } else {
-      setDeliveryResult("");
-    }
-  };
+  // const checkDelivery = () => {
+  //   if (pincode.length === 6) {
+  //     setDeliveryResult("✅ Delivery available in 3-5 days");
+  //   } else if (pincode.length > 0) {
+  //     setDeliveryResult("❌ Please enter a valid 6-digit pincode");
+  //   } else {
+  //     setDeliveryResult("");
+  //   }
+  // };
 
-  const addToCart = () => {
+  const addToCart = async () => {
     // Add to cart logic here
-    console.log("Added to cart:", book.title, "Quantity:", quantity);
-  };
+    // console.log("Added to cart:", book.title, "Quantity:", quantity);
+  try {
+    const payload = {
+      bookId: book._id || book.id,
+      quantity: quantity,
+    };
+
+    const response = await axiosInstance.post("/cart/add", payload);
+
+    console.log("Cart response:", response.data);
+
+    // ✅ SweetAlert here
+    await Swal.fire({
+      icon: "success",
+      title: "Added to Cart 🛒",
+      text: `${book.title} added successfully!`,
+      showCancelButton: true,
+      confirmButtonText: "Go to Cart",
+      cancelButtonText: "Continue Shopping",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate("/cart");
+      }
+    });
+
+  } catch (error) {
+    console.error("Error adding to cart:", error);
+
+    // ❌ Error SweetAlert
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Failed to add book to cart ❌",
+    });
+  }
+};
 
   const buyNow = () => {
     // Buy now logic here

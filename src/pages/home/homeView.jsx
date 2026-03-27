@@ -654,7 +654,7 @@ const HomeView = () => {
                       ₹{book.price}
                     </span>
 
-                    <motion.button
+                    {/* <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       className="bg-blue-500 text-white p-2 rounded-lg"
@@ -678,7 +678,7 @@ const HomeView = () => {
 
                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
                       </svg>
-                    </motion.button>
+                    </motion.button> */}
                   </div>
                 </div>
               </motion.div>
