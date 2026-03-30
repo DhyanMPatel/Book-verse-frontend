@@ -11,7 +11,10 @@ import {
   formThemes,
 } from "./formVariants";
 
-const {Div, Button, A} = motion;
+// const {Div, Button, A} = motion;
+const Div = motion.div;
+const Button = motion.button;
+const A = motion.a;
 
 const CommonFormView = ({
   initialValues,
@@ -107,6 +110,7 @@ const CommonFormView = ({
                   </Button>
 
                   <div className="flex items-center justify-between text-sm">
+            
                     {showForgotPassword && (
                       <A
                         href="#"
@@ -122,6 +126,20 @@ const CommonFormView = ({
                         Forgot Password?
                       </A>
                     )}
+
+                    {/* <A
+                      href="#"
+                      variants={itemVariants}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="text-blue-400 hover:text-blue-300 transition-colors duration-200"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        onLinkClick?.("/reset-password");
+                      }}
+                    >
+                      Reset Password
+                    </A> */}
 
                     <div className="flex gap-4">
                       {showSignUpLink && (

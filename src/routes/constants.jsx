@@ -6,6 +6,8 @@ import {
   HomeContainer,
   LibraryContainer,
   LoginContainer,
+  ForgotpasswordContainer,
+  ResetPasswordContainer,
   ProfileContainer,
   RegisterContainer,
   SearchContainer,
@@ -34,6 +36,26 @@ export const AppRoutes = [
           <PublicRoute>
             <Suspense fallback="loading">
               <LoginContainer />
+            </Suspense>
+          </PublicRoute>
+        ),
+      },
+      {
+        path: RouteConstants.forgotPassword,
+        element: (
+          <PublicRoute>
+            <Suspense fallback="loading">
+              <ForgotpasswordContainer />
+            </Suspense>
+          </PublicRoute>
+        ),
+      },
+      {
+        path: RouteConstants.resetPassword,
+        element: (
+          <PublicRoute>
+            <Suspense fallback="loading">
+              <ResetPasswordContainer />
             </Suspense>
           </PublicRoute>
         ),

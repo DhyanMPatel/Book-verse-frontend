@@ -10,7 +10,8 @@ const PersonalInfo = ({
   handleSave,
   handleCancel,
   handleInputChange,
-  handleAddressChange
+  handleAddressChange,
+  
 }) => {
   return (
     <motion.div

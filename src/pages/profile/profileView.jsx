@@ -147,6 +147,7 @@ const ProfileView = () => {
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           handleImageUpload={handleImageUpload}
+          isEditing={isEditing}
         />
 
         {/* Main Content */}

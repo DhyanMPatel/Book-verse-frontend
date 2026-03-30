@@ -56,6 +56,7 @@ const CommonFormController = ({
       loading={loading}
       error={error}
       showForgotPassword={showForgotPassword}
+      res
       showSignUpLink={showSignUpLink}
       showSignInLink={showSignInLink}
       additionalLinks={additionalLinks}

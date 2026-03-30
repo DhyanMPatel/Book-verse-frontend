@@ -10,7 +10,8 @@ const ProfileSidebar = ({
   tabs,
   activeTab,
   setActiveTab,
-  handleImageUpload
+  handleImageUpload,
+  isEditing={isEditing} 
 }) => {
   return (
     <motion.div
@@ -29,14 +30,17 @@ const ProfileSidebar = ({
             className="w-32 h-32 rounded-full object-cover border-4 border-blue-100"
             whileHover={{ scale: 1.05 }}
           />
-          <motion.label
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full cursor-pointer"
-          >
-            <Camera className="w-4 h-4" />
-            <input type="file" className="hidden" onChange={handleImageUpload} />
-          </motion.label>
+         
+            {isEditing && (
+  <motion.label
+    whileHover={{ scale: 1.1 }}
+    whileTap={{ scale: 0.9 }}
+    className="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full cursor-pointer"
+  >
+    <Camera className="w-4 h-4" />
+    <input type="file" className="hidden" onChange={handleImageUpload} />
+  </motion.label>
+)}
         </div>
 
         <h2 className="text-xl font-bold text-gray-800">

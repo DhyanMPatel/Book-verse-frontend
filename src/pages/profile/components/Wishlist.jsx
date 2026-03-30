@@ -44,13 +44,7 @@ const Wishlist = () => {
                 ₹{item * 199}
               </p>
 
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-blue-500 text-white p-2 rounded-xl hover:bg-blue-600 transition-colors"
-              >
-                <ShoppingBag className="w-4 h-4" />
-              </motion.button>
+              
             </div>
           </motion.div>
         ))}

@@ -1,6 +1,8 @@
 import HomeContainer from "./home/homeContainer";
 import LoginContainer from "./auth/login/loginContainer";
 import RegisterContainer from "./auth/register/registerContainer";
+import ForgotpasswordContainer from "./auth/forgot-password/forgotpasswordContainer"; 
+import ResetPasswordContainer from "./auth/reset-password/resetPasswordContainer";
 import ErrorContainer from "./error/errorContainer";
 import SearchContainer from "./search/searchContainer";
 import LibraryContainer from "./library/libraryContainer";
@@ -16,6 +18,8 @@ export {
   HomeContainer,
   LoginContainer,
   RegisterContainer,
+  ForgotpasswordContainer,
+  ResetPasswordContainer,
   ErrorContainer,
   SearchContainer,
   LibraryContainer,

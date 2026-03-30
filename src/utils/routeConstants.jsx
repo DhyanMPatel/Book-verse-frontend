@@ -5,6 +5,8 @@ const RouteConstants = {
   home: "/",
   login: "/login",
   register: "/register",
+  forgotPassword: "/forgot-password",
+  resetPassword: "/reset-password/:token",
   search: "/search",
   booksdetails: "/book/:id",
   library: "/library",

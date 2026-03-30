@@ -1,14 +1,14 @@
-
-
-
 import React, { useState,useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from 'lucide-react'
 import axiosInstance from '../../services/axiosInstance'
+import { useNavigate } from "react-router-dom";
+
 
 const CartView = () => {
   const [cart, setCart] = useState([])
 const [loading, setLoading] = useState(true)
+const navigate = useNavigate();
   // STATIC CART DATA
 
 useEffect(() => {
@@ -42,10 +42,11 @@ const fetchCart = async () => {
 }
 
   // UPDATE QUANTITY
-  const updateQuantity = async (bookId, quantity) => {
+ const updateQuantity = async (bookId, quantity) => {
   try {
     await axiosInstance.put('/cart/update', {
       bookId,
+      quantity
     })
     fetchCart()
   } catch (error) {
@@ -54,7 +55,11 @@ const fetchCart = async () => {
 }
 
   // CALCULATE TOTALS
-  const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0)
+ const subtotal = cart.reduce((total, item) => {
+  const price = Number(item.price) || 0
+  const quantity = Number(item.quantity) || 1
+  return total + (price * quantity)
+}, 0)
   // const shipping = subtotal > 500 ? 0 : 50
   const total = subtotal - discount
 
@@ -202,7 +207,9 @@ const fetchCart = async () => {
                       {/* Item Subtotal */}
                       <div className="mt-3 pt-3 border-t border-gray-100">
                         <p className="text-sm text-gray-600">
-                          Subtotal: <span className="font-semibold text-gray-800">₹{item.price}</span>
+                          Subtotal: <span className="font-semibold text-gray-800">
+  ₹{(Number(item.price) || 0) * (Number(item.quantity) || 1)}
+</span>
                         </p>
                       </div>
                     </div>
