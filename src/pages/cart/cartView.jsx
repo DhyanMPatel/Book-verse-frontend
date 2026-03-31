@@ -5,7 +5,8 @@ import axiosInstance from '../../services/axiosInstance'
 import { useNavigate } from "react-router-dom";
 
 
-const CartView = () => {
+const CartView = (props) => {
+  const {handlePayment} = props
   const [cart, setCart] = useState([])
 const [loading, setLoading] = useState(true)
 const navigate = useNavigate();
@@ -381,6 +382,7 @@ const fetchCart = async () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-xl font-semibold"
+                  onClick={() => handlePayment(total, cart, 1)}
                 >
                   Proceed to Payment
                 </motion.button>
