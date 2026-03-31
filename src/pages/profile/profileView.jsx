@@ -1,11 +1,7 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { User, ShoppingBag, Heart, Settings, LogOut, Check } from 'lucide-react'
-
-// import ProfileSidebar from './ProfileSidebar'
-// import PersonalInfo from './PersonalInfo'
-// import OrderHistory from './OrderHistory'
-// import Wishlist from './Wishlist'
+import { useAuth } from "../../hooks/useAuth";
 
 import PersonalInfo from './components/PersonalInfo'
 import ProfileSidebar from './components/ProfileSidebar'
@@ -18,6 +14,8 @@ const ProfileView = () => {
   const [isEditing, setIsEditing] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [profileImage, setProfileImage] = useState('/api/placeholder/150/150')
+  const { logout } = useAuth();
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   const [profileData, setProfileData] = useState({
     firstName: 'Nisarg',
@@ -40,6 +38,11 @@ const ProfileView = () => {
   })
 
   const [tempProfileData, setTempProfileData] = useState(profileData)
+
+const handleLogout = () => {
+    logout();
+    setProfileDropdownOpen(false);
+  };
 
   const userStats = {
     totalOrders: 24,
@@ -124,6 +127,7 @@ const ProfileView = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={handleLogout}
               className=" flex lg:hidden items-center gap-2  text-red-500 hover:text-red-600 transition-colors min"
             >
               <LogOut className="w-5 h-5" />

@@ -17,6 +17,7 @@ const DesktopNavbarView = (props) => {
     setProfileDropdownOpen,
   } = props;
 
+    
   const { user, isAuthenticated, isAdmin } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();

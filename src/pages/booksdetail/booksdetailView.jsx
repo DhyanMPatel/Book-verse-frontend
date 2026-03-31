@@ -6,6 +6,7 @@ import Reviews from "../../components/Review";
 import { useBooks } from "../../contexts/BookContext";
 import { useReviews } from "../../contexts/ReviewContext";
 import Swal from "sweetalert2";
+import { Heart } from "lucide-react";
 
 export default function BookDetailView() {
   const [book, setBook] = useState(null);
@@ -63,16 +64,6 @@ export default function BookDetailView() {
           reviews.reduce((acc, r) => acc + (r.rating || 0), 0) / reviewCount
         ).toFixed(1)
       : 0;
-
-  // const checkDelivery = () => {
-  //   if (pincode.length === 6) {
-  //     setDeliveryResult("✅ Delivery available in 3-5 days");
-  //   } else if (pincode.length > 0) {
-  //     setDeliveryResult("❌ Please enter a valid 6-digit pincode");
-  //   } else {
-  //     setDeliveryResult("");
-  //   }
-  // };
 
   const addToCart = async () => {
     // Add to cart logic here
@@ -186,12 +177,14 @@ export default function BookDetailView() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         {/* MAIN CONTENT GRID */}
+        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="grid lg:grid-cols-2 gap-8 lg:gap-12"
         >
+          
           {/* IMAGE SECTION */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -199,32 +192,25 @@ export default function BookDetailView() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="space-y-6"
           >
+            
             {/* Main Image */}
-            <div className="bg-white rounded-2xl shadow-xl p-6 flex justify-center">
-              <div className="w-[320px] h-[460px] flex items-center justify-center bg-gray-50 rounded-xl overflow-hidden">
-                <motion.img
-                  src={book.coverImage}
-                  alt={book.title}
-                  className="w-full h-[350px] sm:h-[400px] lg:h-[450px] object-cover"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.5 }}
-                />
-                <div className="absolute top-4 right-4">
-                  <motion.div
-                    whileHover={{ scale: 1.1, rotate: 15 }}
-                    whileTap={{ scale: 0.9 }}
-                    className="bg-white/90 backdrop-blur-sm p-3 rounded-full shadow-lg cursor-pointer"
-                  >
-                    <svg
-                      className="w-6 h-6 text-red-500"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
-                    </svg>
-                  </motion.div>
-                </div>
-              </div>
+            
+<div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 flex justify-center">
+  <div className="relative w-[260px] sm:w-[300px] lg:w-[320px] h-[380px] sm:h-[420px] lg:h-[460px] flex items-center justify-center bg-gray-50 rounded-xl overflow-hidden">
+    
+    <motion.img
+      src={book.coverImage}
+      alt={book.title}
+      className="w-full h-[300px] sm:h-[360px] lg:h-[420px] object-cover"
+      whileHover={{ scale: 1.05 }}
+      transition={{ duration: 0.5 }}
+    />
+
+    {/* Wishlist Button */}
+    
+
+  </div>
+
             </div>
 
             {/* Image Gallery */}
@@ -267,6 +253,20 @@ export default function BookDetailView() {
           >
             {/* Title and Author */}
             <div className="bg-white rounded-3xl shadow-xl p-6 lg:p-8">
+        
+        
+        {/* wishlist button */}
+        
+          <motion.button
+            whileHover={{ scale: 1.1, rotate: 10 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={console.log("wish list buttton is clicked")}
+            className="bg-white/90 backdrop-blur-sm p-2 sm:p-3 rounded-full shadow-md sm:shadow-lg cursor-pointer flex items-center justify-center "
+          >
+            <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
+          </motion.button>
+        
+        
               <motion.h1
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -359,53 +359,8 @@ export default function BookDetailView() {
                   </motion.span>
                 )}
               </motion.div>
-
-              {/* Stock Status
-              {book.stock && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.8 }}
-                  className="flex items-center gap-2 mb-6"
-                >
-                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-                  <span className="text-green-600 font-semibold">
-                    In Stock - Ready to ship
-                  </span>
-                </motion.div>
-              )} */}
-
-              {/* Quantity Selector
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.9 }}
-                className="flex items-center gap-4 mb-6"
-              >
-                <span className="font-medium text-gray-700">Quantity:</span>
-                <div className="flex items-center gap-3">
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 hover:from-blue-200 hover:to-purple-200 flex items-center justify-center"
-                  >
-                    -
-                  </motion.button>
-                  <span className="w-12 text-center font-semibold">
-                    {quantity}
-                  </span>
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 hover:from-blue-200 hover:to-purple-200 flex items-center justify-center"
-                  >
-                    +
-                  </motion.button>
-                </div>
-              </motion.div> */}
-
+                
+             
               {/* Action Buttons */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
