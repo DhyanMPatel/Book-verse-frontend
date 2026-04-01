@@ -3,17 +3,18 @@ import CartView from './cartView'
 
 const CartContainer = () => {
   const handlePayment = async (amount, cartItems, userId) => {
-    const res = await axiosInstance.get('/order/create', {amount: amount, cartItems: cartItems, userId: userId})
+    const res = await axiosInstance.post('/order/create', {totalAmount: amount, cartItems: cartItems, userId: userId})
 
     const option = {
-      key: "RAZORPAY_KEY_ID",
+    key: import.meta.env.VITE_RAZORPAY_KEY_ID,
     amount: res.amount,
     currency: "INR",
     name: "BookVerse",
     description: "Test Transaction",
-    order_id: res.id,
+    order_id: res.orderId,
     handler: async function (response) {
-      await axios.post("/verify-payment", response);
+      console.log("Response", response)
+      await axiosInstance.post("/order/verify-payment", response);
     },
     theme: {
       color: "#3399cc",
