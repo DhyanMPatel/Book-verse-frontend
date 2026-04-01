@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 
 const CartView = (props) => {
-  const {handlePayment} = props
+  const {handlePayment, isProcessing} = props
   const [cart, setCart] = useState([])
 const [loading, setLoading] = useState(true)
 const navigate = useNavigate();
@@ -381,10 +381,11 @@ const fetchCart = async () => {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-xl font-semibold"
-                  onClick={() => handlePayment(total, cart, 1)}
+                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={() => handlePayment(total, cart)}
+                  disabled={isProcessing}
                 >
-                  Proceed to Payment
+                  {isProcessing ? 'Processing...' : 'Proceed to Payment'}
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.02 }}
