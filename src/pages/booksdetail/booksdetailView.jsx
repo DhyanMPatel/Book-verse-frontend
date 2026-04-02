@@ -9,15 +9,16 @@ import Swal from "sweetalert2";
 import { Heart } from "lucide-react";
 
 export default function BookDetailView() {
+
   const [book, setBook] = useState(null);
   const [expanded, setExpanded] = useState(false);
   const [pincode, setPincode] = useState("");
-  const [deliveryResult, setDeliveryResult] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [relatedBooks, setRelatedBooks] = useState([]);
+  const [liked, setLiked] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -68,41 +69,40 @@ export default function BookDetailView() {
   const addToCart = async () => {
     // Add to cart logic here
     // console.log("Added to cart:", book.title, "Quantity:", quantity);
-  try {
-    const payload = {
-      bookId: book._id || book.id,
-      quantity: quantity,
-    };
+    try {
+      const payload = {
+        bookId: book._id || book.id,
+        quantity: quantity,
+      };
 
-    const response = await axiosInstance.post("/cart/add", payload);
+      const response = await axiosInstance.post("/cart/add", payload);
 
-    console.log("Cart response:", response.data);
+      console.log("Cart response:", response.data);
 
-    // ✅ SweetAlert here
-    await Swal.fire({
-      icon: "success",
-      title: "Added to Cart 🛒",
-      text: `${book.title} added successfully!`,
-      showCancelButton: true,
-      confirmButtonText: "Go to Cart",
-      cancelButtonText: "Continue Shopping",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        navigate("/cart");
-      }
-    });
+      // ✅ SweetAlert here
+      await Swal.fire({
+        icon: "success",
+        title: "Added to Cart 🛒",
+        text: `${book.title} added successfully!`,
+        showCancelButton: true,
+        confirmButtonText: "Go to Cart",
+        cancelButtonText: "Continue Shopping",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate("/cart");
+        }
+      });
+    } catch (error) {
+      console.error("Error adding to cart:", error);
 
-  } catch (error) {
-    console.error("Error adding to cart:", error);
-
-    // ❌ Error SweetAlert
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: "Failed to add book to cart ❌",
-    });
-  }
-};
+      // ❌ Error SweetAlert
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Failed to add book to cart ❌",
+      });
+    }
+  };
 
   const buyNow = () => {
     // Buy now logic here
@@ -177,14 +177,13 @@ export default function BookDetailView() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         {/* MAIN CONTENT GRID */}
-        
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="grid lg:grid-cols-2 gap-8 lg:gap-12"
         >
-          
           {/* IMAGE SECTION */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -192,25 +191,20 @@ export default function BookDetailView() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="space-y-6"
           >
-            
             {/* Main Image */}
-            
-<div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 flex justify-center">
-  <div className="relative w-[260px] sm:w-[300px] lg:w-[320px] h-[380px] sm:h-[420px] lg:h-[460px] flex items-center justify-center bg-gray-50 rounded-xl overflow-hidden">
-    
-    <motion.img
-      src={book.coverImage}
-      alt={book.title}
-      className="w-full h-[300px] sm:h-[360px] lg:h-[420px] object-cover"
-      whileHover={{ scale: 1.05 }}
-      transition={{ duration: 0.5 }}
-    />
 
-    {/* Wishlist Button */}
-    
+            <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 flex justify-center">
+              <div className="relative w-[260px] sm:w-[300px] lg:w-[320px] h-[380px] sm:h-[420px] lg:h-[460px] flex items-center justify-center bg-gray-50 rounded-xl overflow-hidden">
+                <motion.img
+                  src={book.coverImage}
+                  alt={book.title}
+                  className="w-full h-[300px] sm:h-[360px] lg:h-[420px] object-cover"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.5 }}
+                />
 
-  </div>
-
+                {/* Wishlist Button */}
+              </div>
             </div>
 
             {/* Image Gallery */}
@@ -253,20 +247,33 @@ export default function BookDetailView() {
           >
             {/* Title and Author */}
             <div className="bg-white rounded-3xl shadow-xl p-6 lg:p-8">
-        
-        
-        {/* wishlist button */}
-        
-          <motion.button
-            whileHover={{ scale: 1.1, rotate: 10 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={console.log("wish list buttton is clicked")}
-            className="bg-white/90 backdrop-blur-sm p-2 sm:p-3 rounded-full shadow-md sm:shadow-lg cursor-pointer flex items-center justify-center "
-          >
-            <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
-          </motion.button>
-        
-        
+              {/* wishlist button */}
+
+              <motion.button
+  whileHover={{ scale: 1.1 }}
+  whileTap={{ scale: 0.9 }}
+  onClick={() => {
+    if (liked) {
+      console.log("Item removed from wishlist ❌");
+    } else {
+      console.log("Item added to wishlist ❤️");
+    }
+    setLiked(!liked);
+  }}
+  className="bg-white/90 backdrop-blur-sm p-2 sm:p-3 rounded-full shadow-md sm:shadow-lg cursor-pointer flex items-center justify-center"
+>
+  <motion.div
+    animate={{ scale: liked ? [1, 1.4, 1] : 1 }}
+    transition={{ duration: 0.3 }}
+  >
+    <Heart
+      className={`w-4 h-4 sm:w-5 sm:h-5 transition-all duration-300 ${
+        liked ? "fill-red-500 text-red-500" : "text-red-500"
+      }`}
+    />
+  </motion.div>
+</motion.button>
+
               <motion.h1
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -359,8 +366,7 @@ export default function BookDetailView() {
                   </motion.span>
                 )}
               </motion.div>
-                
-             
+
               {/* Action Buttons */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -419,37 +425,39 @@ export default function BookDetailView() {
             </div>
 
             {/* Book Details Table */}
-         <motion.div
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ delay: 1.1 }}
-  className="bg-white rounded-3xl shadow-xl p-4 lg:p-6"  // reduced padding
->
-  <h3 className="text-xl lg:text-2xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-    Book Details
-  </h3>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.1 }}
+              className="bg-white rounded-3xl shadow-xl p-4 lg:p-6" // reduced padding
+            >
+              <h3 className="text-xl lg:text-2xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Book Details
+              </h3>
 
-  <div className="space-y-2"> {/* reduced spacing */}
-    {Object.entries(bookDetails || {}).map(
-      ([key, value], index) => (
-        <motion.div
-          key={key}
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 1.2 + index * 0.05 }}
-          className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0" // reduced py
-        >
-          <span className="font-semibold text-gray-700 capitalize text-sm lg:text-base">
-            {key}
-          </span>
-          <span className="text-gray-600 font-medium text-sm lg:text-base">
-            {value || "N/A"}
-          </span>
-        </motion.div>
-      ),
-    )}
-  </div>
-</motion.div>
+              <div className="space-y-2">
+                {" "}
+                {/* reduced spacing */}
+                {Object.entries(bookDetails || {}).map(
+                  ([key, value], index) => (
+                    <motion.div
+                      key={key}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 1.2 + index * 0.05 }}
+                      className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0" // reduced py
+                    >
+                      <span className="font-semibold text-gray-700 capitalize text-sm lg:text-base">
+                        {key}
+                      </span>
+                      <span className="text-gray-600 font-medium text-sm lg:text-base">
+                        {value || "N/A"}
+                      </span>
+                    </motion.div>
+                  ),
+                )}
+              </div>
+            </motion.div>
           </motion.div>
         </motion.div>
 

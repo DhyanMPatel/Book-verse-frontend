@@ -28,6 +28,12 @@ const fetchCart = async () => {
   }
 }
 
+const getFinalPrice = (item) => {
+  const price = Number(item.price) || 0
+  const discount = Number(item.discount) || 0
+
+  return price - (price * discount) / 100
+}
   const [couponCode, setCouponCode] = useState('')
   const [discount, setDiscount] = useState(0)
   const [showCheckout, setShowCheckout] = useState(false)
@@ -55,13 +61,13 @@ const fetchCart = async () => {
   }
 }
 
+
   // CALCULATE TOTALS
  const subtotal = cart.reduce((total, item) => {
-  const price = Number(item.price) || 0
+  const price = getFinalPrice(item)
   const quantity = Number(item.quantity) || 1
   return total + (price * quantity)
 }, 0)
-  // const shipping = subtotal > 500 ? 0 : 50
   const total = subtotal - discount
 
   // APPLY COUPON
@@ -197,10 +203,20 @@ const fetchCart = async () => {
                       {/* Price and Quantity */}
                       <div className="flex justify-between items-end">
                         <div>
-                          <p className="text-2xl font-bold text-green-600">₹{item.price}</p>
-                          {item.price && (
-                            <p className="text-sm text-gray-400 line-through"></p>
-                          )}
+                         <p className="text-2xl font-bold text-green-600">
+  ₹{getFinalPrice(item)}
+</p>
+
+{item.discount > 0 && (
+  <div className="flex items-center gap-2">
+    <p className="text-sm text-gray-400 line-through">
+      ₹{item.price}
+    </p>
+    <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded">
+      {item.discount}% OFF
+    </span>
+  </div>
+)}
                         </div>
 
                       </div>
@@ -209,7 +225,7 @@ const fetchCart = async () => {
                       <div className="mt-3 pt-3 border-t border-gray-100">
                         <p className="text-sm text-gray-600">
                           Subtotal: <span className="font-semibold text-gray-800">
-  ₹{(Number(item.price) || 0) * (Number(item.quantity) || 1)}
+  ₹{getFinalPrice(item) * (Number(item.quantity) || 1)}
 </span>
                         </p>
                       </div>
@@ -238,13 +254,6 @@ const fetchCart = async () => {
                   <span>Subtotal ({cart.length} items)</span>
                   <span className="font-semibold">₹{subtotal}</span>
                 </div>
-
-                {/* <div className="flex justify-between text-gray-600">
-                  <span>Shipping</span>
-                  <span className="font-semibold">
-                    {shipping === 0 ? 'FREE' : `₹${shipping}`}
-                  </span>
-                </div> */}
 
                 {discount > 0 && (
                   <div className="flex justify-between text-green-600">
@@ -285,15 +294,6 @@ const fetchCart = async () => {
                   <p className="text-sm text-green-600 mt-2">Coupon applied successfully!</p>
                 )}
               </div>
-
-              {/* Free Shipping Notice */}
-              {/* {subtotal < 500 && (
-                <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
-                  <p className="text-sm text-blue-700">
-                    Add ₹{500 - subtotal} more for FREE shipping! 🚚
-                  </p>
-                </div>
-              )} */}
             </div>
 
             {/* Checkout Button */}
