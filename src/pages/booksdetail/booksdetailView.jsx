@@ -8,8 +8,11 @@ import { useReviews } from "../../contexts/ReviewContext";
 import Swal from "sweetalert2";
 import { Heart } from "lucide-react";
 
-export default function BookDetailView() {
+export default function BookDetailView(props) {
+   const {handlePayment, isProcessing} = props;
+
   const [book, setBook] = useState(null);
+  const [showCheckout, setShowCheckout] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [pincode, setPincode] = useState("");
   const [deliveryResult, setDeliveryResult] = useState("");
@@ -104,10 +107,10 @@ export default function BookDetailView() {
   }
 };
 
-  const buyNow = () => {
-    // Buy now logic here
-    console.log("Buy now:", book.title, "Quantity:", quantity);
-  };
+  // const buyNow = () => {
+  //   // Buy now logic here
+  //   console.log("Buy now:", book.title, "Quantity:", quantity);
+  // };
 
   if (loading) {
     return (
@@ -260,7 +263,7 @@ export default function BookDetailView() {
           <motion.button
             whileHover={{ scale: 1.1, rotate: 10 }}
             whileTap={{ scale: 0.9 }}
-            onClick={console.log("wish list buttton is clicked")}
+           onClick={() => console.log("wish list button is clicked")}
             className="bg-white/90 backdrop-blur-sm p-2 sm:p-3 rounded-full shadow-md sm:shadow-lg cursor-pointer flex items-center justify-center "
           >
             <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
@@ -395,7 +398,19 @@ export default function BookDetailView() {
                 <motion.button
                   whileHover={{ scale: 1.02, y: -2 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={buyNow}
+                  onClick={() =>
+  handlePayment(
+    book.discount
+      ? (book.price - (book.price * book.discount) / 100) * quantity
+      : book.price * quantity,
+    [
+      {
+        bookId: book._id || book.id,
+        quantity: quantity,
+      },
+    ]
+  )
+}
                   className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   <span className="flex items-center justify-center gap-2">
@@ -484,7 +499,7 @@ export default function BookDetailView() {
 
         {/* REVIEWS SECTION */}
         <Reviews bookId={id} />
-
+ 
         {/* RELATED BOOKS */}
         {relatedBooks && relatedBooks.length > 0 && (
           <motion.div
@@ -589,7 +604,7 @@ export default function BookDetailView() {
               </div>
             </div>
           </motion.div>
-        )}
+        )} 
 
         {/* OFFERS SECTION */}
         {book.offers && book.offers.length > 0 && (

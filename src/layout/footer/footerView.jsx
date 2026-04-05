@@ -5,12 +5,22 @@ import "./footerStyle.css";
 import { useAuth } from "../../hooks/useAuth";
 import RouteConstants from "../../utils/routeConstants";
 import { LogIn, User } from "lucide-react";
+import { adminNavItems } from "../../utils/AdminRouteConstants";
 
 const FooterView = (props) => {
   const { pathname } = props;
-  const { isAuthenticated } = useAuth();
+  // const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isAdmin } = useAuth();
 
-  const updatedNav = [...navItems, isAuthenticated ? { href: RouteConstants.profile, icon: User, label: "Profile" } : { href: RouteConstants.login, icon: LogIn, label: "Login" }]
+
+  // const updatedNav = [...navItems, isAuthenticated ? { href: RouteConstants.profile, icon: User, label: "Profile" } : { href: RouteConstants.login, icon: LogIn, label: "Login" }]
+
+    const updatedNav = isAuthenticated && isAdmin() ? [...adminNavItems] : [...navItems];
+  if (isAuthenticated) {
+    updatedNav.push({ href: RouteConstants.profile, icon: User, label: "Profile" });
+  } else {
+    updatedNav.push({ href: RouteConstants.login, icon: LogIn, label: "Login" });
+  }
 
   return (
     <nav className="bottom-nav thumb-nav">
@@ -19,6 +29,8 @@ const FooterView = (props) => {
           const isActive =
             pathname === item.href || pathname.startsWith(`${item.href}/`);
           const Icon = item.icon;
+
+          
 
           return (
             <Link

@@ -2,7 +2,12 @@ import {
   Home,
   Library,
   Search,
-  ShoppingCart
+  ShoppingCart,
+  User,
+  Book,
+  Settings,
+  LayoutDashboard,
+
 } from "lucide-react";
 import RouteConstants from "./routeConstants";
 
@@ -22,3 +27,12 @@ export const mainDesktopNavItems = [
     { href: RouteConstants.cart, icon: ShoppingCart, label: "Cart" },
     { href: RouteConstants.library, icon: Library, label: "Library" },
   ];
+
+  
+// export const adminDesktopNavItems = [
+//     { href: RouteConstants.adminDashboard, icon:LayoutDashboard  , label: "Dashboard" },
+//     { href: RouteConstants.adminUsers, icon: User, label: "Users" },
+//     { href: RouteConstants.adminBooks, icon: Book, label: "Books" },
+//     { href: RouteConstants.adminOrders, icon: ShoppingCart, label: "Orders" },
+//     { href: RouteConstants.adminSettings, icon: Settings, label: "Settings" },
+//   ];

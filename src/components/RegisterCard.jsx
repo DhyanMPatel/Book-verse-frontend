@@ -89,7 +89,7 @@ const RegisterCard = () => {
       onSubmit={handleSubmit}
       fields={fields}
       theme="register"
-      showForgotPassword={true}
+      showForgotPassword={false}
       showSignUpLink={false}
       showSignInLink={false}
       additionalLinks={additionalLinks}

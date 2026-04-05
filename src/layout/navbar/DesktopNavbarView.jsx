@@ -3,7 +3,8 @@ import { ChevronDown, LogOut, Settings, User, BookOpen } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { buttonVariants, formThemes } from "../../common/Table/formVariants";
 import { useAuth } from "../../hooks/useAuth";
-import { mainDesktopNavItems } from "../../utils/layoutConstants";
+import { mainDesktopNavItems , } from "../../utils/layoutConstants";
+import { adminNavItems } from "../../utils/AdminRouteConstants";
 import RouteConstants from "../../utils/routeConstants";
 import "./DesktopNavbarStyle.css";
 
@@ -36,12 +37,13 @@ const DesktopNavbarView = (props) => {
         </div>
 
         {/* Center/Right: Navigation Links */}
+        {/* {user?.role === "user" && ( */}
         <nav
           className="navbar-nav"
           role="navigation"
           aria-label="Main navigation"
         >
-          {mainDesktopNavItems.map((item) => {
+          {(user?.role === "admin" ? adminNavItems : mainDesktopNavItems).map((item) => {
             const Icon = item.icon;
             return (
               <NavLink
@@ -56,10 +58,13 @@ const DesktopNavbarView = (props) => {
             );
           })}
         </nav>
+        {/* )} */}
 
+
+   
         {/* Far Right: Profile Dropdown and Admin Settings */}
         <div className="navbar-actions">
-          {/* Admin Settings Icon - Only shown for admin users */}
+          {/* Admin Settings Icon - Only shown for admin users
           {isAuthenticated && isAdmin() && (
             <button
               onClick={onToggleAdminSidebar}
@@ -70,7 +75,7 @@ const DesktopNavbarView = (props) => {
             >
               <Settings size={20} aria-hidden="true" />
             </button>
-          )}
+          )} */}
 
           {/* Profile Dropdown */}
           {isAuthenticated && user ? (

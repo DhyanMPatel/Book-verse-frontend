@@ -269,7 +269,7 @@ const CreateUser = ({ isOpen, onClose, onSubmit }) => {
             </div>
 
             {/* Role Dropdown */}
-            <div>
+              <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Role
               </label>

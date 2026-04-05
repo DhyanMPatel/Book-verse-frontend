@@ -23,7 +23,7 @@ const CartContainer = () => {
         order_id: res.data.data.razorpayOrderId,
         handler: async function (response) {
           try {
-            console.log(response, "Response")
+            // console.log(response, "Response")
             const verifyRes = await axiosInstance.post("/order/verify-payment", {
               ...response,
               razorpay_order_id: response.razorpay_order_id,

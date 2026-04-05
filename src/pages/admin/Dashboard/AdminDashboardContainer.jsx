@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import AdminDashboardView from './AdminDashboardView';
+import axiosInstance from "../../../services/axiosInstance";
+
 
 // ============ MOCK DATA ============
 const mockStats = {

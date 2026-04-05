@@ -23,10 +23,22 @@ const LoginCard = () => {
       .required("Password is required"),
   });
 
-  const handleSubmit = async (values) => {
+  // const handleSubmit = async (values) => {
+  //   const result = await login(values.email, values.password);
+  //   if (result.success) {
+  //     return { success: true, redirect: RouteConstants.home };
+  //   }
+  //   return { success: false };
+  // };
+
+const handleSubmit = async (values) => {
     const result = await login(values.email, values.password);
     if (result.success) {
-      return { success: true, redirect: RouteConstants.home };
+      let redirectPath = RouteConstants.home;
+      if (result.data.user.role === "admin") {
+        redirectPath = RouteConstants.adminDashboard;
+      }
+      return { success: true, redirect: redirectPath };
     }
     return { success: false };
   };

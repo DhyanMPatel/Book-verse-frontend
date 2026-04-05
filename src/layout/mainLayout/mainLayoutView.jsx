@@ -54,7 +54,7 @@ const MainLayoutView = ({ isLaptop }) => {
           </nav>
 
           {/* Floating Menu Toggle Button */}
-          {isAdmin() && (
+          {/* {isAdmin() && (
             <button
               onClick={toggleSidebar}
               className="floating-menu-btn"
@@ -74,7 +74,7 @@ const MainLayoutView = ({ isLaptop }) => {
                 />
               </svg>
             </button>
-          )}
+          )} */}
 
           {/* Sidebar Drawer Overlay */}
           {sidebarOpen && (
