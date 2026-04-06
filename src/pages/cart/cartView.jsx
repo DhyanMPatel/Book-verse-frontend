@@ -1,93 +1,95 @@
-import React, { useState,useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from 'lucide-react'
-import axiosInstance from '../../services/axiosInstance'
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, X } from "lucide-react";
+import axiosInstance from "../../services/axiosInstance";
 import { useNavigate } from "react-router-dom";
 
-
 const CartView = (props) => {
-  const {handlePayment, isProcessing} = props
-  const [cart, setCart] = useState([])
-const [loading, setLoading] = useState(true)
-const navigate = useNavigate();
+  const { handlePayment, isProcessing, onClearCart } = props;
+  const [cart, setCart] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   // STATIC CART DATA
 
-useEffect(() => {
-  fetchCart()
-}, [])
+  useEffect(() => {
+    fetchCart();
+  }, []);
 
-const fetchCart = async () => {
-  try {
-    const res = await axiosInstance.get('/cart/get')
-    setCart(res.data.data.items || [])
-    console.log('Cart data:', res.data.data.items)
-  } catch (error) {
-    console.error(error)
-  } finally {
-    setLoading(false)
-  }
-}
+  const fetchCart = async () => {
+    try {
+      const res = await axiosInstance.get("/cart/get");
+      setCart(res.data.data.items || []);
+      console.log("Cart data:", res.data.data.items);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const [couponCode, setCouponCode] = useState('')
-  const [discount, setDiscount] = useState(0)
-  const [showCheckout, setShowCheckout] = useState(false)
+  const [couponCode, setCouponCode] = useState("");
+  const [discount, setDiscount] = useState(0);
+  const [showCheckout, setShowCheckout] = useState(false);
 
   // REMOVE ITEM
   const removeFromCart = async (bookId) => {
-  try {
-    await axiosInstance.delete(`/cart/remove/${bookId}`)
-    fetchCart()
-  } catch (error) {
-    console.error(error)
-  }
-}
+    try {
+      await axiosInstance.delete(`/cart/remove/${bookId}`);
+      fetchCart();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   // UPDATE QUANTITY
- const updateQuantity = async (bookId, quantity) => {
-  try {
-    await axiosInstance.put('/cart/update', {
-      bookId,
-      quantity
-    })
-    fetchCart()
-  } catch (error) {
-    console.error(error)
-  }
-}
+  const updateQuantity = async (bookId, quantity) => {
+    try {
+      await axiosInstance.put("/cart/update", {
+        bookId,
+        quantity,
+      });
+      fetchCart();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   // CALCULATE TOTALS
- const subtotal = cart.reduce((total, item) => {
-  const price = Number(item.price) || 0
-  const quantity = Number(item.quantity) || 1
-  return total + (price * quantity)
-}, 0)
+  // Replace your subtotal calculation
+  const subtotal = cart.reduce((total, item) => {
+    const price = Number(item.price) || 0;
+    const discount = Number(item.discount) || 0;
+    const quantity = Number(item.quantity) || 1;
+    const discountedPrice = price - (price * discount) / 100;
+    return total + discountedPrice * quantity;
+  }, 0);
   // const shipping = subtotal > 500 ? 0 : 50
-  const total = subtotal - discount
+  const total = subtotal - discount;
 
   // APPLY COUPON
   const applyCoupon = () => {
     if (!couponCode) {
-      alert('Please enter a coupon code')
-      return
+      alert("Please enter a coupon code");
+      return;
     }
 
-    const code = couponCode.trim().toLowerCase()
-    if (code === 'save10') {
-      setDiscount(subtotal * 0.1)
-    } else if (code === 'save20') {
-      setDiscount(subtotal * 0.2)
+    const code = couponCode.trim().toLowerCase();
+    if (code === "save10") {
+      setDiscount(subtotal * 0.1);
+    } else if (code === "save20") {
+      setDiscount(subtotal * 0.2);
     } else {
-      alert('Invalid coupon code')
+      alert("Invalid coupon code");
     }
-  }
+  };
 
-  const updateItemQuantity = (id, newQuantity) => {
-    if (newQuantity === 0) {
-      removeFromCart(id)
-    } else {
-      updateQuantity(id, newQuantity)
-    }
-  }
+  // const updateItemQuantity = (id, newQuantity) => {
+  //   if (newQuantity === 0) {
+  //     removeFromCart(id);
+  //   } else {
+  //     updateQuantity(id, newQuantity);
+  //   }
+  // };
 
   if (!cart || cart.length === 0) {
     return (
@@ -104,7 +106,9 @@ const fetchCart = async () => {
           >
             🛒
           </motion.div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Your cart is empty</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            Your cart is empty
+          </h2>
           <p className="text-gray-600 mb-6">Add some books to get started!</p>
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -116,11 +120,11 @@ const fetchCart = async () => {
           </motion.button>
         </motion.div>
       </div>
-    )
+    );
   }
   if (loading) {
-  return <div className="text-center mt-10">Loading cart...</div>
-}
+    return <div className="text-center mt-10">Loading cart...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -135,9 +139,23 @@ const fetchCart = async () => {
             <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Shopping Cart
             </h1>
-            <div className="flex items-center gap-2 text-gray-600">
-              <ShoppingBag className="w-5 h-5" />
-              <span className="font-medium">{cart.length} items</span>
+            <div className="flex items-center gap-4">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={async () => {
+                  const cleared = await onClearCart();
+                  if (cleared) fetchCart();
+                }}
+                className="flex items-center gap-2 text-red-500 hover:text-red-600 font-medium transition-colors"
+              >
+                <X className="w-5 h-5" />
+                Clear Cart
+              </motion.button>
+              <div className="flex items-center gap-2 text-gray-600">
+                <ShoppingBag className="w-5 h-5" />
+                <span className="font-medium">{cart.length} items</span>
+              </div>
             </div>
           </div>
         </div>
@@ -181,9 +199,11 @@ const fetchCart = async () => {
                           <h3 className="font-semibold text-lg text-gray-800 truncate hover:text-blue-600 transition-colors">
                             {item.title}
                           </h3>
-                          <p className="text-gray-600 text-sm">by {item.author}</p>
+                          <p className="text-gray-600 text-sm">
+                            by {item.author}
+                          </p>
                         </div>
-                        
+
                         <motion.button
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
@@ -197,20 +217,44 @@ const fetchCart = async () => {
                       {/* Price and Quantity */}
                       <div className="flex justify-between items-end">
                         <div>
-                          <p className="text-2xl font-bold text-green-600">₹{item.price}</p>
-                          {item.price && (
-                            <p className="text-sm text-gray-400 line-through"></p>
+                          {item.discount > 0 ? (
+                            <>
+                              <p className="text-2xl font-bold text-green-600">
+                                ₹
+                                {Math.round(
+                                  item.price -
+                                  (item.price * item.discount) / 100
+                                )}
+                              </p>
+                              <div className="flex items-center gap-2">
+                                <p className="text-sm text-gray-400 line-through">
+                                  ₹{item.price}
+                                </p>
+                                <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-semibold">
+                                  {item.discount}% OFF
+                                </span>
+                              </div>
+                            </>
+                          ) : (
+                            <p className="text-2xl font-bold text-green-600">
+                              ₹{item.price}
+                            </p>
                           )}
                         </div>
-
                       </div>
 
                       {/* Item Subtotal */}
                       <div className="mt-3 pt-3 border-t border-gray-100">
                         <p className="text-sm text-gray-600">
-                          Subtotal: <span className="font-semibold text-gray-800">
-  ₹{(Number(item.price) || 0) * (Number(item.quantity) || 1)}
-</span>
+                          Subtotal:{" "}
+                          <span className="font-semibold text-gray-800">
+                            ₹
+                            {Math.round(
+                              (item.price -
+                                (item.price * (item.discount || 0)) / 100) *
+                              (Number(item.quantity) || 1)
+                            )}
+                          </span>
                         </p>
                       </div>
                     </div>
@@ -263,7 +307,9 @@ const fetchCart = async () => {
 
               {/* Coupon Code */}
               <div className="mt-6">
-                <p className="text-sm text-gray-600 mb-2">Have a coupon code?</p>
+                <p className="text-sm text-gray-600 mb-2">
+                  Have a coupon code?
+                </p>
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -282,7 +328,9 @@ const fetchCart = async () => {
                   </motion.button>
                 </div>
                 {discount > 0 && (
-                  <p className="text-sm text-green-600 mt-2">Coupon applied successfully!</p>
+                  <p className="text-sm text-green-600 mt-2">
+                    Coupon applied successfully!
+                  </p>
                 )}
               </div>
 
@@ -311,24 +359,54 @@ const fetchCart = async () => {
             <div className="flex justify-center gap-4 pt-4">
               <div className="text-center">
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-1">
-                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg
+                    className="w-6 h-6 text-green-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                 </div>
                 <p className="text-xs text-gray-600">Secure</p>
               </div>
               <div className="text-center">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-1">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  <svg
+                    className="w-6 h-6 text-blue-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
                   </svg>
                 </div>
                 <p className="text-xs text-gray-600">Safe</p>
               </div>
               <div className="text-center">
                 <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-1">
-                  <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  <svg
+                    className="w-6 h-6 text-purple-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    />
                   </svg>
                 </div>
                 <p className="text-xs text-gray-600">Fast</p>
@@ -347,7 +425,7 @@ const fetchCart = async () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => window.history.back()}
+            onClick={() => navigate("/search")}
             className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium transition-colors"
           >
             <ArrowRight className="w-4 h-4 rotate-180" />
@@ -375,7 +453,10 @@ const fetchCart = async () => {
                 Checkout
               </h3>
               <p className="text-gray-600 mb-6">
-                Total amount: <span className="font-bold text-xl text-green-600">₹{total}</span>
+                Total amount:{" "}
+                <span className="font-bold text-xl text-green-600">
+                  ₹{total}
+                </span>
               </p>
               <div className="space-y-3">
                 <motion.button
@@ -385,7 +466,7 @@ const fetchCart = async () => {
                   onClick={() => handlePayment(total, cart)}
                   disabled={isProcessing}
                 >
-                  {isProcessing ? 'Processing...' : 'Proceed to Payment'}
+                  {isProcessing ? "Processing..." : "Proceed to Payment"}
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.02 }}
@@ -401,7 +482,7 @@ const fetchCart = async () => {
         )}
       </AnimatePresence>
     </div>
-  )
-}
+  );
+};
 
-export default CartView
+export default CartView;

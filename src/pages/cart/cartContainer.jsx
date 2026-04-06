@@ -54,9 +54,35 @@ const CartContainer = () => {
       setIsProcessing(false);
     }
   }
+
+  const handleClearCart = async () => {
+    try {
+      const result = await Swal.fire({
+        title: 'Clear Cart?',
+        text: 'Are you sure you want to remove all items from your cart?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Yes, clear it!',
+        cancelButtonText: 'Cancel'
+      });
+
+      if (result.isConfirmed) {
+        await axiosInstance.delete('/cart/clear');
+        toast.success('Cart cleared successfully');
+        return true;
+      }
+      return false;
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to clear cart');
+      return false;
+    }
+  }
+
   return (
     <>
-      <CartView handlePayment={handlePayment} isProcessing={isProcessing} />
+      <CartView handlePayment={handlePayment} isProcessing={isProcessing} onClearCart={handleClearCart} />
     </>
   )
 }

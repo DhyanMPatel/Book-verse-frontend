@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState } from 'react'
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 import BookDetailView from "./booksdetailView"
 import axiosInstance from '../../services/axiosInstance';
 
@@ -54,8 +55,7 @@ const user = JSON.parse(localStorage.getItem('user')) || {};
       const rzp = new window.Razorpay(option);
       rzp.open();
     } catch (error) {
-// console.error("Order Error:", error.response || error);
-toast.error(error.response?.data?.message || error.message || "Failed to create order");
+      toast.error(error.response?.data?.message || "Failed to create order");
     } finally {
       setIsProcessing(false);
     }

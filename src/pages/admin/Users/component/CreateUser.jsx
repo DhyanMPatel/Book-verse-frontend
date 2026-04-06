@@ -36,10 +36,10 @@ const CreateUser = ({ isOpen, onClose, onSubmit }) => {
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
         "Password must contain uppercase, lowercase and number",
       ),
-    role: yup
-      .string()
-      .required("Role is required")
-      .oneOf(["admin", "user"], "Invalid role"),
+    // role: yup
+    //   .string()
+    //   .required("Role is required")
+    //   .oneOf(["admin", "user"], "Invalid role"),
   });
 
   const handleChange = (e) => {
@@ -269,7 +269,7 @@ const CreateUser = ({ isOpen, onClose, onSubmit }) => {
             </div>
 
             {/* Role Dropdown */}
-              <div>
+              {/* <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Role
               </label>
@@ -295,7 +295,7 @@ const CreateUser = ({ isOpen, onClose, onSubmit }) => {
                   {errors.role}
                 </motion.p>
               )}
-            </div>
+            </div> */}
 
             {/* Actions */}
             <div className="flex gap-3 pt-4">

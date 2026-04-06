@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import * as yup from "yup";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFormik } from "formik";
@@ -26,88 +26,123 @@ const UpdateBooks = ({ isOpen, onClose, onSubmit, bookData }) => {
     fetchCategories();
   }, []);
 
-  const validationSchema = yup.object().shape({
-    title: yup
-      .string()
-      .required("Title is required")
-      .test(
-        "no-only-spaces",
-        "Cannot be empty or spaces only",
-        (value) => value && value.trim().length > 0
-      ),
-    author: yup
-      .string()
-      .required("Author is required")
-      .test(
-        "no-only-spaces",
-        "Author cannot be empty or spaces only",
-        (value) => value && value.trim().length > 0
-      ),
-    description: yup
-      .string()
-      .required("Description is required")
-      .test(
-        "no-only-spaces",
-        "Description cannot be empty or spaces only",
-        (value) => value && value.trim().length > 0
-      ),
-    categoryId: yup.string().required("Category is required"),
-    isbn: yup
-      .string()
-      .required("ISBN is required")
-      .matches(
-  /^(?:ISBN(?:-1[03])?:? )?(?=[0-9X]{10}$|(?=(?:[0-9]+[- ]){3})[- 0-9X]{13}$|97[89][0-9]{10}$|(?=(?:[0-9]+[- ]){4})[- 0-9]{17}$)(?:97[89][- ]?)?[0-9]{1,5}[- ]?[0-9]+[- ]?[0-9]+[- ]?[0-9X]$/,
-  "Invalid ISBN format"
-),
-    price: yup
-      .number()
-      .required("Price is required")
-      .min(0, "Price must be positive")
-      .max(10000, "Price must be less than 10000"),
-    discount: yup
-      .number()
-      .min(0, "Discount must be positive")
-      .max(100, "Discount must be less than 100"),
-    pages: yup
-      .number()
-      .required("Pages is required")
-      .min(1, "Pages must be at least 1")
-      .max(100000, "Pages must be less than 100000"),
-    stock: yup
-      .number()
-      .required("Stock is required")
-      .min(0, "Stock must be positive")
-      .max(10000, "Stock must be less than 10000"),
-    language: yup
-      .string()
-      .trim()
-      .required("Language is required")
-      .min(2, "Language must be at least 2 characters")
-      .max(50, "Language must be less than 50 characters"),
-    publisher: yup
-      .string()
-      .trim()
-      .required("Publisher is required")
-      .min(2, "Publisher must be at least 2 characters")
-      .max(100, "Publisher must be less than 100 characters"),
-    publishedDate: yup
-      .date()
-      .required("Published date is required")
-      .max(new Date(), "Published date cannot be in the future"),
-    coverImage: yup
-      .mixed()
-      .required("Cover image is required"),
-    file: yup
-      .mixed()
-      .test("fileType", "Only PDF files are allowed", (value) => {
-        if (!value) return true;
-        return value.type === "application/pdf";
-      })
-      .test("fileSize", "File size must be less than 10MB", (value) => {
-        if (!value) return true;
-        return value.size <= 100 * 1024 * 1024;
+  const validationSchema = useMemo(
+    () =>
+      yup.object().shape({
+        title: yup
+          .string()
+          .required("Title is required")
+          .test(
+            "no-only-spaces",
+            "Cannot be empty or spaces only",
+            (value) => value && value.trim().length > 0,
+          ),
+        author: yup
+          .string()
+          .required("Author is required")
+          .test(
+            "no-only-spaces",
+            "Author cannot be empty or spaces only",
+            (value) => value && value.trim().length > 0,
+          ),
+        description: yup
+          .string()
+          .required("Description is required")
+          .test(
+            "no-only-spaces",
+            "Description cannot be empty or spaces only",
+            (value) => value && value.trim().length > 0,
+          ),
+        categoryId: yup.string().required("Category is required"),
+        isbn: yup
+          .string()
+          .required("ISBN is required")
+          .matches(
+            /^(?:ISBN(?:-1[03])?:? )?(?=[0-9X]{10}$|(?=(?:[0-9]+[- ]){3})[- 0-9X]{13}$|97[89][0-9]{10}$|(?=(?:[0-9]+[- ]){4})[- 0-9]{17}$)(?:97[89][- ]?)?[0-9]{1,5}[- ]?[0-9]+[- ]?[0-9]+[- ]?[0-9X]$/,
+            "Invalid ISBN format",
+          ),
+        price: yup
+          .number()
+          .required("Price is required")
+          .min(0, "Price must be positive")
+          .max(10000, "Price must be less than 10000"),
+        discount: yup
+          .number()
+          .min(0, "Discount must be positive")
+          .max(100, "Discount must be less than 100"),
+        pages: yup
+          .number()
+          .required("Pages is required")
+          .min(1, "Pages must be at least 1")
+          .max(100000, "Pages must be less than 100000"),
+        stock: yup
+          .number()
+          .required("Stock is required")
+          .min(0, "Stock must be positive")
+          .max(10000, "Stock must be less than 10000"),
+        language: yup
+          .string()
+          .trim()
+          .required("Language is required")
+          .min(2, "Language must be at least 2 characters")
+          .max(50, "Language must be less than 50 characters"),
+        publisher: yup
+          .string()
+          .trim()
+          .required("Publisher is required")
+          .min(2, "Publisher must be at least 2 characters")
+          .max(100, "Publisher must be less than 100 characters"),
+        publishedDate: yup
+          .date()
+          .required("Published date is required")
+          .max(new Date(), "Published date cannot be in the future"),
+        // ✅ correct coverImage validation
+        // coverImage: yup
+        //   .mixed()
+        //   .test(
+        //     "coverImage-required",
+        //     "Cover image is required",
+        //     function (value) {
+        //       return (
+        //         (value !== null && value !== undefined) ||
+        //         existingCoverImage !== null
+        //       );
+        //     },
+        //   ),
+        coverImage: yup
+          .mixed()
+          .nullable()
+          .test(
+            "coverImage-required",
+            "Cover image is required",
+            function (value) {
+              const { existingCoverImage } = this.options.context || {};
+              return value || existingCoverImage;
+            },
+          ),
+    //this is for the update book file validation, it allows the file to be optional if an existing file is present, but if a new file is uploaded.
+        file: yup
+  .mixed()
+  .nullable()
+  .test(
+    "file-required",
+    "file cannot be null",
+    function (value) {
+      const { existingFile } = this.options.context || {};
+      return value || existingFile; // ✅ passes if existing file exists
+    }
+  )
+  .test("fileType", "Only PDF files are allowed", (value) => {
+    if (!value) return true;
+    return value.type === "application/pdf";
+  })
+  .test("fileSize", "File size must be less than 100MB", (value) => {
+    if (!value) return true;
+    return value.size <= 100 * 1024 * 1024;
+  }),
       }),
-  });
+    [existingCoverImage],
+  ); // ✅ closing useMemo
 
   const formik = useFormik({
     initialValues: {
@@ -126,7 +161,8 @@ const UpdateBooks = ({ isOpen, onClose, onSubmit, bookData }) => {
       coverImage: null,
       file: null,
     },
-    validationSchema,
+    // validationSchema,
+    validationContext: { existingCoverImage, existingFile },
     onSubmit: async (values) => {
       setIsSubmitting(true);
       try {
@@ -137,12 +173,12 @@ const UpdateBooks = ({ isOpen, onClose, onSubmit, bookData }) => {
         formData.append("description", values.description);
 
         const selectedCategory = categories.find(
-          (cat) => cat.id === values.categoryId
+          (cat) => (cat.id || cat._id) === values.categoryId,
         );
         formData.append(
-  "category",
-  selectedCategory?.categoryName?.toLowerCase() || ""
-);
+          "category",
+          selectedCategory?.categoryName?.toLowerCase() || "",
+        );
 
         formData.append("price", values.price);
         formData.append("discount", values.discount || 0);
@@ -151,17 +187,18 @@ const UpdateBooks = ({ isOpen, onClose, onSubmit, bookData }) => {
         formData.append("language", values.language);
         formData.append("publisher", values.publisher);
         formData.append("publishedDate", values.publishedDate);
-        formData.append("isbn", values.isbn);
+        // formData.append("isbn", values.isbn);
         formData.append("format", "pdf");
 
-        if (values.coverImage) {
+        // ✅ ONLY send new files (like your reference image)
+        if (values.coverImage instanceof File) {
           formData.append("coverImage", values.coverImage);
         }
 
-        if (values.file) {
+        if (values.file instanceof File) {
           formData.append("file", values.file);
         }
-
+        // }
         await onSubmit(formData);
 
         formik.resetForm();
@@ -179,18 +216,23 @@ const UpdateBooks = ({ isOpen, onClose, onSubmit, bookData }) => {
   });
 
   useEffect(() => {
-if (isOpen && bookData && categories.length > 0) {
-   const category = categories.find(
-  (cat) =>
-    cat.categoryName?.toLowerCase() ===
-    bookData.category?.toLowerCase()
-);
+  if (formik.submitCount > 0 || formik.touched.coverImage) {
+    formik.validateForm();
+  }
+}, [existingCoverImage, existingFile]);
+
+  useEffect(() => {
+    if (isOpen && bookData && categories.length > 0) {
+      const category = categories.find(
+        (cat) =>
+          cat.categoryName?.toLowerCase() === bookData.category?.toLowerCase(),
+      );
 
       formik.setValues({
         title: bookData.title || "",
         author: bookData.author || "",
         description: bookData.description || "",
-categoryId: category?.id || category?._id || "",
+        categoryId: category?.id || category?._id || "",
         isbn: bookData.isbn || "",
         price: bookData.price || "",
         discount: bookData.discount || "",
@@ -291,7 +333,10 @@ categoryId: category?.id || category?._id || "",
             </div>
           </div>
 
-          <form onSubmit={formik.handleSubmit} className="flex flex-col flex-1 min-h-0">
+          <form
+            onSubmit={formik.handleSubmit}
+            className="flex flex-col flex-1 min-h-0"
+          >
             <div className="flex-1 overflow-y-auto p-6 min-h-0">
               <div className="space-y-6">
                 <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
@@ -364,7 +409,7 @@ categoryId: category?.id || category?._id || "",
                         type="text"
                         name="isbn"
                         value={formik.values.isbn}
-                        onChange={formik.handleChange}
+                        // onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                           formik.errors.isbn && formik.touched.isbn
@@ -374,8 +419,8 @@ categoryId: category?.id || category?._id || "",
                         placeholder="Enter ISBN (e.g., 978-3-16-148410-0  ' 13 or 10 ' )"
                       />
                       <p className="text-sm text-gray-500">
-  Accepts ISBN-10 or ISBN-13 (with or without dashes)
-</p>
+                        Accepts ISBN-10 or ISBN-13 (with or without dashes)
+                      </p>
                       {formik.errors.isbn && formik.touched.isbn && (
                         <motion.p
                           initial={{ opacity: 0, y: -5 }}
@@ -398,7 +443,8 @@ categoryId: category?.id || category?._id || "",
                         onBlur={formik.handleBlur}
                         rows="4"
                         className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                          formik.errors.description && formik.touched.description
+                          formik.errors.description &&
+                          formik.touched.description
                             ? "border-red-500"
                             : "border-gray-300"
                         }`}
@@ -441,20 +487,24 @@ categoryId: category?.id || category?._id || "",
                       >
                         <option value="">Select Category</option>
                         {categories.map((cat) => (
-                         <option key={cat.id || cat._id} value={cat.id || cat._id}>
+                          <option
+                            key={cat.id || cat._id}
+                            value={cat.id || cat._id}
+                          >
                             {cat.categoryName}
                           </option>
                         ))}
                       </select>
-                      {formik.errors.categoryId && formik.touched.categoryId && (
-                        <motion.p
-                          initial={{ opacity: 0, y: -5 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="mt-1 text-sm text-red-500 text-left"
-                        >
-                          {formik.errors.categoryId}
-                        </motion.p>
-                      )}
+                      {formik.errors.categoryId &&
+                        formik.touched.categoryId && (
+                          <motion.p
+                            initial={{ opacity: 0, y: -5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="mt-1 text-sm text-red-500 text-left"
+                          >
+                            {formik.errors.categoryId}
+                          </motion.p>
+                        )}
                     </div>
 
                     <div>
@@ -690,7 +740,8 @@ categoryId: category?.id || category?._id || "",
                           accept=".jpg,.jpeg,.png,.webp"
                           multiple={false}
                           className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                            formik.errors.coverImage && formik.touched.coverImage
+                            formik.errors.coverImage &&
+                            formik.touched.coverImage
                               ? "border-red-500"
                               : "border-gray-300"
                           }`}
@@ -698,7 +749,9 @@ categoryId: category?.id || category?._id || "",
                         {(coverImagePreview || existingCoverImage) && (
                           <div className="relative inline-block">
                             <img
-                              src={coverImagePreview || existingCoverImage || "" }
+                              src={
+                                coverImagePreview || existingCoverImage || ""
+                              }
                               alt="Cover preview"
                               className="w-32 h-48 object-cover rounded-lg border border-gray-300"
                             />
@@ -724,15 +777,16 @@ categoryId: category?.id || category?._id || "",
                           </div>
                         )}
                       </div>
-                      {formik.errors.coverImage && formik.touched.coverImage && (
-                        <motion.p
-                          initial={{ opacity: 0, y: -5 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="mt-1 text-sm text-red-500 text-left"
-                        >
-                          {formik.errors.coverImage}
-                        </motion.p>
-                      )}
+                      {formik.errors.coverImage &&
+                        formik.touched.coverImage && (
+                          <motion.p
+                            initial={{ opacity: 0, y: -5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="mt-1 text-sm text-red-500 text-left"
+                          >
+                            {formik.errors.coverImage}
+                          </motion.p>
+                        )}
                     </div>
 
                     <div>
@@ -817,19 +871,14 @@ categoryId: category?.id || category?._id || "",
                   Cancel
                 </button>
 
-                <motion.button
+                <button
                   type="submit"
+                  // disabled={isSubmitting || !formik.isValid}
                   disabled={isSubmitting || !formik.isValid}
-                  whileHover={{
-                    scale: isSubmitting || !formik.isValid ? 1 : 1.02,
-                  }}
-                  whileTap={{
-                    scale: isSubmitting || !formik.isValid ? 1 : 0.98,
-                  }}
                   className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? "Updating..." : "Update Book"}
-                </motion.button>
+                </button>
               </div>
             </div>
           </form>

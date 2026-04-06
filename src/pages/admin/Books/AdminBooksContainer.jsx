@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import CreateBooks from "./Component/CreateBooks";
 import Swal from "sweetalert2";
 import UpdateBooks from "./Component/UpdateBooks";
+import ViewBooks from "./Component/ViewBooks";
 // import { Book } from "lucide-react";
 
 const AdminBooksContainer = () => {
@@ -11,6 +12,7 @@ const AdminBooksContainer = () => {
    const [isModalOpen, setIsModalOpen] = useState(false);
    const [deletingId, setDeletingId] = useState(null);
    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
    const [selectedBook, setSelectedBook] = useState(null);
 
  
@@ -35,22 +37,73 @@ const AdminBooksContainer = () => {
     fetchBooks();
   }, []);
 
-const handleView = (row) => {
-    console.log("View user:", row);
-  };
 
-const handleEdit = (row) => {
-  console.log("🟢 Selected Book:", row); // debug
+const handleView = async (row) => {
+  try {
+    const response = await axiosInstance.get(`/books/details/${row.id || row._id}`);
+    const bookData = response?.data?.data?.bookDetailData;
+    
+    if (!bookData) {
+      Swal.fire("Error", "Book details not found", "error");
+      return;
+    }
 
-  setSelectedBook({ ...row }); // 🔥 force new reference
-  setIsEditModalOpen(true);
+    setSelectedBook(bookData);
+    setIsViewModalOpen(true);
+  } catch (error) {
+    console.error("❌ Failed to fetch book details:", error);
+    Swal.fire("Error", "Failed to load book details", "error");
+  }
 };
+
+const handleCloseViewModal = () => {
+  setIsViewModalOpen(false);
+  setSelectedBook(null);
+};
+
+// const handleEdit = (row) => {
+//   console.log("🟢 Selected Book:", row); // debug
+
+//   setSelectedBook({ ...row }); // 🔥 force new reference
+//   setIsEditModalOpen(true);
+// };
 
 const handleCloseEditModal = () => {
   setIsEditModalOpen(false);
   setSelectedBook(null);
 };
 
+
+const handleEdit = async (row) => {
+  try {
+    const response = await axiosInstance.get(`/books/details/${row.id || row._id}`);
+    const bookData = response?.data?.data?.bookDetailData;
+
+    setSelectedBook({
+      id: bookData.id,
+      title: bookData.title,
+      author: bookData.author,
+      description: bookData.description,
+      category: bookData.category,      
+      price: bookData.price,
+      discount: bookData.discount,
+      pages: bookData.pages,
+      stock: bookData.stock,
+      language: bookData.language,
+      publisher: bookData.publisher,
+      publishedDate: bookData.publishedDate,
+      isbn: bookData.isbn,
+      coverImage: bookData.coverImage,  
+      fileUrl: bookData.fileUrl,        
+    
+    });
+
+    setIsEditModalOpen(true);
+  } catch (error) {
+    console.error("❌ Failed to fetch book details:", error);
+    Swal.fire("Error", "Failed to load book details for editing", "error");
+  }
+};
 
 const handleUpdateBook = async (formData) => {
   try {
@@ -66,6 +119,7 @@ const handleUpdateBook = async (formData) => {
         headers: { "Content-Type": "multipart/form-data" },
       }
     );
+    console.log("✅ Update response:", response.data.data);
 
     Swal.fire({
       icon: "success",
@@ -88,6 +142,8 @@ const handleUpdateBook = async (formData) => {
     );
   }
 };
+
+
 
 const handleDelete = async (row) => {
   try {
@@ -188,6 +244,11 @@ const handleCreateBook = async (formData) => {
   onSubmit={handleUpdateBook}
   bookData={selectedBook}
 />
+  <ViewBooks
+    isOpen={isViewModalOpen}
+    onClose={handleCloseViewModal}
+    bookData={selectedBook}
+  />
   </>
     
   );

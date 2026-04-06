@@ -10,7 +10,7 @@ import { Heart } from "lucide-react";
 
 export default function BookDetailView(props) {
    const {handlePayment, isProcessing} = props;
-
+   const [liked, setLiked] = useState(false);
   const [book, setBook] = useState(null);
   const [showCheckout, setShowCheckout] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -25,6 +25,16 @@ export default function BookDetailView(props) {
   const navigate = useNavigate();
 
   const { fetchReviews, reviews } = useReviews();
+ 
+  const handleClick = () => {
+    setLiked((prev) => !prev);
+
+    if (!liked) {
+      console.log("❤️ Added to wishlist");
+    } else {
+      console.log("🤍 Removed from wishlist");
+    }
+  };
 
   // Fetch book data
   useEffect(() => {
@@ -82,18 +92,20 @@ export default function BookDetailView(props) {
     console.log("Cart response:", response.data);
 
     // ✅ SweetAlert here
-    await Swal.fire({
-      icon: "success",
-      title: "Added to Cart 🛒",
-      text: `${book.title} added successfully!`,
-      showCancelButton: true,
-      confirmButtonText: "Go to Cart",
-      cancelButtonText: "Continue Shopping",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        navigate("/cart");
-      }
-    });
+   await Swal.fire({
+  icon: "success",
+  title: "Added to Cart 🛒",
+  text: `${book.title} added successfully!`,
+  showCancelButton: true,
+  confirmButtonText: "Go to Cart",
+  cancelButtonText: "Continue Shopping",
+}).then((result) => {
+  if (result.isConfirmed) {
+    navigate("/cart");
+  } else if (result.isDismissed) {
+    navigate("/search"); // 👈 change "/search" to your actual search page route
+  }
+});
 
   } catch (error) {
     console.error("Error adding to cart:", error);
@@ -259,16 +271,20 @@ export default function BookDetailView(props) {
         
         
         {/* wishlist button */}
-        
-          <motion.button
-            whileHover={{ scale: 1.1, rotate: 10 }}
-            whileTap={{ scale: 0.9 }}
-           onClick={() => console.log("wish list button is clicked")}
-            className="bg-white/90 backdrop-blur-sm p-2 sm:p-3 rounded-full shadow-md sm:shadow-lg cursor-pointer flex items-center justify-center "
-          >
-            <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
-          </motion.button>
-        
+           <div>
+      <motion.button
+        whileHover={{ scale: 1.1, rotate: 10 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={handleClick}
+        className="bg-white/90 backdrop-blur-sm p-2 sm:p-3 rounded-full shadow-md sm:shadow-lg cursor-pointer flex items-center justify-center"
+      >
+        <Heart
+          className={`w-4 h-4 sm:w-5 sm:h-5 transition-all duration-300 ${
+            liked ? "fill-red-500 text-red-500 scale-110" : "text-red-500"
+          }`}
+        />
+      </motion.button>
+    </div>
         
               <motion.h1
                 initial={{ opacity: 0, y: -10 }}
@@ -398,19 +414,25 @@ export default function BookDetailView(props) {
                 <motion.button
                   whileHover={{ scale: 1.02, y: -2 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() =>
-  handlePayment(
-    book.discount
-      ? (book.price - (book.price * book.discount) / 100) * quantity
-      : book.price * quantity,
-    [
-      {
-        bookId: book._id || book.id,
-        quantity: quantity,
-      },
-    ]
-  )
-}
+                  onClick={() => {
+                    const amountInRupees = book.discount
+                      ? (book.price - (book.price * book.discount) / 100) * quantity
+                      : book.price * quantity;
+                    handlePayment(
+                      amountInRupees * 100, // Convert to paise
+                      [
+                        {
+                          bookId: book._id || book.id,
+                          quantity: quantity,
+                          title: book.title,
+                          author: book.author,
+                          price: book.price,
+                          discount: book.discount || 0,
+                          coverImage: book.coverImage || book.image,
+                        },
+                      ]
+                    );
+                  }}
                   className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   <span className="flex items-center justify-center gap-2">
@@ -500,111 +522,7 @@ export default function BookDetailView(props) {
         {/* REVIEWS SECTION */}
         <Reviews bookId={id} />
  
-        {/* RELATED BOOKS */}
-        {relatedBooks && relatedBooks.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.6 }}
-            className="mt-8 lg:mt-12"
-          >
-            <div className="bg-white rounded-3xl shadow-xl p-6 lg:p-8">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  More from {book?.category}
-                </h2>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate(`/search?category=${book?.category}`)}
-                  className="text-blue-600 hover:text-blue-700 font-semibold transition-colors"
-                >
-                  View All →
-                </motion.button>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-                {relatedBooks.map((relatedBook, index) => (
-                  <motion.div
-                    key={relatedBook.id || index}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 1.7 + index * 0.1 }}
-                    whileHover={{ y: -8, scale: 1.02 }}
-                    className="group cursor-pointer"
-                    onClick={() => navigate(`/books/${relatedBook.id}`)}
-                  >
-                    <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-4 text-center hover:shadow-xl transition-all duration-300">
-                      <div className="relative overflow-hidden rounded-xl mb-3">
-                        <motion.img
-                          src={relatedBook.image || relatedBook.cover}
-                          alt={relatedBook.title}
-                          className="w-full h-40 object-cover"
-                          whileHover={{ scale: 1.1 }}
-                          transition={{ duration: 0.3 }}
-                        />
-                        {relatedBook.discount && (
-                          <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-                            {relatedBook.discount}% OFF
-                          </div>
-                        )}
-                      </div>
-
-                      <h3 className="font-semibold text-sm text-gray-800 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                        {relatedBook.title}
-                      </h3>
-
-                      <p className="text-xs text-gray-600 mb-2">
-                        by {relatedBook.author}
-                      </p>
-
-                      <div className="flex items-center justify-center gap-1 mb-3">
-                        <div className="flex text-yellow-400">
-                          {[...Array(5)].map((_, i) => (
-                            <svg
-                              key={i}
-                              className="w-3 h-3"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                            </svg>
-                          ))}
-                        </div>
-                        <span className="text-xs text-gray-500">
-                          ({relatedBook.reviewsCount || 0})
-                        </span>
-                      </div>
-
-                      <div className="flex items-center justify-between mb-3">
-                        <p className="text-lg font-bold text-green-600">
-                          ₹{relatedBook.price}
-                        </p>
-                        {relatedBook.oldPrice && (
-                          <p className="text-sm text-gray-400 line-through">
-                            ₹{relatedBook.oldPrice}
-                          </p>
-                        )}
-                      </div>
-
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          console.log("Added to cart:", relatedBook.title);
-                        }}
-                        className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 rounded-xl font-medium text-sm hover:shadow-lg transition-all duration-300"
-                      >
-                        Add to Cart
-                      </motion.button>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )} 
+        
 
         {/* OFFERS SECTION */}
         {book.offers && book.offers.length > 0 && (
@@ -652,58 +570,7 @@ export default function BookDetailView(props) {
           </motion.div>
         )}
 
-        {/* DELIVERY SECTION
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2.0 }}
-          className="mt-8 lg:mt-12"
-        >
-          <div className="bg-white rounded-3xl shadow-xl p-6 lg:p-8">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Check Delivery
-            </h2>
-
-            <div className="flex flex-col sm:flex-row gap-4 mb-4">
-              <motion.input
-                type="text"
-                value={pincode}
-                onChange={(e) =>
-                  setPincode(e.target.value.replace(/\D/g, "").slice(0, 6))
-                }
-                placeholder="Enter 6-digit Pincode"
-                className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-2xl focus:border-blue-500 focus:outline-none transition-all duration-300"
-                whileFocus={{ scale: 1.02 }}
-              />
-
-              <motion.button
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={checkDelivery}
-                className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-3 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                Check Availability
-              </motion.button>
-            </div>
-
-            <AnimatePresence>
-              {deliveryResult && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className={`p-4 rounded-2xl ${
-                    deliveryResult.includes("✅")
-                      ? "bg-green-50 border-2 border-green-200 text-green-700"
-                      : "bg-red-50 border-2 border-red-200 text-red-700"
-                  }`}
-                >
-                  {deliveryResult}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </motion.div> */}
+       
       </div>
     </div>
   );

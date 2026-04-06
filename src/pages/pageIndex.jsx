@@ -3,6 +3,7 @@ import LoginContainer from "./auth/login/loginContainer";
 import RegisterContainer from "./auth/register/registerContainer";
 import ForgotpasswordContainer from "./auth/forgot-password/forgotpasswordContainer"; 
 import ResetPasswordContainer from "./auth/reset-password/resetPasswordContainer";
+import SettingsContainer from "./setting/settingsContainer"
 import ErrorContainer from "./error/errorContainer";
 import SearchContainer from "./search/searchContainer";
 import LibraryContainer from "./library/libraryContainer";
@@ -20,6 +21,7 @@ export {
   RegisterContainer,
   ForgotpasswordContainer,
   ResetPasswordContainer,
+  SettingsContainer,
   ErrorContainer,
   SearchContainer,
   LibraryContainer,

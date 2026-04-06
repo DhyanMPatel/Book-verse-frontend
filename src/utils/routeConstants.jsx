@@ -7,6 +7,7 @@ const RouteConstants = {
   register: "/register",
   forgotPassword: "/forgot-password",
   resetPassword: "/reset-password/:token",
+  settings: "/settings",
   search: "/search",
   booksdetails: "/book/:id",
   library: "/library",

@@ -3,6 +3,7 @@ import axiosInstance from "../../../services/axiosInstance";
 import AdminUsersView from "./AdminUsersView";
 import CreateUser from "./component/CreateUser";
 import UpdateUser from "./component/UpdateUser";
+import ViewUser from "./component/ViewUser";
 import Swal from "sweetalert2";
 
 const AdminUsersContainer = () => {
@@ -10,10 +11,34 @@ const AdminUsersContainer = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
-  const handleView = (row) => {
-    console.log("View user:", row);
+  const handleView = async (row) => {
+    try {
+      const userId = row.id || row._id;
+      const response = await axiosInstance.get(`/user/${userId}`);
+      const userData = response?.data?.data;
+      
+      if (!userData) {
+        Swal.fire("Error", "User details not found", "error");
+        return;
+      }
+
+      setSelectedUser({
+        ...userData,
+        id: userData.id || userData._id,
+      });
+      setIsViewModalOpen(true);
+    } catch (error) {
+      console.error("❌ Failed to fetch user details:", error);
+      Swal.fire("Error", "Failed to load user details", "error");
+    }
+  };
+
+  const handleCloseViewModal = () => {
+    setIsViewModalOpen(false);
+    setSelectedUser(null);
   };
 
   const handleAddUserModal = () => {
@@ -24,19 +49,41 @@ const AdminUsersContainer = () => {
     setIsModalOpen(false);
   };
 
+  // const handleCreateUser = async (formData) => {
+  //   try {
+  //     const response = await axiosInstance.post("/user/create", formData);
+
+  //     const newUser = response?.data?.data?.user;
+
+  //     console.log("User created:", newUser);
+
+  //     setUserList((prev) => [newUser, ...prev]);
+  //   } catch (error) {
+  //     console.error("Create user failed:", error);
+  //   }
+  // };
+
   const handleCreateUser = async (formData) => {
-    try {
-      const response = await axiosInstance.post("/user/create", formData);
+  try {
+    const payload = {
+      ...formData,
+      role: "user",
+    };
 
-      const newUser = response?.data?.data?.user;
+    console.log("Sending payload:", payload);
 
-      console.log("User created:", newUser);
+    const response = await axiosInstance.post("/user/create", payload);
 
-      setUserList((prev) => [newUser, ...prev]);
-    } catch (error) {
-      console.error("Create user failed:", error);
-    }
-  };
+    console.log("Response:", response.data);
+
+    const newUser = response?.data?.data?.user;
+
+    setUserList((prev) => [newUser, ...prev]);
+  } catch (error) {
+    console.error("Create user failed:", error);
+    console.log("Backend error:", error?.response?.data); // 👈 IMPORTANT
+  }
+};
 
  
   const handleEdit = (row) => {
@@ -128,6 +175,11 @@ const AdminUsersContainer = () => {
         isOpen={isEditModalOpen}
         onClose={handleCloseEditModal}
         onSubmit={handleUpdateUser}
+        userData={selectedUser}
+      />
+      <ViewUser
+        isOpen={isViewModalOpen}
+        onClose={handleCloseViewModal}
         userData={selectedUser}
       />
     </>

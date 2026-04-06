@@ -157,6 +157,19 @@ export const AppRoutes = [
           </PrivateRoute>
         ),
       }, 
+      //settings route
+      //  {
+      //   path: RouteConstants.booksdetails,
+      //   element: (
+      //     <PrivateRoute>
+      //       <Suspense fallback="loading">
+      //         <div className="pt-[64px]">
+      //           <BooksDetailContainer />
+      //         </div>
+      //       </Suspense>
+      //     </PrivateRoute>
+      //   ),
+      // }, 
       
       // Admin routes
       {
@@ -207,6 +220,18 @@ export const AppRoutes = [
           </AdminRoute>
         ),
       },
+      //  {
+      //   path: RouteConstants.adminOrders,
+      //   element: (
+      //     <AdminRoute>
+      //       <Suspense fallback="loading">
+      //         <div className="page-content">
+      //           <AdminOrdersContainer />
+      //         </div>
+      //       </Suspense>
+      //     </AdminRoute>
+      //   ),
+      // },
     ],
   },
 ];
