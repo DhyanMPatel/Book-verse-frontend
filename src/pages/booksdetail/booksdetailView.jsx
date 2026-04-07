@@ -9,12 +9,12 @@ import Swal from "sweetalert2";
 import { Heart } from "lucide-react";
 
 export default function BookDetailView(props) {
-   const {handlePayment, isProcessing} = props;
-   const [liked, setLiked] = useState(false);
+   const {handlePayment, isProcessing, handleClickWishlist, liked} = props;
+  // const { handlePayment, isProcessing, handleClickWishlist, liked } = props;
+  //  const [liked, setLiked] = useState(false);
   const [book, setBook] = useState(null);
   const [showCheckout, setShowCheckout] = useState(false);
   const [expanded, setExpanded] = useState(false);
-  const [pincode, setPincode] = useState("");
   const [deliveryResult, setDeliveryResult] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,16 +25,6 @@ export default function BookDetailView(props) {
   const navigate = useNavigate();
 
   const { fetchReviews, reviews } = useReviews();
- 
-  const handleClick = () => {
-    setLiked((prev) => !prev);
-
-    if (!liked) {
-      console.log("❤️ Added to wishlist");
-    } else {
-      console.log("🤍 Removed from wishlist");
-    }
-  };
 
   // Fetch book data
   useEffect(() => {
@@ -86,7 +76,7 @@ export default function BookDetailView(props) {
       bookId: book._id || book.id,
       quantity: quantity,
     };
-
+    // await axiosInstance.put("/cart/update", payload);
     const response = await axiosInstance.post("/cart/add", payload);
 
     console.log("Cart response:", response.data);
@@ -275,8 +265,8 @@ export default function BookDetailView(props) {
       <motion.button
         whileHover={{ scale: 1.1, rotate: 10 }}
         whileTap={{ scale: 0.9 }}
-        onClick={handleClick}
-        className="bg-white/90 backdrop-blur-sm p-2 sm:p-3 rounded-full shadow-md sm:shadow-lg cursor-pointer flex items-center justify-center"
+onClick={() => handleClickWishlist(book)}    
+    className="bg-white/90 backdrop-blur-sm p-2 sm:p-3 rounded-full shadow-md sm:shadow-lg cursor-pointer flex items-center justify-center"
       >
         <Heart
           className={`w-4 h-4 sm:w-5 sm:h-5 transition-all duration-300 ${

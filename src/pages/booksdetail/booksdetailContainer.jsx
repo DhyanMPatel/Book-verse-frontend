@@ -8,8 +8,10 @@ import axiosInstance from '../../services/axiosInstance';
 
 const BooksDetailContainer = () => {
   const [isProcessing, setIsProcessing] = useState(false);
+  const [liked, setLiked] = useState(false);
+
 const user = JSON.parse(localStorage.getItem('user')) || {};
-  const handlePayment = async (amount, cartItems) => {
+const handlePayment = async (amount, cartItems) => {
     if (!user?._id) {
   toast.error("User not logged in");
   return;
@@ -60,10 +62,54 @@ const user = JSON.parse(localStorage.getItem('user')) || {};
       setIsProcessing(false);
     }
   }
- 
+
+
+const handleClickWishlist = async (book) => {
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (!user?._id) {
+    toast.error("Please login first");
+    return;
+  }
+
+  const bookId = book._id || book.id || book.bookId;
+
+  try {
+    if (!liked) {
+      // ADD TO WISHLIST
+      await axiosInstance.post("/wishlist/add", { bookId });
+      setLiked(true);
+      Swal.fire({ icon: "success", title: "Added to Wishlist ❤️", text: book.title });
+
+    } else {
+      // REMOVE FROM WISHLIST
+      await axiosInstance.delete(`/wishlist/remove/${bookId}`);
+      setLiked(false);
+      Swal.fire({ icon: "info", title: "Removed from Wishlist 🤍", text: book.title });
+    }
+
+  } catch (error) {
+    console.error(error);
+
+    // ✅ If already in wishlist (400), just sync the state and remove it
+    if (error.response?.status === 400 && !liked) {
+      setLiked(true); // sync state to reality
+      toast.info("Already in wishlist — click again to remove");
+      return;
+    }
+
+    toast.error(error.response?.data?.message || "Wishlist error");
+  }
+};
+
   return (
     <div>
-      <BookDetailView handlePayment={handlePayment} isProcessing={isProcessing} />
+      <BookDetailView 
+      handlePayment={handlePayment}
+      isProcessing={isProcessing}
+      handleClickWishlist={handleClickWishlist}
+      liked={liked}
+      />
     </div>
   )
 }
