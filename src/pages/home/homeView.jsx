@@ -1,16 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
-import axiosInstance from "../../services/axiosInstance";
-import CouponCard from "../../components/CouponCard";
 import "./homeStyle.css";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import {
   Book,
-  BookOpen,
   DollarSign,
   Smartphone,
   ChevronsLeft,
@@ -18,128 +13,27 @@ import {
   MoveRight,
 } from "lucide-react";
 
-/**
- * HomeView
- * - Smaller/compact book cards compared to your original version
- * - Keeps sliders for books and categories (react-slick)
- * - Keeps framer-motion hero animations
- *
- * Notes:
- * - This uses Tailwind utility classes (as in your original). If you don't use Tailwind,
- *   you'll need to convert the classes to your CSS.
- * - If you rely on `line-clamp-2`, ensure Tailwind line-clamp plugin is enabled or replace with CSS truncation.
- */
-
-const HomeView = () => {
-  const sliderRef1 = useRef(null);
-  const sliderRef2 = useRef(null);
+const HomeView = ({
+  sliderRef1,
+  sliderRef2,
+  books,
+  categories,
+  selectedCategory,
+  setSelectedCategory,
+  loading,
+  error,
+  filteredBooks,
+  bookSettings,
+  categorySettings,
+  features,
+}) => {
   const navigate = useNavigate();
-  const [books, setBooks] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  // Double click function
+
   const handleDoubleClick = (id) => {
     navigate(`/book/${id}`);
   };
-  // Get category icon function
 
-  const getCategoryIcon = (category) => {
-    const icons = {
-      Fiction: "",
-      "Non-Fiction": "",
-      Science: "",
-      Technology: "",
-      Business: "",
-      History: "",
-      Biography: "",
-      "Self-Help": "",
-      Romance: "",
-      Mystery: "",
-      Fantasy: "",
-      Horror: "",
-      Poetry: "",
-      Drama: "",
-      Adventure: "",
-      Children: "",
-      Cooking: "",
-      Travel: "",
-      Art: "",
-      Music: "",
-    };
-
-    return icons[category] || "";
-  };
-
-  // FETCH BOOKS
-
-  useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        setLoading(true);
-
-        const response = await axiosInstance.get("/books/all");
-
-        const apiBooks = response?.data?.data?.books || [];
-
-        setBooks(apiBooks);
-
-        const uniqueCategories = [
-          ...new Set(apiBooks.map((book) => book.category || "Uncategorized")),
-        ];
-
-        setCategories(uniqueCategories);
-
-        if (uniqueCategories.length > 0) {
-          setSelectedCategory(uniqueCategories[0]);
-        }
-      } catch (err) {
-        console.error(err);
-
-        setError("Failed to load books");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBooks();
-  }, []);
-
-  // FILTER BOOKS BY CATEGORY
-
-  const filteredBooks = books.filter(
-    (book) => book.category === selectedCategory,
-  );
-
-  // BOOK SLIDER SETTINGS (kept mostly same; you can increase slidesToShow to show more)
-
-  const bookSettings = {
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    arrows: true,
-    infinite: false,
-    responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 3 } },
-      { breakpoint: 768, settings: { slidesToShow: 2 } },
-      { breakpoint: 480, settings: { slidesToShow: 1 } },
-    ],
-  };
-
-  // CATEGORY SLIDER SETTINGS
-
-  const categorySettings = {
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    arrows: false,
-    // swipeToSlide: true,
-    centerMode: true,
-    focusOnSelect: true,
-    responsive: [
-      { breakpoint: 768, settings: { slidesToShow: 4 } },
-      { breakpoint: 480, settings: { slidesToShow: 3 } },
-    ],
-  };
+  const getCategoryIcon = () => "";
 
   if (loading)
     return (
@@ -535,25 +429,9 @@ const HomeView = () => {
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                icon: Book,
-                title: "Vast Collection",
-                description:
-                  "Thousands of books across multiple genres and categories",
-              },
-              {
-                icon: DollarSign,
-                title: "Best Prices",
-                description: "Competitive prices and amazing discounts",
-              },
-              {
-                icon: Smartphone,
-                title: "Read Anywhere",
-                description: "Access your books on any device anytime",
-              },
-            ].map((feature, index) => {
-              const Icon = feature.icon;
+            {features.map((feature, index) => {
+              const icons = [Book, DollarSign, Smartphone];
+              const Icon = icons[index];
 
               return (
                 <motion.div

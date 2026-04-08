@@ -36,7 +36,7 @@ const LibraryView = ({ books, onDownload, onRead }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={springTransition}
-      className="bg-white rounded-2xl shadow-xl p-6 lg:p-8"
+      className="bg-white rounded-2xl shadow-xl p-4 lg:p-6"
     >
       {/* Header */}
       <motion.div 
@@ -74,7 +74,7 @@ const LibraryView = ({ books, onDownload, onRead }) => {
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
       >
         <AnimatePresence mode="popLayout">
           {books.map((book) => (
@@ -88,23 +88,31 @@ const LibraryView = ({ books, onDownload, onRead }) => {
                 scale: 1.02,
                 transition: springTransition
               }}
-              className="group bg-gray-50 rounded-2xl p-4 hover:shadow-xl transition-shadow"
+              className="group bg-gray-50 rounded-2xl p-3 hover:shadow-xl transition-shadow"
             >
               {/* Book Cover */}
-              <div className="relative w-full h-40 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl mb-4 flex items-center justify-center overflow-hidden">
-                <motion.div
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  transition={springTransition}
-                >
-                  <Book className="w-12 h-12 text-blue-600" />
-                </motion.div>
-                
-                {/* Format Badge */}
-                <span className="absolute top-2 left-2 px-2 py-1 bg-white/90 rounded-md text-xs font-medium text-gray-700 flex items-center gap-1">
-                  {getFormatIcon(book.format)}
-                  {book.format}
-                </span>
-              </div>
+             <div className="relative w-full h-36 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl mb-3 flex items-center justify-center overflow-hidden">
+  {book.cover ? (
+    <img
+      src={book.cover}
+      alt={book.title}
+      className="w-full h-full object-cover rounded-xl"
+    />
+  ) : (
+    <motion.div
+      whileHover={{ scale: 1.1, rotate: 5 }}
+      transition={springTransition}
+    >
+      <Book className="w-12 h-12 text-blue-600" />
+    </motion.div>
+  )}
+
+  {/* Format Badge */}
+  <span className="absolute top-2 left-2 px-2 py-1 bg-white/90 rounded-md text-xs font-medium text-gray-700 flex items-center gap-1">
+    {getFormatIcon(book.format)}
+    {book.format}
+  </span>
+</div>
 
               {/* Book Info */}
               <h3 className="font-semibold text-gray-800 text-sm mb-1 line-clamp-1">{book.title}</h3>
