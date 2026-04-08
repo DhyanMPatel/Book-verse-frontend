@@ -1,114 +1,30 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { User, ShoppingBag, Heart, Settings, LogOut, Check } from 'lucide-react'
-import { useAuth } from "../../hooks/useAuth";
+import { User, ShoppingBag, Heart, LogOut, Check } from 'lucide-react'
 
 import PersonalInfo from './components/PersonalInfo'
 import ProfileSidebar from './components/ProfileSidebar'
 import OrderHistory from './components/OrderHistory'
 import Wishlist from './components/Wishlist'
 
-
-const ProfileView = () => {
-  const [activeTab, setActiveTab] = useState('personal')
-  const [isEditing, setIsEditing] = useState(false)
-  const [showSuccess, setShowSuccess] = useState(false)
-  const [profileImage, setProfileImage] = useState('/api/placeholder/150/150')
-  const { logout } = useAuth();
-  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-
-  const [profileData, setProfileData] = useState({
-    firstName: 'Nisarg',
-    lastName: 'patel',
-    email: 'nisargpatel@gmail.com',
-    phone: '+91 98765 43210',
-    dateOfBirth: '1995-06-15',
-    address: {
-      street: '123 Main Street',
-      city: 'Mumbai',
-      state: 'Maharashtra',
-      pincode: '400001',
-      country: 'India'
-    },
-    preferences: {
-      newsletter: true,
-      notifications: true,
-      darkMode: false
-    }
-  })
-
-  const [tempProfileData, setTempProfileData] = useState(profileData)
-
-const handleLogout = () => {
-    logout();
-    setProfileDropdownOpen(false);
-  };
-
-  const userStats = {
-    totalOrders: 24,
-    totalBooks: 47,
-    wishlistItems: 12,
-    memberSince: '2022-01-15'
-  }
-
-  const orderHistory = [
-    {
-      id: 'ORD001',
-      date: '2024-03-10',
-      total: 1299,
-      status: 'Delivered',
-      books: []
-    },
-    {
-      id: 'ORD002',
-      date: '2024-02-28',
-      total: 899,
-      status: 'Delivered',
-      books: []
-    }
-  ]
-
-  const tabs = [
-    { id: 'personal', label: 'Personal Info', icon: User },
-    { id: 'orders', label: 'Order History', icon: ShoppingBag },
-    { id: 'wishlist', label: 'Wishlist', icon: Heart },
-  ]
-
-  // Handlers
-  const handleEdit = () => {
-    setTempProfileData(profileData)
-    setIsEditing(true)
-  }
-
-  const handleSave = () => {
-    setProfileData(tempProfileData)
-    setIsEditing(false)
-    setShowSuccess(true)
-    setTimeout(() => setShowSuccess(false), 3000)
-  }
-
-  const handleCancel = () => {
-    setTempProfileData(profileData)
-    setIsEditing(false)
-  }
-
-  const handleInputChange = (field, value) => {
-    setTempProfileData(prev => ({
-      ...prev,
-      [field]: value
-    }))
-  }
-
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setProfileImage(reader.result)
-      }
-      reader.readAsDataURL(file)
-    }
-  }
+const ProfileView = ({
+  activeTab,
+  setActiveTab,
+  isEditing,
+  showSuccess,
+  profileImage,
+  profileData,
+  tempProfileData,
+  userStats,
+  orderHistory,
+  tabs,
+  handleLogout,
+  handleEdit,
+  handleSave,
+  handleCancel,
+  handleInputChange,
+  handleImageUpload
+}) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -144,7 +60,6 @@ const handleLogout = () => {
         {/* Sidebar */}
         <ProfileSidebar
           profileImage={profileImage}
-          setProfileImage={setProfileImage}
           profileData={profileData}
           userStats={userStats}
           tabs={tabs}

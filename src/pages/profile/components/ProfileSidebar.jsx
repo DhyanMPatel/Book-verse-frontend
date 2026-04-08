@@ -22,7 +22,7 @@ const ProfileSidebar = ({
     >
       <div className="bg-white rounded-2xl shadow-xl p-6 text-center">
         {/* Profile Image */}
-        <div className="relative inline-block mb-4">
+        {/* <div className="relative inline-block mb-4">
           <motion.img
             src={profileImage}
             alt="Profile"
@@ -44,7 +44,7 @@ const ProfileSidebar = ({
               />
             </motion.label>
           )}
-        </div>
+        </div> */}
 
         <h2 className="text-xl font-bold text-gray-800">
           {profileData.firstName} {profileData.lastName}
@@ -56,13 +56,14 @@ const ProfileSidebar = ({
           <div className="bg-blue-50 rounded-xl p-3">
             <Book className="w-6 h-6 text-blue-600 mx-auto mb-1" />
             <p className="text-2xl font-bold text-blue-600">
-              {userStats.totalBooks}
+{userStats.totalOrders}
             </p>
           </div>
           <div className="bg-green-50 rounded-xl p-3">
             <ShoppingBag className="w-6 h-6 text-green-600 mx-auto mb-1" />
             <p className="text-2xl font-bold text-green-600">
-              {userStats.totalOrders}
+                         {userStats.totalBooks}
+
             </p>
           </div>
         </div>
@@ -100,3 +101,4 @@ const ProfileSidebar = ({
 };
 
 export default ProfileSidebar;
+

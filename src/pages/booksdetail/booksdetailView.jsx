@@ -409,7 +409,7 @@ onClick={() => handleClickWishlist(book)}
                       ? (book.price - (book.price * book.discount) / 100) * quantity
                       : book.price * quantity;
                     handlePayment(
-                      amountInRupees * 100, // Convert to paise
+                      amountInRupees, // Convert to paise
                       [
                         {
                           bookId: book._id || book.id,
