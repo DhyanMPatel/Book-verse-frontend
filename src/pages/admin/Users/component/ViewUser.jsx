@@ -245,9 +245,9 @@ const ViewUser = ({ isOpen, onClose, userData }) => {
   
   const [loadingStats, setLoadingStats] = useState(false);
   const [stats, setStats] = useState({
-    wishlist: 0,
-    cart: 0,
-    orders: 0,
+    wishlist: userData?.wishlist?.length || 0,
+    cart: userData?.cart?.length || 0,
+    orders: userData?.orders?.length || 0,
   });
 
   const formatDate = (dateString) => {
@@ -270,36 +270,36 @@ const ViewUser = ({ isOpen, onClose, userData }) => {
     });
   };
 
-  useEffect(() => {
-    const fetchUserStats = async () => {
-      if (!userData?._id) return;
+  // useEffect(() => {
+  //   const fetchUserStats = async () => {
+  //     if (!userData?._id) return;
       
-      setLoadingStats(true);
-      try {
-        const res = await axiosInstance.get(
-          `/admin/user-stats/${userData._id}`
-        );
-        console.log("Fetched user stats:", res.data);
-        setStats({
-          wishlist: res.data?.wishlist || 0,
-          orders: res.data?.orders || 0,
-          cart: res.data?.cart || 0,
-        });
-      } catch (error) {
-        console.error("Error fetching stats:", error);
-        // Keep default values on error
-        setStats({
-          wishlist: 0,
-          cart: 0,
-          orders: 0,
-        });
-      } finally {
-        setLoadingStats(false);
-      }
-    };
+  //     setLoadingStats(true);
+  //     try {
+  //       const res = await axiosInstance.get(
+  //         `/admin/user-stats/${userData._id}`
+  //       );
+  //       console.log("Fetched user stats:", res.data);
+  //       setStats({
+  //         wishlist: res.data?.wishlist || 0,
+  //         orders: res.data?.orders || 0,
+  //         cart: res.data?.cart || 0,
+  //       });
+  //     } catch (error) {
+  //       console.error("Error fetching stats:", error);
+  //       // Keep default values on error
+  //       setStats({
+  //         wishlist: 0,
+  //         cart: 0,
+  //         orders: 0,
+  //       });
+  //     } finally {
+  //       setLoadingStats(false);
+  //     }
+  //   };
 
-    fetchUserStats();
-  }, [userData?._id]);
+  //   fetchUserStats();
+  // }, [userData?._id]);
   if (!isOpen || !userData) return null;
 
   return (
@@ -417,7 +417,7 @@ const ViewUser = ({ isOpen, onClose, userData }) => {
                   />
                   <StatCard 
                     label="Wishlist Items" 
-                    value={stats.wishlist} 
+                    value={userData?.wishlist?.length || 0} 
                     color="purple" 
                     loading={loadingStats}
                   />
