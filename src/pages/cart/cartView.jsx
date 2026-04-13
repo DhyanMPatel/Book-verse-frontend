@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, X } from "lucide-react";
 import axiosInstance from "../../services/axiosInstance";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const CartView = (props) => {
   const { handlePayment, isProcessing, onClearCart } = props;
@@ -66,20 +67,41 @@ const CartView = (props) => {
   // const shipping = subtotal > 500 ? 0 : 50
   const total = subtotal - discount;
 
-  // APPLY COUPON
-  const applyCoupon = () => {
+  // APPLY COUPON - Dynamic from backend
+  const applyCoupon = async () => {
     if (!couponCode) {
-      alert("Please enter a coupon code");
+      toast.warning("Please enter a coupon code");
       return;
     }
 
-    const code = couponCode.trim().toLowerCase();
-    if (code === "save10") {
-      setDiscount(subtotal * 0.1);
-    } else if (code === "save20") {
-      setDiscount(subtotal * 0.2);
-    } else {
-      alert("Invalid coupon code");
+    try {
+      const code = couponCode.trim();
+      const response = await axiosInstance.get(`/coupons/validate/${code}`);
+      
+      // Backend returns { success: true, data: { couponCode, discount, discountType } }
+      const isValid = response.data?.success === true;
+      const couponData = response.data?.data;
+
+      if (isValid && couponData) {
+        let calculatedDiscount = 0;
+
+        if (couponData.discountType === "percentage") {
+          calculatedDiscount = (subtotal * couponData.discount) / 100;
+        } else {
+          // Fixed amount
+          calculatedDiscount = couponData.discount;
+        }
+
+        setDiscount(calculatedDiscount);
+        toast.success(`Coupon applied! You saved ₹${Math.round(calculatedDiscount)}`);
+      } else {
+        toast.error("Invalid or expired coupon code");
+        setDiscount(0);
+      }
+    } catch (error) {
+      console.error("Coupon validation error:", error);
+      toast.error(error.response?.data?.message || "Failed to validate coupon");
+      setDiscount(0);
     }
   };
 

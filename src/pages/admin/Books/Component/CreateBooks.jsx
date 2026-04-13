@@ -265,16 +265,16 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
           </div>
 
           <form onSubmit={formik.handleSubmit} className="flex flex-col flex-1 min-h-0">
-            <div className="flex-1 overflow-y-auto p-6 min-h-0">
-              <div className="space-y-6">
-                <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-100">
+            <div className="flex-1 overflow-y-auto p-4 min-h-0">
+              <div className="space-y-4">
+                <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3 pb-2 border-b border-gray-100">
                     Basic Information
                   </h3>
 
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         Title
                       </label>
                       <input
@@ -283,7 +283,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                         value={formik.values.title}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                           formik.errors.title && formik.touched.title
                             ? "border-red-500"
                             : "border-gray-300"
@@ -302,7 +302,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         Author
                       </label>
                       <input
@@ -311,7 +311,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                         value={formik.values.author}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                           formik.errors.author && formik.touched.author
                             ? "border-red-500"
                             : "border-gray-300"
@@ -330,7 +330,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         ISBN
                       </label>
                       <input
@@ -339,7 +339,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                         value={formik.values.isbn}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                           formik.errors.isbn && formik.touched.isbn
                             ? "border-red-500"
                             : "border-gray-300"
@@ -358,7 +358,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         Description
                       </label>
                       <textarea
@@ -366,8 +366,8 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                         value={formik.values.description}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        rows="4"
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                        rows="3"
+                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                           formik.errors.description && formik.touched.description
                             ? "border-red-500"
                             : "border-gray-300"
@@ -387,14 +387,14 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-100">
+                <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3 pb-2 border-b border-gray-100">
                     Pricing & Inventory
                   </h3>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         Category
                       </label>
                       <select
@@ -402,7 +402,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                         value={formik.values.categoryId}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                           formik.errors.categoryId && formik.touched.categoryId
                             ? "border-red-500"
                             : "border-gray-300"
@@ -427,7 +427,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         Price (₹)
                       </label>
                       <input
@@ -438,7 +438,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                         onBlur={formik.handleBlur}
                         step="0.01"
                         min="0"
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                           formik.errors.price && formik.touched.price
                             ? "border-red-500"
                             : "border-gray-300"
@@ -457,7 +457,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         Discount (%)
                       </label>
                       <input
@@ -469,7 +469,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                         step="0.01"
                         min="0"
                         max="100"
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                           formik.errors.discount && formik.touched.discount
                             ? "border-red-500"
                             : "border-gray-300"
@@ -488,7 +488,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         Stock
                       </label>
                       <input
@@ -498,7 +498,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         min="0"
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                           formik.errors.stock && formik.touched.stock
                             ? "border-red-500"
                             : "border-gray-300"
@@ -518,14 +518,14 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-100">
+                <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3 pb-2 border-b border-gray-100">
                     Additional Details
                   </h3>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         Pages
                       </label>
                       <input
@@ -535,7 +535,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         min="1"
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                           formik.errors.pages && formik.touched.pages
                             ? "border-red-500"
                             : "border-gray-300"
@@ -554,7 +554,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         Language
                       </label>
                       <input
@@ -563,7 +563,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                         value={formik.values.language}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                           formik.errors.language && formik.touched.language
                             ? "border-red-500"
                             : "border-gray-300"
@@ -582,7 +582,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         Publisher
                       </label>
                       <input
@@ -591,7 +591,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                         value={formik.values.publisher}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                           formik.errors.publisher && formik.touched.publisher
                             ? "border-red-500"
                             : "border-gray-300"
@@ -610,7 +610,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         Published Date
                       </label>
                       <input
@@ -620,7 +620,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         max={new Date().toISOString().split("T")[0]}
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                           formik.errors.publishedDate &&
                           formik.touched.publishedDate
                             ? "border-red-500"
@@ -641,14 +641,14 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-100">
+                <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3 pb-2 border-b border-gray-100">
                     Files
                   </h3>
 
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         Cover Image
                       </label>
                       <div className="space-y-2">
@@ -658,7 +658,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                           onChange={handleCoverImageChange}
                           accept=".jpg,.jpeg,.png,.webp"
                           multiple={false}
-                          className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                          className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                             formik.errors.coverImage && formik.touched.coverImage
                               ? "border-red-500"
                               : "border-gray-300"
@@ -705,16 +705,16 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         Book Softcopy (PDF)
                       </label>
-                      <div className="space-y-2">
+                      <div className="space-y-1">
                         <input
                           type="file"
                           name="fileUrl"
                           onChange={handleFileUrlChange}
                           accept=".pdf"
-                          className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                          className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
                             formik.errors.fileUrl && formik.touched.fileUrl
                               ? "border-red-500"
                               : "border-gray-300"

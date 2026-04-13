@@ -21,7 +21,7 @@ const RouteConstants = {
   adminUsers: "/admin/users",
   adminBooks: "/admin/books",
   adminOrders: "/admin/orders",
-  adminSettings: "/admin/settings",
+  admincoupons: "/admin/coupons",
 };
 
 export default RouteConstants;

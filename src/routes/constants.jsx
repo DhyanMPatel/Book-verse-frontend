@@ -19,11 +19,15 @@ import {
   AdminUsersContainer,
   AdminBooksContainer,
   AdminOrdersContainer,
+  AdminCouponContainer,
+
+
 } from "../pages/admin/pageIndex";
 import RouteConstants from "../utils/routeConstants";
 import PrivateRoute from "./privateRoutes";
 import PublicRoute from "./publicRoutes";
 import AdminRoute from "./adminRoutes";
+
 
 export const AppRoutes = [
   {
@@ -220,18 +224,18 @@ export const AppRoutes = [
           </AdminRoute>
         ),
       },
-      //  {
-      //   path: RouteConstants.adminOrders,
-      //   element: (
-      //     <AdminRoute>
-      //       <Suspense fallback="loading">
-      //         <div className="page-content">
-      //           <AdminOrdersContainer />
-      //         </div>
-      //       </Suspense>
-      //     </AdminRoute>
-      //   ),
-      // },
+       {
+        path: RouteConstants.admincoupons,
+        element: (
+          <AdminRoute>
+            <Suspense fallback="loading">
+              <div className="page-content">
+                <AdminCouponContainer />
+              </div>
+            </Suspense>
+          </AdminRoute>
+        ),
+      },
     ],
   },
 ];

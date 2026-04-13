@@ -190,7 +190,7 @@ const ProfileContainer = () => {
   const [profileImage, setProfileImage] = useState('/api/placeholder/150/150')
 
   // Auth
-  const { logout } = useAuth();
+  const { logout, isAdmin } = useAuth();
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   // Profile data state
@@ -262,11 +262,14 @@ const ProfileContainer = () => {
   }, []);
 
   // ✅ Tabs use actual lucide components, not strings
-  const tabs = [
+  // Filter tabs based on user role - admin only sees Personal Info
+  const allTabs = [
     { id: 'personal', label: 'Personal Info', icon: User },
     { id: 'orders', label: 'Order History', icon: ShoppingBag },
     { id: 'wishlist', label: 'Wishlist', icon: Heart },
   ]
+
+  const tabs = isAdmin?.() ? allTabs.filter(tab => tab.id === 'personal') : allTabs
 
   // Handlers
   const handleLogout = () => {
@@ -327,6 +330,7 @@ const ProfileContainer = () => {
       handleCancel={handleCancel}
       handleInputChange={handleInputChange}
       handleImageUpload={handleImageUpload}
+      isAdmin={isAdmin?.()}
     />
   )
 }

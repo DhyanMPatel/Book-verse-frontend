@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import Slider from "react-slick";
+import CouponCard from "../../components/CouponCard";
 import "./homeStyle.css";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
@@ -26,6 +28,9 @@ const HomeView = ({
   bookSettings,
   categorySettings,
   features,
+  handleAddToCart,
+  coupons = [],
+  couponLoading = false,
 }) => {
   const navigate = useNavigate();
 
@@ -302,25 +307,33 @@ const HomeView = ({
 
                       <p className="book-author">by {book.author}</p>
 
-                      <div className="book-rating">
-                        <div className="stars">
-                          {[...Array(5)].map((_, i) => (
-                            <svg
-                              key={i}
-                              width="14"
-                              height="14"
-                              viewBox="0 0 24 24"
-                              fill={i < 4 ? "currentColor" : "none"}
-                              stroke="currentColor"
-                              strokeWidth="1"
-                            >
-                              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                          ))}
-                        </div>
-
-                        <span className="rating-text">(4.0)</span>
-                      </div>
+                      {/* Rating - matches book details page style */}
+                      {(() => {
+                        const rating = Number(book.rating || book.avgRating || book.averageRating || 0);
+                        const reviewCount = book.reviewCount || book.reviews || 0;
+                        return (
+                          <div className="book-rating">
+                            <div className="stars">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <svg
+                                  key={star}
+                                  width="14"
+                                  height="14"
+                                  viewBox="0 0 24 24"
+                                  fill={star <= Math.round(rating) ? "currentColor" : "none"}
+                                  stroke="currentColor"
+                                  strokeWidth="1"
+                                >
+                                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                              ))}
+                            </div>
+                            <span className="rating-text">
+                              {rating > 0 ? `${rating.toFixed(1)} / 5` : 'No rating'} {reviewCount > 0 && `(${reviewCount})`}
+                            </span>
+                          </div>
+                        );
+                      })()}
 
                       <div className="price-section">
                         <div className="price-row">
@@ -340,8 +353,7 @@ const HomeView = ({
                         className="add-to-cart-btn"
                         onClick={(e) => {
                           e.stopPropagation();
-
-                          // Add to cart logic here
+                          handleAddToCart(book);
                         }}
                       >
                         <svg
@@ -544,22 +556,30 @@ const HomeView = ({
 
      
       {/* COUPON SECTION */}
-      {/* <motion.section
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
-        className="py-16 px-6 bg-gray-50"
-      >
-        <div className="max-w-3xl mx-auto">
-          <CouponCard 
-            brand="BookVerse"
-            discount={20}
-            code="BOOK20"
-            validUntil="Dec 31, 2025"
-          />
-        </div>
-      </motion.section> */}
+      {coupons.length > 0 && (
+        <motion.section
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="py-16 px-6 bg-gray-50"
+        >
+          <div className="max-w-3xl mx-auto">
+            <CouponCard 
+              brand="BookVerse"
+              discount={coupons[0]?.discount || 20}
+              code={coupons[0]?.couponCode || "BOOK20"}
+              validUntil={coupons[0]?.validTillDate ? new Date(coupons[0].validTillDate).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+              }) : "Dec 31, 2025"}
+              discountType={coupons[0]?.discountType || "percentage"}
+              onCopy={(code) => toast.success(`Coupon ${code} copied!`)}
+            />
+          </div>
+        </motion.section>
+      )}
 
       {/* NEWSLETTER SECTION */}
 

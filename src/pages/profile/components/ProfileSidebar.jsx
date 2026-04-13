@@ -12,6 +12,7 @@ const ProfileSidebar = ({
   setActiveTab,
   handleImageUpload,
   isEditing = { isEditing },
+  isAdmin = false,
 }) => {
   return (
     <motion.div
@@ -49,31 +50,41 @@ const ProfileSidebar = ({
         <h2 className="text-xl font-bold text-gray-800">
           {profileData.firstName} {profileData.lastName}
         </h2>
-        <p className="text-gray-600 mb-4">{profileData.email}</p>
+        <p className="text-gray-600 mb-2">{profileData.email}</p>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="bg-blue-50 rounded-xl p-3">
-            <Book className="w-6 h-6 text-blue-600 mx-auto mb-1" />
-            <p className="text-2xl font-bold text-blue-600">
-{userStats.totalOrders}
-            </p>
+        {/* Admin Badge */}
+        {isAdmin && (
+          <div className="inline-block bg-purple-500 text-white text-xs font-semibold px-3 py-1 rounded-full mb-4">
+            Admin
           </div>
-          <div className="bg-green-50 rounded-xl p-3">
-            <ShoppingBag className="w-6 h-6 text-green-600 mx-auto mb-1" />
-            <p className="text-2xl font-bold text-green-600">
-                         {userStats.totalBooks}
+        )}
 
-            </p>
-          </div>
-        </div>
+        {/* Stats - Only for regular users */}
+        {!isAdmin && (
+          <>
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="bg-blue-50 rounded-xl p-3">
+                <Book className="w-6 h-6 text-blue-600 mx-auto mb-1" />
+                <p className="text-2xl font-bold text-blue-600">
+                  {userStats.totalOrders}
+                </p>
+              </div>
+              <div className="bg-green-50 rounded-xl p-3">
+                <ShoppingBag className="w-6 h-6 text-green-600 mx-auto mb-1" />
+                <p className="text-2xl font-bold text-green-600">
+                  {userStats.totalBooks}
+                </p>
+              </div>
+            </div>
 
-        <div className="bg-purple-50 rounded-xl p-3 mb-6">
-          <Heart className="w-6 h-6 text-purple-600 mx-auto mb-1" />
-          <p className="text-2xl font-bold text-purple-600">
-            {userStats.wishlistItems}
-          </p>
-        </div>
+            <div className="bg-purple-50 rounded-xl p-3 mb-6">
+              <Heart className="w-6 h-6 text-purple-600 mx-auto mb-1" />
+              <p className="text-2xl font-bold text-purple-600">
+                {userStats.wishlistItems}
+              </p>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Tabs */}

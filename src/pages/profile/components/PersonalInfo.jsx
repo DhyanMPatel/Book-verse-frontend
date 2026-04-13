@@ -69,30 +69,16 @@ const PersonalInfo = ({
                       <h3 className="font-semibold text-gray-700 mb-4">Basic Information</h3>
                       
                       <div>
-                        <label className="block text-sm font-medium text-gray-600 mb-2">First Name</label>
-                        <input
-                          type="text"
-                          value={isEditing ? tempProfileData.firstName : profileData.firstName}
-                          onChange={(e) => handleInputChange('firstName', e.target.value)}
-                          disabled={!isEditing}
-                          className={`w-full px-4 py-2 rounded-xl border-2 transition-colors ${
-                            isEditing 
-                              ? 'border-blue-200 focus:border-blue-500 bg-white' 
-                              : 'border-gray-200 bg-gray-50'
-                          }`}
-                        />
-                      </div>
-
-
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">Last Name</label>
+            <label className="block text-sm font-medium text-gray-600 mb-2">Full Name</label>
             <input
               type="text"
-              value={isEditing ? tempProfileData.lastName : profileData.lastName}
-              onChange={(e) => handleInputChange('lastName', e.target.value)}
+              value={isEditing ? tempProfileData.fullName : profileData.fullName}
+              onChange={(e) => handleInputChange('fullName', e.target.value)}
               disabled={!isEditing}
-              className={`w-full px-4 py-2 rounded-xl border-2 ${
-                isEditing ? 'border-blue-200 focus:border-blue-500' : 'border-gray-200 bg-gray-50'
+              className={`w-full px-4 py-2 rounded-xl border-2 transition-colors ${
+                isEditing
+                  ? 'border-blue-200 focus:border-blue-500 bg-white'
+                  : 'border-gray-200 bg-gray-50'
               }`}
             />
           </div>

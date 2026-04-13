@@ -307,7 +307,7 @@
 .book-cover-container {
   position: relative;
   width: 100%;
-  height: 280px;
+  height: 220px;
   overflow: hidden;
   background: linear-gradient(135deg, #f8fafc, #e2e8f0);
 }
@@ -584,7 +584,7 @@
   }
 
   .book-cover-container {
-    height: 240px;
+    height: 200px;
   }
 
   .book-details {
@@ -626,7 +626,7 @@
   }
 
   .book-cover-container {
-    height: 200px;
+    height: 180px;
   }
 
   .book-details {

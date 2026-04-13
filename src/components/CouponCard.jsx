@@ -1,70 +1,242 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { BookOpen } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  BookOpen, 
+  Copy, 
+  Check, 
+  Clock, 
+  Tag, 
+  Users,
+  Sparkles,
+  AlertCircle
+} from 'lucide-react';
+import './CouponCard.css';
 
 const CouponCard = ({ 
   brand = "BookVerse",
   discount = 20,
   code = "Bookv20",
   validUntil = "Dec 31, 2025",
-  onCopy
+  discountType = "percentage",
+  category = null,
+  usageCount = 0,
+  maxUsage = null,
+  isUsed = false,
+  isExpired = false,
+  onCopy,
+  onApply,
+  showApplyButton = false
 }) => {
-  const handleCopy = () => {
+  const [copied, setCopied] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [daysLeft, setDaysLeft] = useState(null);
+
+  // Calculate days left on mount
+  useEffect(() => {
+    if (validUntil) {
+      const today = new Date();
+      const expiry = new Date(validUntil);
+      const diffTime = expiry - today;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      setDaysLeft(diffDays);
+    }
+  }, [validUntil]);
+
+  const handleCopy = (e) => {
+    e?.stopPropagation();
     navigator.clipboard.writeText(code);
+    setCopied(true);
+    setShowConfetti(true);
+    
     if (onCopy) onCopy(code);
+    
+    // Reset copied state after 2 seconds
+    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => setShowConfetti(false), 1000);
+  };
+
+  const handleApply = (e) => {
+    e?.stopPropagation();
+    if (onApply && !isUsed && !isExpired) {
+      onApply(code);
+    }
+  };
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "N/A";
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric' 
+    });
+  };
+
+  const getStatusClass = () => {
+    if (isUsed) return 'coupon-card--used';
+    if (isExpired) return 'coupon-card--expired';
+    return '';
+  };
+
+  const getStatusText = () => {
+    if (isUsed) return 'USED';
+    if (isExpired) return 'EXPIRED';
+    return '';
   };
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.6, delay: 0.2 }}
-      viewport={{ once: true }}
-      whileHover={{ scale: 1.02 }}
-      className="relative bg-white rounded-2xl shadow-xl overflow-hidden cursor-pointer"
+      initial={{ opacity: 0, scale: 0.9, y: 20 }}
+      whileInView={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: [0.175, 0.885, 0.32, 1.275] }}
+      viewport={{ once: true, margin: "-50px" }}
+      whileHover={!isUsed && !isExpired ? { y: -8, scale: 1.02 } : {}}
+      className={`coupon-card ${getStatusClass()}`}
+      data-status={getStatusText()}
     >
+      {/* Shine Effect */}
+      <div className="coupon-card__shine" />
+      
+      {/* Confetti Effect */}
+      <AnimatePresence>
+        {showConfetti && (
+          <div className="coupon-card__confetti">
+            {[...Array(12)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="confetti-piece"
+                style={{
+                  backgroundColor: ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'][i % 5],
+                  left: `${10 + (i * 7)}%`,
+                  animationDelay: `${i * 0.05}s`
+                }}
+              />
+            ))}
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Ticket Shape with Cutouts */}
-      <div className="flex">
-        {/* Left Side - Logo Area */}
-        <div className="w-1/3 bg-gradient-to-br from-blue-500 to-purple-600 p-6 flex flex-col items-center justify-center relative">
-          {/* Semi-circle cutout right */}
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-5 h-5 bg-gray-50 rounded-full"></div>
+      <div className="flex h-full">
+        {/* Left Side - Brand Area */}
+        <div className="coupon-card__brand">
+          <div className="coupon-card__brand-pattern" />
+          <div className="coupon-card__cutout-right" />
           
-          <BookOpen className="w-14 h-14 text-white mb-1" />
-          <p className="text-white font-bold text-base">{brand}</p>
+          <div>
+            <BookOpen className="coupon-card__icon" />
+          </div>
+          <p className="coupon-card__brand-name">{brand}</p>
         </div>
         
         {/* Perforated Line */}
-        <div className="w-px bg-gray-300 relative">
-          <div className="absolute inset-0 border-l-2 border-dashed border-gray-300"></div>
+        <div className="coupon-card__perforation">
+          <div className="coupon-card__perforation-line" />
+          <div className="coupon-card__cutout-left" />
         </div>
         
         {/* Right Side - Coupon Details */}
-        <div className="w-2/3 p-6 flex flex-col justify-center relative">
-          {/* Semi-circle cutout left */}
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 bg-gray-50 rounded-full"></div>
+        <div className="coupon-card__details">
+          {/* Category Badge */}
+          {category && category.name && (
+            <div className="coupon-card__category-badge">
+              <Tag />
+              {category.name}
+            </div>
+          )}
           
-          <p className="text-gray-500 text-sm uppercase tracking-wider mb-1">{brand}</p>
-          <div className="flex items-baseline gap-1 mb-1">
-            <span className="text-2xl text-gray-400 font-medium">%</span>
-            <span className="text-5xl font-bold text-gray-800">{discount}</span>
-            <span className="text-xl text-gray-500 uppercase tracking-wider ml-1">OFF</span>
+          {/* Discount Display */}
+          <div className="coupon-card__discount">
+            <span className="coupon-card__discount-symbol">
+              {discountType === "percentage" ? "%" : "₹"}
+            </span>
+            <span className="coupon-card__discount-amount">
+              {discount}
+            </span>
+            <span className="coupon-card__discount-label">OFF</span>
           </div>
-          <p className="text-gray-400 text-sm">Valid until {validUntil}</p>
           
-          {/* Code */}
-          <div className="mt-3 flex items-center gap-2">
-            <span className="text-lg font-mono font-bold text-blue-600 tracking-widest">{code}</span>
+          {/* Validity */}
+          <div className={`coupon-card__validity ${daysLeft !== null && daysLeft <= 3 ? 'coupon-card__validity--urgent' : ''}`}>
+            <Clock />
+            {isExpired ? (
+              <span>Expired on {formatDate(validUntil)}</span>
+            ) : daysLeft !== null && daysLeft <= 3 ? (
+              <span>Expires in {daysLeft} day{daysLeft !== 1 ? 's' : ''}!</span>
+            ) : (
+              <span>Valid until {formatDate(validUntil)}</span>
+            )}
+          </div>
+          
+          {/* Code & Copy */}
+          <div className="coupon-card__code-section">
+            <span className="coupon-card__code">{code}</span>
+            
             <button 
-              onClick={(e) => {
-                e.stopPropagation();
-                handleCopy();
-              }}
-              className="text-sm bg-blue-100 text-blue-600 px-3 py-1.5 rounded-full font-medium hover:bg-blue-200 transition-colors active:scale-95"
+              onClick={handleCopy}
+              disabled={isUsed || isExpired}
+              className={`coupon-card__copy-btn ${copied ? 'coupon-card__copy-btn--copied' : ''}`}
             >
-              Copy
+              <AnimatePresence mode="wait">
+                {copied ? (
+                  <motion.span
+                    key="check"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                  >
+                    <Check />
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="copy"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                  >
+                    <Copy />
+                  </motion.span>
+                )}
+              </AnimatePresence>
+              <span>{copied ? 'Copied!' : 'Copy'}</span>
+              
+              {/* Tooltip */}
+              <span className="coupon-card__tooltip">
+                {copied ? 'Code copied!' : 'Click to copy'}
+              </span>
             </button>
+            
+            {/* Apply Button */}
+            {showApplyButton && !isUsed && !isExpired && (
+              <motion.button
+                onClick={handleApply}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="coupon-card__copy-btn"
+                style={{
+                  background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                  color: 'white'
+                }}
+              >
+                <Sparkles />
+                <span>Apply</span>
+              </motion.button>
+            )}
           </div>
+          
+          {/* Usage Info */}
+          {maxUsage && (
+            <div className="coupon-card__usage">
+              <Users />
+              <span>
+                Used <span className="coupon-card__usage-count">{usageCount}</span>
+                {maxUsage !== Infinity && ` / ${maxUsage}`} times
+              </span>
+              {usageCount >= maxUsage && (
+                <AlertCircle style={{ color: '#ef4444', width: '0.875rem', height: '0.875rem' }} />
+              )}
+            </div>
+          )}
         </div>
       </div>
     </motion.div>

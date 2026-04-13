@@ -14,6 +14,8 @@ const AdminUsersContainer = () => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
+
+  
   const handleView = async (row) => {
     try {
       const userId = row.id || row._id;
@@ -48,21 +50,6 @@ const AdminUsersContainer = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-
-  // const handleCreateUser = async (formData) => {
-  //   try {
-  //     const response = await axiosInstance.post("/user/create", formData);
-
-  //     const newUser = response?.data?.data?.user;
-
-  //     console.log("User created:", newUser);
-
-  //     setUserList((prev) => [newUser, ...prev]);
-  //   } catch (error) {
-  //     console.error("Create user failed:", error);
-  //   }
-  // };
-
   const handleCreateUser = async (formData) => {
   try {
     const payload = {
@@ -93,10 +80,12 @@ const AdminUsersContainer = () => {
     });
     setIsEditModalOpen(true);
   };
+
   const handleCloseEditModal = () => {
     setIsEditModalOpen(false);
     setSelectedUser(null);
   };
+
  //edit user info
   const handleUpdateUser = async (formData) => {
     try {

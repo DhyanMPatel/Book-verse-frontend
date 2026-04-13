@@ -23,7 +23,8 @@ const ProfileView = ({
   handleSave,
   handleCancel,
   handleInputChange,
-  handleImageUpload
+  handleImageUpload,
+  isAdmin
 }) => {
 
   return (
@@ -67,6 +68,7 @@ const ProfileView = ({
           setActiveTab={setActiveTab}
           handleImageUpload={handleImageUpload}
           isEditing={isEditing}
+          isAdmin={isAdmin}
         />
 
         {/* Main Content */}

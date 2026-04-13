@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 import HomeView from './homeView';
 import axiosInstance from '../../services/axiosInstance';
 
@@ -7,8 +9,10 @@ const HomeContainer = () => {
   const sliderRef2 = useRef(null);
   const [books, setBooks] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [coupons, setCoupons] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [loading, setLoading] = useState(false);
+  const [couponLoading, setCouponLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // Fetch books
@@ -37,6 +41,36 @@ const HomeContainer = () => {
     };
 
     fetchBooks();
+
+    // Fetch active coupons
+    const fetchCoupons = async () => {
+      setCouponLoading(true);
+      try {
+        const response = await axiosInstance.get('/coupons/list');
+        console.log('Coupons API response:', response.data);
+        const allCoupons = response?.data?.data?.coupons || [];
+        console.log('All coupons:', allCoupons);
+
+        // Filter active coupons (not expired, has usage left)
+        const now = new Date();
+        const activeCoupons = allCoupons.filter(coupon => {
+          const validDate = new Date(coupon.validTillDate);
+          const hasUsageLeft = !coupon.usageLimit || coupon.timesUsed < coupon.usageLimit;
+          return validDate > now && hasUsageLeft;
+        });
+
+        console.log('Filtered active coupons:', activeCoupons);
+        setCoupons(activeCoupons.slice(0, 3)); // Show max 3 coupons
+      } catch (err) {
+        console.error('Failed to fetch coupons:', err);
+        console.log('Error response:', err.response);
+        setCoupons([]);
+      } finally {
+        setCouponLoading(false);
+      }
+    };
+
+    fetchCoupons();
   }, []);
 
   // Filter books by category
@@ -86,6 +120,42 @@ const HomeContainer = () => {
     },
   ];
 
+  // Add to cart handler
+  const handleAddToCart = async (book) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user?._id) {
+      toast.error('Please login first');
+      return;
+    }
+
+    try {
+      const payload = {
+        bookId: book._id || book.id,
+        quantity: 1,
+      };
+      await axiosInstance.post('/cart/add', payload);
+
+      const result = await Swal.fire({
+        icon: 'success',
+        title: 'Added to Cart',
+        text: `${book.title} added successfully!`,
+        showCancelButton: true,
+        confirmButtonText: 'Go to Cart',
+        cancelButtonText: 'Continue Shopping',
+      });
+
+      if (result.isConfirmed) {
+        window.location.href = '/cart';
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: error.response?.data?.message || 'Failed to add to cart',
+      });
+    }
+  };
+
   return (
     <HomeView
       sliderRef1={sliderRef1}
@@ -100,6 +170,9 @@ const HomeContainer = () => {
       bookSettings={bookSettings}
       categorySettings={categorySettings}
       features={features}
+      handleAddToCart={handleAddToCart}
+      coupons={coupons}
+      couponLoading={couponLoading}
     />
   );
 };

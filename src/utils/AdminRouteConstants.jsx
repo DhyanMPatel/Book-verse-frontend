@@ -1,4 +1,4 @@
-import { BookOpen, LayoutDashboard, Settings, ShoppingCart, Users } from "lucide-react";
+import { BookOpen, LayoutDashboard, Component , ShoppingCart, Users } from "lucide-react";
 import RouteConstants from "./routeConstants";
 
 export const adminNavItems = [
@@ -23,8 +23,14 @@ export const adminNavItems = [
       icon: ShoppingCart,
     },
     {
-      href: RouteConstants.adminSettings,
-      label: "Settings",
-      icon: Settings,
+      href: RouteConstants.admincoupons,
+      label: "Coupons",
+      icon: Component ,
     },
   ];
+
+
+
+
+
+ 

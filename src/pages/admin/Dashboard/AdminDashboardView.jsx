@@ -448,7 +448,7 @@ const TopPerformersTable = ({ topReadBooks, topEarningBooks }) => (
                 </span>
               </div>
               <span className="text-sm font-semibold text-emerald-600">
-                ${book.revenue.toLocaleString()}
+                ₹{book.revenue.toLocaleString()}
               </span>
             </motion.div>
           ))}
@@ -532,13 +532,18 @@ const AdminDashboardView = ({ loading, data }) => {
         />
         <BooksCard stats={stats} />
         <ActiveReadersCard stats={stats} />
-        <StatCard
-          title="Total Revenue"
-          value={`$${stats.totalRevenue.value.toLocaleString()}`}
-          subtitle="Lifetime earnings"
-          icon={DollarSign}
-          isHero
-        />
+      <StatCard
+  title="Total Revenue"
+  value={`₹${stats.totalRevenue.value?.toLocaleString() || 0}`}
+  icon={DollarSign}
+  trend={stats.totalRevenue.growth}
+  isHero
+>
+  <div className="mt-3 text-xs text-slate-500 space-y-1">
+    <p>Monthly: ₹{stats.totalRevenue.monthlyRevenue?.toLocaleString()}</p>
+    <p>Last Month: ₹{stats.totalRevenue.lastMonthRevenue?.toLocaleString()}</p>
+  </div>
+</StatCard>
       </motion.div>
 
       {/* Section 2: Visualizations */}
@@ -630,11 +635,11 @@ const AdminDashboardView = ({ loading, data }) => {
               <YAxis
                 stroke={CHART_THEME.text}
                 fontSize={12}
-                tickFormatter={(value) => `$${value}`}
+                tickFormatter={(value) => `₹${value}`}
               />
               <Tooltip
                 content={<CustomTooltip />}
-                formatter={(value) => [`$${value}`, 'Revenue']}
+                formatter={(value) => [`₹${value}`, 'Revenue']}
               />
               <Bar
                 dataKey="revenue"
