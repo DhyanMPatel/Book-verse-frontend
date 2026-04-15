@@ -3,6 +3,8 @@ import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 import { Book, Download, BookOpen, FileText, Calendar } from 'lucide-react'
+import { toast } from 'react-toastify'
+
 
 
 
@@ -112,6 +114,12 @@ const LibraryView = ({ books, onDownload, onRead }) => {
 
     return format === 'PDF' ? <FileText className="w-3.5 h-3.5" /> : <BookOpen className="w-3.5 h-3.5" />
 
+  }
+
+  // Handle download with toast
+  const handleDownload = (bookId, bookTitle) => {
+    onDownload(bookId);
+    toast.success(`"${bookTitle}" downloaded successfully!`);
   }
 
 
@@ -373,15 +381,10 @@ const LibraryView = ({ books, onDownload, onRead }) => {
                 </button>
 
                 <button
-
-                  onClick={() => onDownload(book.id)}
-
+                  onClick={() => handleDownload(book.id, book.title)}
                   className="flex items-center justify-center p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 hover:shadow-md active:scale-95 transition-all duration-300 ease-out"
-
                 >
-
                   <Download className="w-4 h-4" />
-
                 </button>
 
               </div>
@@ -396,10 +399,7 @@ const LibraryView = ({ books, onDownload, onRead }) => {
 
     </motion.div>
 
-  )
-
-}
-
-
+  );
+};
 
 export default LibraryView

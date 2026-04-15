@@ -30,7 +30,10 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response?.status === 401) {
+    // Skip redirect for change-password endpoint (401 means wrong current password, not expired token)
+    const isChangePasswordEndpoint = error.config?.url?.includes('/user/change-password');
+    
+    if (error.response?.status === 401 && !isChangePasswordEndpoint) {
       localStorage.removeItem('token');
       window.location.href = '/login';
     }

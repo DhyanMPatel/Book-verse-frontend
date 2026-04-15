@@ -1,24 +1,56 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, BookOpen, ShoppingCart, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../services/axiosInstance";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
 const Wishlist = () => {
+  const navigate = useNavigate();
   const [wishlistBooks, setWishlistBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [removingId, setRemovingId] = useState(null);
   const [clearing, setClearing] = useState(false);
 
-  // ✅ Fetch wishlist from backend on mount
+  // Helper to get full image URL
+  const getFullImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+    // If already a full URL, return as is
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath;
+    }
+    // Get base URL from axios instance (remove /api if present)
+    const baseURL = import.meta.env.VITE_NODE_ENV === "production" 
+      ? import.meta.env.VITE_LIVE_API_URL?.replace('/api', '') 
+      : import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+    // Ensure no double slashes
+    const cleanPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
+    return `${baseURL}${cleanPath}`;
+  };
+
+  // ✅ Fetch wishlist from backend (now returns populated book data with coverImage)
   useEffect(() => {
     const fetchWishlist = async () => {
       try {
         setLoading(true);
         const res = await axiosInstance.get("/wishlist/get");
+        // Backend returns { books: [{ id, title, author, price, coverImage }] }
         const books = res.data?.data?.books || [];
-        setWishlistBooks(books);
+
+        // Map backend format to frontend format
+        const formattedBooks = books.map(item => ({
+          bookId: {
+            _id: item.id,
+            title: item.title,
+            author: item.author,
+            price: item.price,
+            coverImage: item.coverImage
+          }
+        }));
+
+        setWishlistBooks(formattedBooks);
+        console.log("Fetched wishlist with images:", formattedBooks);
       } catch (error) {
         console.error("Failed to fetch wishlist", error);
         toast.error("Failed to load wishlist");
@@ -184,17 +216,16 @@ const Wishlist = () => {
           </motion.button>
         </div>
       </div>
-
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <AnimatePresence>
           {wishlistBooks.map((item, index) => {
-            const book = item.bookId; // populated from backend
-            const bookId = book?._id || item.bookId;
+            const book = item.bookId;
+            const bookId = book?._id;
             const title = book?.title || "Unknown Title";
             const author = book?.author || "Unknown Author";
             const price = book?.price || 0;
             const discount = book?.discount || 0;
-            const coverImage = book?.coverImage || null;
+            const coverImage = getFullImageUrl(book?.coverImage);
             const discountedPrice = price - (price * discount) / 100;
             const isRemoving = removingId === bookId?.toString();
 
@@ -207,7 +238,8 @@ const Wishlist = () => {
                 exit={{ opacity: 0, scale: 0.8, y: -20 }}
                 transition={{ delay: index * 0.05 }}
                 whileHover={{ y: -5, scale: 1.02 }}
-                className="bg-gray-50 rounded-2xl p-4 hover:shadow-lg transition-shadow relative"
+                onClick={() => navigate(`/book/${bookId}`)}
+                className="bg-gray-50 rounded-2xl p-4 hover:shadow-lg transition-shadow relative cursor-pointer"
               >
                 {/* Cover Image */}
                 <div className="w-full h-40 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl mb-4 flex items-center justify-center overflow-hidden">
@@ -253,9 +285,12 @@ const Wishlist = () => {
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    onClick={() => handleRemove(bookId?.toString(), title)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemove(bookId?.toString(), title);
+                    }}
                     disabled={isRemoving}
-                    className="bg-white/90 backdrop-blur-sm p-2 sm:p-3 rounded-full shadow-md cursor-pointer flex items-center justify-center disabled:opacity-50"
+                    className="bg-white/90 backdrop-blur-sm p-2 sm:p-3 rounded-full shadow-md cursor-pointer flex items-center justify-center disabled:opacity-50 z-10"
                     title="Remove from wishlist"
                   >
                     <motion.div

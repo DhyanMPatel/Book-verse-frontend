@@ -138,7 +138,7 @@ const AdminUsersContainer = () => {
       try {
         const response = await axiosInstance.get("/user");
         setUserList(response?.data?.data);
-        console.log("Fetched users:", response?.data?.data);
+        // console.log("Fetched users:", response?.data?.data);
       } catch (error) {
         console.error("Failed to fetch users:", error);
       }

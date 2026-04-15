@@ -6,6 +6,7 @@ import PersonalInfo from './components/PersonalInfo'
 import ProfileSidebar from './components/ProfileSidebar'
 import OrderHistory from './components/OrderHistory'
 import Wishlist from './components/Wishlist'
+import ResetPasswordContainer from './components/ResetPasswordContainer'
 
 const ProfileView = ({
   activeTab,
@@ -98,6 +99,8 @@ const ProfileView = ({
                 Settings (same as before — you can extract later)
               </div>
             )}
+
+            {activeTab === 'resetpassword' && <ResetPasswordContainer />}
 
           </AnimatePresence>
         </div>

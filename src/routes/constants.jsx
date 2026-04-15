@@ -13,6 +13,7 @@ import {
   SearchContainer,
   WishlistContainer,
   BooksDetailContainer,
+  SettingsContainer,
 } from "../pages/pageIndex";
 import {
   AdminDashboardContainer,
@@ -162,18 +163,18 @@ export const AppRoutes = [
         ),
       }, 
       //settings route
-      //  {
-      //   path: RouteConstants.booksdetails,
-      //   element: (
-      //     <PrivateRoute>
-      //       <Suspense fallback="loading">
-      //         <div className="pt-[64px]">
-      //           <BooksDetailContainer />
-      //         </div>
-      //       </Suspense>
-      //     </PrivateRoute>
-      //   ),
-      // }, 
+       {
+        path: RouteConstants.settings,
+        element: (
+          <PrivateRoute>
+            <Suspense fallback="loading">
+              <div className="pt-[64px]">
+                <SettingsContainer />
+              </div>
+            </Suspense>
+          </PrivateRoute>
+        ),
+      }, 
       
       // Admin routes
       {

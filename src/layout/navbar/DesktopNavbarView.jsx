@@ -136,7 +136,7 @@ const DesktopNavbarView = (props) => {
                     </div>
                   </NavLink>
 
-                  <NavLink
+                  {/* <NavLink
                     to="/settings"
                     className="dropdown-item"
                     onClick={() => setProfileDropdownOpen(false)}
@@ -150,7 +150,7 @@ const DesktopNavbarView = (props) => {
                         Manage your preferences
                       </span>
                     </div>
-                  </NavLink>
+                  </NavLink> */}
 
                   <div className="dropdown-divider"></div>
 

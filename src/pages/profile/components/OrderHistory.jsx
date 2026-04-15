@@ -18,7 +18,7 @@ const OrderHistory = ({ orderHistory }) => {
         <div className="space-y-4">
           {orderHistory.map((order, index) => (
             <motion.div
-              key={order.id}
+              key={order.id || `order-${index}`}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
@@ -56,7 +56,7 @@ const OrderHistory = ({ orderHistory }) => {
               <div className="space-y-2">
                 {order.books.map((book, bookIndex) => (
                   <div
-                    key={bookIndex}
+                    key={book._id || book.id || `${order.id}-${bookIndex}`}
                     className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0"
                   >
                     <div>

@@ -150,9 +150,10 @@ const ViewOrder = ({ isOpen, onClose, orderData }) => {
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <InfoItem label="Buyer Name" value={orderData.userId?.name || "N/A"} />
-                  <InfoItem label="Buyer Email" value={orderData.userId?.email || "N/A"} />
-                  <InfoItem label="Buyer User ID" value={orderData.userId?._id || orderData.userId?.id || orderData.userId || "N/A"} />
+                  <InfoItem label="Buyer Name" value={orderData.user?.name || orderData.userId?.name || "N/A"} />
+                  <InfoItem label="Buyer Email" value={orderData.user?.email || orderData.userId?.email || "N/A"} />
+                  <InfoItem label="Buyer Phone" value={orderData.user?.phone || orderData.userId?.phone || "N/A"} />
+                  <InfoItem label="Buyer User ID" value={orderData.user?.id || orderData.userId?._id || orderData.userId?.id || orderData.userId || "N/A"} />
                 </div>
               </div>
 

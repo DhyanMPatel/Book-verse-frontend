@@ -121,40 +121,95 @@ const HomeContainer = () => {
   ];
 
   // Add to cart handler
-  const handleAddToCart = async (book) => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (!user?._id) {
-      toast.error('Please login first');
-      return;
-    }
+// In HomeContainer.jsx — replace handleAddToCart
+const handleAddToCart = async (book) => {
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (!user?._id) {
+    toast.error('Please login first');
+    return;
+  }
 
-    try {
-      const payload = {
-        bookId: book._id || book.id,
-        quantity: 1,
-      };
-      await axiosInstance.post('/cart/add', payload);
+  try {
+    // 🔹 Check if book already in cart
+    const cartRes = await axiosInstance.get('/cart/get');
+    const cartItems = cartRes.data?.data?.items || [];
+    const alreadyInCart = cartItems.some(
+      (item) => item.bookId.toString() === (book._id || book.id).toString()
+    );
 
+    if (alreadyInCart) {
       const result = await Swal.fire({
-        icon: 'success',
-        title: 'Added to Cart',
-        text: `${book.title} added successfully!`,
+        icon: 'info',
+        title: 'Already in Cart',
+        text: `"${book.title}" is already in your cart.`,
         showCancelButton: true,
         confirmButtonText: 'Go to Cart',
         cancelButtonText: 'Continue Shopping',
       });
-
-      if (result.isConfirmed) {
-        window.location.href = '/cart';
-      }
-    } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: error.response?.data?.message || 'Failed to add to cart',
-      });
+      if (result.isConfirmed) window.location.href = '/cart';
+      return; // ✅ stop here
     }
-  };
+
+    // 🔹 Not in cart — add it
+    await axiosInstance.post('/cart/add', {
+      bookId: book._id || book.id,
+      quantity: 1,
+    });
+
+    const result = await Swal.fire({
+      icon: 'success',
+      title: 'Added to Cart 🛒',
+      text: `${book.title} added successfully!`,
+      showCancelButton: true,
+      confirmButtonText: 'Go to Cart',
+      cancelButtonText: 'Continue Shopping',
+    });
+
+    if (result.isConfirmed) window.location.href = '/cart';
+
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: error.response?.data?.message || 'Failed to add to cart',
+    });
+  }
+};
+
+  // const handleAddToCart = async (book) => {
+  //   const user = JSON.parse(localStorage.getItem('user'));
+  //   if (!user?._id) {
+  //     toast.error('Please login first');
+  //     return;
+  //   }
+
+  //   try {
+  //     const payload = {
+  //       bookId: book._id || book.id,
+  //       quantity: 1,
+  //     };
+  //     await axiosInstance.post('/cart/add', payload);
+
+  //     const result = await Swal.fire({
+  //       icon: 'success',
+  //       title: 'Added to Cart',
+  //       text: `${book.title} added successfully!`,
+  //       showCancelButton: true,
+  //       confirmButtonText: 'Go to Cart',
+  //       cancelButtonText: 'Continue Shopping',
+  //     });
+
+  //     if (result.isConfirmed) {
+  //       window.location.href = '/cart';
+  //     }
+  //   } catch (error) {
+  //     Swal.fire({
+  //       icon: 'error',
+  //       title: 'Oops...',
+  //       text: error.response?.data?.message || 'Failed to add to cart',
+  //     });
+  //   }
+  // };
 
   return (
     <HomeView

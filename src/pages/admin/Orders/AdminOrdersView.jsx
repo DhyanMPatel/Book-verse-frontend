@@ -28,6 +28,26 @@ const AdminOrdersView = ({ orderList, handleView, loading, onRefresh }) => {
     });
   };
 
+  // Helper function to extract user name from various possible structures
+  const getUserName = (row) => {
+    // Try different possible locations for user name
+    // If userId is populated object with name
+    if (row.userId?.name) return row.userId.name;
+    // If user object has name
+    if (row.user?.name) return row.user.name;
+    // If userId is just an ID string, return shortened ID
+    const userId = row.userId?._id || row.userId?.id || row.userId || row.user_id || row.user?._id || row.user?.id;
+    if (userId && typeof userId === 'string') {
+      return `User: ${userId.substring(0, 8)}...`;
+    }
+    return "Unknown User";
+  };
+
+  // Helper function to extract user email
+  const getUserEmail = (row) => {
+    return row.userId?.email || row.user?.email || row.userEmail || "--";
+  };
+
   const columns = [
     {
       key: "actions",
@@ -48,14 +68,14 @@ const AdminOrdersView = ({ orderList, handleView, loading, onRefresh }) => {
     },
     {
       key: "user",
-      label: "Customer",
+      label: "User",
       cell: (row) => (
         <div style={{ textAlign: "left" }}>
-          <div className="order-customer-cell text-capitalize">
-            {row.userId?.name || row.userName || "--"}
+          <div className="order-customer-cell font-medium">
+            {getUserName(row)}
           </div>
-          <div className="order-email-cell">
-            {row.userId?.email || row.userEmail || ""}
+          <div className="order-email-cell text-xs">
+            {getUserEmail(row)}
           </div>
         </div>
       ),

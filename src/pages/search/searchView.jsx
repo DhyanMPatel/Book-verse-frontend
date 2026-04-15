@@ -62,13 +62,18 @@ export default function SearchView() {
     navigate(`/book/${id}`);
   };
 
-  // Check if book is in wishlist
-  const checkWishlistStatus = async (bookId) => {
+  // Check if book is in wishlist by fetching full wishlist
+  const checkWishlistStatus = async () => {
     try {
-      const response = await axiosInstance.get(`/wishlist/check/${bookId}`);
-      return response.data?.inWishlist || false;
+      const response = await axiosInstance.get('/wishlist/get');
+      const wishlistBooks = response.data?.data?.books || [];
+      const wishlistStatus = {};
+      wishlistBooks.forEach(book => {
+        wishlistStatus[book.id] = true;
+      });
+      return wishlistStatus;
     } catch {
-      return false;
+      return {};
     }
   };
 
@@ -129,11 +134,7 @@ export default function SearchView() {
         // Check wishlist status for all books
         const user = JSON.parse(localStorage.getItem("user"));
         if (user?._id) {
-          const wishlistStatus = {};
-          for (const book of apiBooks) {
-            const bookId = book._id || book.id;
-            wishlistStatus[bookId] = await checkWishlistStatus(bookId);
-          }
+          const wishlistStatus = await checkWishlistStatus();
           setWishlistMap(wishlistStatus);
         }
         

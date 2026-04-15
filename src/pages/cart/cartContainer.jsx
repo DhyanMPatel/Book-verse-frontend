@@ -12,7 +12,7 @@ const CartContainer = () => {
     try {
       const res = await axiosInstance.post('/order/create', {totalAmount: amount, cartItems: cartItems, userId: user._id});
 
-      console.log("Response on Create", res)
+      // console.log("Response on Create", res)
 
       const option = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
@@ -28,13 +28,20 @@ const CartContainer = () => {
               ...response,
               razorpay_order_id: response.razorpay_order_id,
             });
+            
+            // Clear the cart after successful payment
+            await axiosInstance.delete('/cart/clear');
+            
             // Success modal
-            Swal.fire({
+            await Swal.fire({
               title: 'Payment Successful!',
               text: `Order ID: ${verifyRes.data.orderId || response.razorpay_order_id}`,
               icon: 'success',
               confirmButtonText: 'OK'
             });
+            
+            // Refresh page to show empty cart
+            window.location.reload();
           } catch (error) {
             toast.error(error.response?.data?.message || "Payment verification failed");
           }
@@ -78,7 +85,7 @@ const CartContainer = () => {
       toast.error(error.response?.data?.message || 'Failed to clear cart');
       return false;
     }
-  }
+  } 
 
   return (
     <>

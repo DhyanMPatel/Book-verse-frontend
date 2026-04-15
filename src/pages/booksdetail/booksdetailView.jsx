@@ -68,46 +68,91 @@ export default function BookDetailView(props) {
         ).toFixed(1)
       : 0;
 
-  const addToCart = async () => {
-    // Add to cart logic here
-    // console.log("Added to cart:", book.title, "Quantity:", quantity);
+// In BookDetailView — replace the addToCart function
+const addToCart = async () => {
   try {
-    const payload = {
-      bookId: book._id || book.id,
-      quantity: quantity,
-    };
-    // await axiosInstance.put("/cart/update", payload);
-    const response = await axiosInstance.post("/cart/add", payload);
+    // 🔹 First check if book already in cart
+    const cartRes = await axiosInstance.get("/cart/get");
+    const cartItems = cartRes.data?.data?.items || [];
+    const alreadyInCart = cartItems.some(
+      (item) => item.bookId === (book._id || book.id)
+    );
 
-    console.log("Cart response:", response.data);
+    if (alreadyInCart) {
+      const result = await Swal.fire({
+        icon: "info",
+        title: "Already in Cart",
+        text: `"${book.title}" is already in your cart.`,
+        showCancelButton: true,
+        confirmButtonText: "Go to Cart",
+        cancelButtonText: "Continue Shopping",
+      });
+      if (result.isConfirmed) navigate("/cart");
+      return; // ✅ stop here — don't add again
+    }
 
-    // ✅ SweetAlert here
-   await Swal.fire({
-  icon: "success",
-  title: "Added to Cart 🛒",
-  text: `${book.title} added successfully!`,
-  showCancelButton: true,
-  confirmButtonText: "Go to Cart",
-  cancelButtonText: "Continue Shopping",
-}).then((result) => {
-  if (result.isConfirmed) {
-    navigate("/cart");
-  } else if (result.isDismissed) {
-    navigate("/search"); // 👈 change "/search" to your actual search page route
-  }
-});
+    // 🔹 Not in cart — proceed to add
+    const payload = { bookId: book._id || book.id, quantity };
+    await axiosInstance.post("/cart/add", payload);
+
+    await Swal.fire({
+      icon: "success",
+      title: "Added to Cart 🛒",
+      text: `${book.title} added successfully!`,
+      showCancelButton: true,
+      confirmButtonText: "Go to Cart",
+      cancelButtonText: "Continue Shopping",
+    }).then((result) => {
+      if (result.isConfirmed) navigate("/cart");
+      else navigate("/search");
+    });
 
   } catch (error) {
     console.error("Error adding to cart:", error);
-
-    // ❌ Error SweetAlert
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: "Failed to add book to cart ❌",
-    });
+    Swal.fire({ icon: "error", title: "Oops...", text: "Failed to add book to cart ❌" });
   }
 };
+
+//   const addToCart = async () => {
+//     // Add to cart logic here
+//     // console.log("Added to cart:", book.title, "Quantity:", quantity);
+//   try {
+//     const payload = {
+//       bookId: book._id || book.id,
+//       quantity: quantity,
+//     };
+//     // await axiosInstance.put("/cart/update", payload);
+//     const response = await axiosInstance.post("/cart/add", payload);
+
+//     console.log("Cart response:", response.data);
+
+//     // ✅ SweetAlert here
+//    await Swal.fire({
+//   icon: "success",
+//   title: "Added to Cart 🛒",
+//   text: `${book.title} added successfully!`,
+//   showCancelButton: true,
+//   confirmButtonText: "Go to Cart",
+//   cancelButtonText: "Continue Shopping",
+// }).then((result) => {
+//   if (result.isConfirmed) {
+//     navigate("/cart");
+//   } else if (result.isDismissed) {
+//     navigate("/search"); // 👈 change "/search" to your actual search page route
+//   }
+// });
+
+//   } catch (error) {
+//     console.error("Error adding to cart:", error);
+
+//     // ❌ Error SweetAlert
+//     Swal.fire({
+//       icon: "error",
+//       title: "Oops...",
+//       text: "Failed to add book to cart ❌",
+//     });
+//   }
+// };
 
   // const buyNow = () => {
   //   // Buy now logic here
