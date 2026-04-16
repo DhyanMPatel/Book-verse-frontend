@@ -20,18 +20,15 @@ const ProfileContainer = () => {
   const { logout, isAdmin } = useAuth();
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
+
   // Profile data state
   const [profileData, setProfileData] = useState({
-    firstName: 'Nisarg',
-    lastName: 'patel',
-    email: 'nisargpatel@gmail.com',
-    phone: '+91 98765 43210',
-    dateOfBirth: '1995-06-15',
-    preferences: {
-      newsletter: true,
-      notifications: true,
-      darkMode: false
-    }
+    // firstName: '',
+    // lastName: '',
+    name: "",
+    email: '',
+    phone: '',
+    dateOfBirth: '',
   })
   const [tempProfileData, setTempProfileData] = useState(profileData)
 
@@ -58,16 +55,17 @@ const ProfileContainer = () => {
         const userData = res.data?.data;
         if (userData) {
           setProfileData({
-            firstName: userData.firstName || userData.name?.split(' ')[0] || '',
+            name: userData.name,
+            // firstName: userData.firstName || userData.name?.split(' ')[0] || '',
             // lastName: userData.lastName || userData.name?.split(' ').slice(1).join(' ') || '',
             email: userData.email || '',
             phone: userData.phone || '',
             dateOfBirth: userData.dateOfBirth || '',
-            preferences: userData.preferences || {
-              newsletter: true,
-              notifications: true,
-              darkMode: false
-            }
+            // preferences: userData.preferences || {
+            //   newsletter: true,
+            //   notifications: true,
+            //   darkMode: false
+            // }
           });
         }
       } catch (error) {
@@ -76,8 +74,9 @@ const ProfileContainer = () => {
         if (user) {
           setProfileData(prev => ({
             ...prev,
-            firstName: user.firstName || user.name?.split(' ')[0] || prev.firstName,
-            lastName: user.lastName || user.name?.split(' ').slice(1).join(' ') || prev.lastName,
+            name: user.name,
+            // firstName: user.firstName || user.name?.split(' ')[0] || prev.firstName,
+            // lastName: user.lastName || user.name?.split(' ').slice(1).join(' ') || prev.lastName,
             email: user.email || prev.email
           }));
         }
@@ -158,9 +157,6 @@ const ProfileContainer = () => {
   ]
 
   const tabs = isAdmin?.() ? adminTabs : allTabs
-  
-  // Debug: log tabs to verify
-  console.log('Tabs:', tabs, 'isAdmin:', isAdmin?.())
 
   // Handlers
   const handleLogout = () => {
@@ -176,12 +172,13 @@ const ProfileContainer = () => {
   const handleSave = async () => {
     try {
       // Call API to update user profile
-      await axiosInstance.put('/user/update-profile', {
-        firstName: tempProfileData.firstName,
-        lastName: tempProfileData.lastName,
+      await axiosInstance.patch(`/user/update/${userId}`, {
+        // firstName: tempProfileData.firstName,
+        // lastName: tempProfileData.lastName,
+        name: tempProfileData.name,
         phone: tempProfileData.phone,
         dateOfBirth: tempProfileData.dateOfBirth,
-        preferences: tempProfileData.preferences
+        // preferences: tempProfileData.preferences
       });
 
       // Update local state with saved data
@@ -191,9 +188,10 @@ const ProfileContainer = () => {
       const currentUser = JSON.parse(localStorage.getItem("user")) || {};
       const updatedUser = {
         ...currentUser,
-        firstName: tempProfileData.firstName,
-        lastName: tempProfileData.lastName,
-        name: `${tempProfileData.firstName} ${tempProfileData.lastName}`.trim()
+        name: tempProfileData.name,
+        // firstName: tempProfileData.firstName,
+        // lastName: tempProfileData.lastName,
+        // name: `${tempProfileData.firstName} ${tempProfileData.lastName}`.trim()
       };
       localStorage.setItem("user", JSON.stringify(updatedUser));
       

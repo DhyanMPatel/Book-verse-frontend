@@ -72,8 +72,8 @@ const PersonalInfo = ({
             <label className="block text-sm font-medium text-gray-600 mb-2">Full Name</label>
             <input
               type="text"
-              value={isEditing ? tempProfileData.fullName : profileData.fullName}
-              onChange={(e) => handleInputChange('fullName', e.target.value)}
+              value={isEditing ? tempProfileData.name : profileData.name}
+              onChange={(e) => handleInputChange('name', e.target.value)}
               disabled={!isEditing}
               className={`w-full px-4 py-2 rounded-xl border-2 transition-colors ${
                 isEditing
