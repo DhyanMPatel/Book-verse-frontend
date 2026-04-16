@@ -71,7 +71,7 @@ const [loading, setLoading] = useState(false);
       theme="forgotPassword"
       showForgotPassword={false}
       showSignUpLink={false}
-      showSignInLink={true}
+      showSignInLink={false}
     />
   );
 };

@@ -21,16 +21,6 @@ const UpdateUser = ({ isOpen, onClose, onSubmit, userData }) => {
       .string()
       .required("Phone number is required")
       .matches(/^[0-9]{10}$/, "Phone number must be exactly 10 digits"),
-    password: yup
-  .string()
-  .transform((value, originalValue) =>
-    originalValue === "" ? undefined : value
-  )
-  .min(6, "Password must be at least 6 characters")
-  .matches(
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-    "Password must contain uppercase, lowercase and number"
-  ),
     role: yup
       .string()
       .required("Role is required")
@@ -38,14 +28,14 @@ const UpdateUser = ({ isOpen, onClose, onSubmit, userData }) => {
   });
 
   // Formik configuration
-  const initialValues = useFormik({
+  const formik = useFormik({
     initialValues: {
-      name: "",
-      email: "",
-      phone: "",
-      password: "",
-      role: "",
+      name: userData?.name || "",
+      email: userData?.email || "",
+      phone: userData?.phone || "",
+      role: userData?.role || "",
     },
+    enableReinitialize: true,
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setIsSubmitting(true);
@@ -58,50 +48,7 @@ const UpdateUser = ({ isOpen, onClose, onSubmit, userData }) => {
         setIsSubmitting(false);
       }
     },
-    enableReinitialize: true, // Allow form to reinitialize when userData changes
   });
-
-  // Update form values when userData changes
-//   useEffect(() => {
-//     if (userData && isOpen) {
-//       formik.setValues({
-//         name: userData.name || "",
-//         email: userData.email || "",
-//         phone: userData.phone || "",
-//         password: "", // Don't pre-fill password for security
-//         role: userData.role || "",
-//       });
-//     }
-//   }, [userData, isOpen, formik]);
-
-const formik = useFormik({
-  initialValues: {
-    name: userData?.name || "",
-    email: userData?.email || "",
-    phone: userData?.phone || "",
-    password: "",
-    role: userData?.role || "",
-  },
-  enableReinitialize: true,
-  validationSchema: validationSchema,
-  onSubmit: async (values) => {
-    setIsSubmitting(true);
-    try {
-      const payload = { ...values };
-
-      if (!payload.password) {
-        delete payload.password;
-      }
-
-      await onSubmit(payload);
-      onClose();
-    } catch (error) {
-      console.error("Update error:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  },
-});
 
   const handlePhoneChange = (e) => {
     const value = e.target.value.replace(/\D/g, "");
@@ -242,35 +189,6 @@ const formik = useFormik({
               {formik.errors.phone && formik.touched.phone && (
                 <motion.p className="mt-1 text-sm text-red-500">
                   {formik.errors.phone}
-                </motion.p>
-              )}
-            </div>
-
-            {/* Password */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password <span className="text-xs text-gray-500">(Leave blank to keep current)</span>
-              </label>
-              <input
-                type="password"
-                name="password"
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all ${
-                  formik.errors.password && formik.touched.password
-                    ? "border-red-500"
-                    : "border-gray-300"
-                }`}
-                placeholder="Enter new password (optional)"
-              />
-              {formik.errors.password && formik.touched.password && (
-                <motion.p
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-1 text-sm text-red-500"
-                >
-                  {formik.errors.password}
                 </motion.p>
               )}
             </div>

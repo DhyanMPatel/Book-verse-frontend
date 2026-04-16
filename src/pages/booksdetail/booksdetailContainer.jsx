@@ -1,5 +1,5 @@
-import React from 'react';
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import BookDetailView from "./booksdetailView"
@@ -9,6 +9,28 @@ import axiosInstance from '../../services/axiosInstance';
 const BooksDetailContainer = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [liked, setLiked] = useState(false);
+  const { id } = useParams();
+
+  // Check if book is in wishlist on page load
+  useEffect(() => {
+    const checkWishlistStatus = async () => {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user?._id || !id) return;
+
+      try {
+        const res = await axiosInstance.get('/wishlist/get');
+        const wishlistBooks = res.data?.data?.books || [];
+        const isInWishlist = wishlistBooks.some(
+          (item) => String(item.bookId?._id || item.bookId) === String(id)
+        );
+        setLiked(isInWishlist);
+      } catch (error) {
+        console.error("Error checking wishlist status:", error);
+      }
+    };
+
+    checkWishlistStatus();
+  }, [id]);
 
 const user = JSON.parse(localStorage.getItem('user')) || {};
 const handlePayment = async (amount, cartItems) => {

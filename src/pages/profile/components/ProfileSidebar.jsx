@@ -63,25 +63,34 @@ const ProfileSidebar = ({
         {!isAdmin && (
           <>
             <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="bg-blue-50 rounded-xl p-3">
+              <div className="bg-blue-50 rounded-xl p-3 group relative">
                 <Book className="w-6 h-6 text-blue-600 mx-auto mb-1" />
                 <p className="text-2xl font-bold text-blue-600">
                   {userStats.totalOrders}
                 </p>
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                  Total Orders
+                </span>
               </div>
-              <div className="bg-green-50 rounded-xl p-3">
+              <div className="bg-green-50 rounded-xl p-3 group relative">
                 <ShoppingBag className="w-6 h-6 text-green-600 mx-auto mb-1" />
                 <p className="text-2xl font-bold text-green-600">
                   {userStats.totalBooks}
                 </p>
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                  Books Purchased
+                </span>
               </div>
             </div>
 
-            <div className="bg-purple-50 rounded-xl p-3 mb-6">
+            <div className="bg-purple-50 rounded-xl p-3 mb-6 group relative">
               <Heart className="w-6 h-6 text-purple-600 mx-auto mb-1" />
               <p className="text-2xl font-bold text-purple-600">
                 {userStats.wishlistItems}
               </p>
+              <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                Wishlist Items
+              </span>
             </div>
           </>
         )}

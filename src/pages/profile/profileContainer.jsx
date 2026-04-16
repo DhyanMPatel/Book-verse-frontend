@@ -59,7 +59,7 @@ const ProfileContainer = () => {
         if (userData) {
           setProfileData({
             firstName: userData.firstName || userData.name?.split(' ')[0] || '',
-            lastName: userData.lastName || userData.name?.split(' ').slice(1).join(' ') || '',
+            // lastName: userData.lastName || userData.name?.split(' ').slice(1).join(' ') || '',
             email: userData.email || '',
             phone: userData.phone || '',
             dateOfBirth: userData.dateOfBirth || '',
@@ -92,6 +92,7 @@ const ProfileContainer = () => {
     if (!userId) return;
 
     const fetchUserData = async () => {
+      console.log("[ProfileContainer] Calling orders API...");
       try {
         const [wishlistRes, cartRes, ordersRes] = await Promise.allSettled([
           axiosInstance.get('/wishlist/get'),
@@ -99,9 +100,12 @@ const ProfileContainer = () => {
           axiosInstance.get(`order/orders/${userId}`)
         ]);
 
+        console.log("[ProfileContainer] Orders API response:", ordersRes);
+
         // Handle orders response
         if (ordersRes.status === 'fulfilled') {
           const orders = ordersRes.value.data?.data || ordersRes.value.data || [];
+          console.log("[ProfileContainer] Orders data:", orders);
           
           setOrderHistory(
             orders.map(order => ({
@@ -112,6 +116,8 @@ const ProfileContainer = () => {
               books: order.items || []
             }))
           );
+        } else {
+          console.error("[ProfileContainer] Orders API failed:", ordersRes.reason);
         }
 
         // Handle stats
@@ -142,7 +148,7 @@ const ProfileContainer = () => {
     { id: 'personal', label: 'Personal Info', icon: User },
     { id: 'orders', label: 'Order History', icon: ShoppingBag },
     { id: 'wishlist', label: 'Wishlist', icon: Heart },
-    { id: 'resetpassword', label: 'Reset Password', icon: Lock },
+    { id: 'resetpassword', label: 'Change Password', icon: Lock },
   ]
 
   // Admin sees personal info and reset password

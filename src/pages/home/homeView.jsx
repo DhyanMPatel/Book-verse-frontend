@@ -337,13 +337,22 @@ const HomeView = ({
 
                       <div className="price-section">
                         <div className="price-row">
-                          <span className="current-price">₹{book.price}</span>
-
-                          {book.originalPrice && (
-                            <span className="original-price">
-                              ₹{book.originalPrice}
-                            </span>
-                          )}
+                          {(() => {
+                            const price = book?.price || 0;
+                            const discount = book?.discount || 0;
+                            const discountedPrice = price - (price * discount) / 100;
+                            return (
+                              <>
+                                <span className="current-price">₹{Math.round(discountedPrice)}</span>
+                                {discount > 0 && (
+                                  <span className="original-price">₹{price}</span>
+                                )}
+                                {discount > 0 && (
+                                  <span className="discount-badge">{discount}% OFF</span>
+                                )}
+                              </>
+                            );
+                          })()}
                         </div>
                       </div>
 
@@ -542,10 +551,28 @@ const HomeView = ({
                   <p className="text-gray-600 text-sm mb-3">by {book.author}</p>
 
                   <div className="flex justify-between items-center">
-                    <span className="text-xl font-bold text-green-600">
-                      ₹{book.price}
-                    </span>
-
+                    {(() => {
+                      const price = book?.price || 0;
+                      const discount = book?.discount || 0;
+                      const discountedPrice = price - (price * discount) / 100;
+                      return (
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl font-bold text-green-600">
+                            ₹{Math.round(discountedPrice)}
+                          </span>
+                          {discount > 0 && (
+                            <span className="text-sm text-gray-400 line-through">
+                              ₹{price}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })()}
+                    {book?.discount > 0 && (
+                      <span className="text-xs font-medium text-white bg-red-500 px-2 py-0.5 rounded-full">
+                        {book.discount}% OFF
+                      </span>
+                    )}
                   </div>
                 </div>
               </motion.div>

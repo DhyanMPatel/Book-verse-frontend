@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import * as yup from "yup";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFormik } from "formik";
+import { toast } from "react-toastify";
 import axiosInstance from "../../../../services/axiosInstance";
 import "./UpdateBookStyle.css";
 
@@ -50,7 +51,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
         (value) => value && value.trim().length > 0
       ),
     categoryId: yup.string().required("Category is required"),
-     isbn: yup
+    isbn: yup
       .string()
       .required("ISBN is required")
       .matches(
@@ -101,7 +102,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
         if (!value) return true;
         return value.type === "application/pdf";
       })
-      .test("fileSize", "File size must be less than 10MB", (value) => {
+      .test("fileSize", "File size must be less than 100MB", (value) => {
         if (!value) return true;
         return value.size <= 100 * 1024 * 1024;
       }),
@@ -182,13 +183,19 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
     const files = event.currentTarget.files;
 
     if (files.length > 1) {
-      formik.setFieldError("coverImage", "Only one image allowed");
+      toast.error("Only one image allowed");
       return;
     }
 
     const file = files[0];
 
     if (file) {
+      // Check file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error("Cover image must be less than 10MB");
+        return;
+      }
+
       formik.setFieldValue("coverImage", file);
       formik.setFieldTouched("coverImage", true);
 
@@ -203,6 +210,12 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
   const handleFileUrlChange = (event) => {
     const file = event.currentTarget.files[0];
     if (file) {
+      // Check file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error("Book file must be less than 10MB");
+        return;
+      }
+
       formik.setFieldValue("file", file);
       setFileUrlPreview(file.name);
     }
@@ -646,7 +659,8 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                     Files
                   </h3>
 
-                  <div className="space-y-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Cover Image */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Cover Image

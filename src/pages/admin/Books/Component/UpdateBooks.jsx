@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import * as yup from "yup";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFormik } from "formik";
+import { toast } from "react-toastify";
 import axiosInstance from "../../../../services/axiosInstance";
 import "./UpdateBookStyle.css";
 
@@ -258,7 +259,15 @@ const UpdateBooks = ({ isOpen, onClose, onSubmit, bookData }) => {
   const handleCoverImageChange = (event) => {
     const file = event.currentTarget.files[0];
     if (file) {
+      // Check file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error("Cover image must be less than 10MB");
+        return;
+      }
+
       formik.setFieldValue("coverImage", file);
+      formik.setFieldTouched("coverImage", true);
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setCoverImagePreview(reader.result);
@@ -270,6 +279,12 @@ const UpdateBooks = ({ isOpen, onClose, onSubmit, bookData }) => {
   const handleFileUrlChange = (event) => {
     const file = event.currentTarget.files[0];
     if (file) {
+      // Check file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error("Book file must be less than 10MB");
+        return;
+      }
+
       formik.setFieldValue("file", file);
       setFileUrlPreview(file.name);
     }
@@ -727,7 +742,8 @@ const UpdateBooks = ({ isOpen, onClose, onSubmit, bookData }) => {
                     Files
                   </h3>
 
-                  <div className="space-y-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Cover Image */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Cover Image
@@ -789,6 +805,7 @@ const UpdateBooks = ({ isOpen, onClose, onSubmit, bookData }) => {
                         )}
                     </div>
 
+                    {/* Book Softcopy */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Book Softcopy (PDF)

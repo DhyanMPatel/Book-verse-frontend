@@ -276,10 +276,15 @@ export default function SearchView() {
                       onError={(e) => { e.target.style.display = 'none'; }}
                     />
                     
-                    {/* Wishlist Button */}
+                    {/* Category Badge - Always Visible */}
+                    <span className="absolute top-2 left-2 px-2 py-1 bg-white/90 backdrop-blur-sm rounded-md text-xs font-medium text-purple-700 shadow-sm">
+                      {book?.category}
+                    </span>
+
+                    {/* Wishlist Button - Show on Hover */}
                     <button
                       onClick={(e) => handleWishlistToggle(e, book)}
-                      className="absolute top-2 right-2 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md transition-all duration-300 ease-out hover:scale-110 active:scale-95"
+                      className="absolute top-2 right-2 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out hover:scale-110 active:scale-95"
                     >
                       <Heart 
                         className={`w-4 h-4 transition-colors duration-300 ${
@@ -288,11 +293,6 @@ export default function SearchView() {
                         fill={isInWishlist ? "currentColor" : "none"}
                       />
                     </button>
-
-                    {/* Category Badge */}
-                    <span className="absolute top-2 left-2 px-2 py-1 bg-white/90 backdrop-blur-sm rounded-md text-xs font-medium text-purple-700 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out">
-                      {book?.category}
-                    </span>
                   </div>
 
                   {/* Book Info */}
@@ -304,16 +304,30 @@ export default function SearchView() {
                   </p>
 
                   {/* Price */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold text-green-600">
-                      ₹{book?.price}
-                    </span>
-                    {book?.originalPrice && book.originalPrice > book.price && (
-                      <span className="text-xs text-gray-400 line-through">
-                        ₹{book.originalPrice}
-                      </span>
-                    )}
-                  </div>
+                  {(() => {
+                    const price = book?.price || 0;
+                    const discount = book?.discount || 0;
+                    const discountedPrice = price - (price * discount) / 100;
+                    return (
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-bold text-green-600">
+                            ₹{Math.round(discountedPrice)}
+                          </span>
+                          {discount > 0 && (
+                            <span className="text-xs text-gray-400 line-through">
+                              ₹{price}
+                            </span>
+                          )}
+                        </div>
+                        {discount > 0 && (
+                          <span className="text-xs font-medium text-white bg-red-500 px-2 py-0.5 rounded-full">
+                            {discount}% OFF
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </motion.div>
               );
             })}

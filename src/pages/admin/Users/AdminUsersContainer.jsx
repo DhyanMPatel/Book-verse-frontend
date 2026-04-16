@@ -69,6 +69,7 @@ const AdminUsersContainer = () => {
   } catch (error) {
     console.error("Create user failed:", error);
     console.log("Backend error:", error?.response?.data); // 👈 IMPORTANT
+    throw error; // Re-throw so CreateUser can show toast
   }
 };
 

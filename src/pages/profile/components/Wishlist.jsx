@@ -4,7 +4,6 @@ import { Heart, BookOpen, ShoppingCart, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../services/axiosInstance";
 import { toast } from "react-toastify";
-import Swal from "sweetalert2";
 
 const Wishlist = () => {
   const navigate = useNavigate();
@@ -64,18 +63,6 @@ const Wishlist = () => {
 
   // ✅ Remove from wishlist — all books come pre-liked
   const handleRemove = async (bookId, bookTitle) => {
-    const result = await Swal.fire({
-      title: "Remove from Wishlist?",
-      text: `"${bookTitle}" will be removed from your wishlist.`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#ef4444",
-      cancelButtonColor: "#6b7280",
-      confirmButtonText: "Yes, remove it",
-    });
-
-    if (!result.isConfirmed) return;
-
     try {
       setRemovingId(bookId);
       await axiosInstance.delete(`/wishlist/remove/${bookId}`);
@@ -99,18 +86,6 @@ const Wishlist = () => {
 
   // ✅ Clear entire wishlist
   const handleClearWishlist = async () => {
-    const result = await Swal.fire({
-      title: "Clear Entire Wishlist?",
-      text: "All books will be removed from your wishlist. This cannot be undone.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#ef4444",
-      cancelButtonColor: "#6b7280",
-      confirmButtonText: "Yes, clear all",
-    });
-
-    if (!result.isConfirmed) return;
-
     try {
       setClearing(true);
       await axiosInstance.delete("/wishlist/clear");
@@ -176,7 +151,7 @@ const Wishlist = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => window.location.href = "/search"}
+            onClick={() => navigate("/search")}
             className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-shadow"
           >
             <BookOpen className="w-5 h-5" />
