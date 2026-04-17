@@ -120,23 +120,16 @@
 //       books={purchasedBooks}
 //       stats={stats}
 //       onDownload={handleDownload}
-//       onRead={handleRead}
-//     />
-//   )
-// }
-
-// export default LibraryContainer
-
-
-import React, { useState, useEffect } from 'react'
 import LibraryView from './libraryView'
 import axiosInstance from '../../services/axiosInstance'
+import { useState, useEffect, useMemo } from 'react'
 
 const LibraryContainer = () => {
   const [purchasedBooks, setPurchasedBooks] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [downloadingIds, setDownloadingIds] = useState(new Set()) // tracks in-progress downloads
+  const [searchQuery, setSearchQuery] = useState('')
 
   const user = JSON.parse(localStorage.getItem('user')) || {}
 
@@ -183,8 +176,6 @@ const LibraryContainer = () => {
     }
   }
 
-  // ✅ FIXED: calls the auth-protected download endpoint,
-  // receives the file as a blob, and triggers a real browser download
   const handleDownload = async (bookId) => {
     if (downloadingIds.has(bookId)) return // prevent duplicate clicks
 
@@ -198,8 +189,6 @@ const LibraryContainer = () => {
         responseType: 'blob', // tells axios to treat the response as binary
       })
 
-      // Derive filename from Content-Disposition header if present,
-      // otherwise fall back to the book title
       const disposition = response.headers['content-disposition']
       let filename = `${book.title || 'book'}.pdf`
       if (disposition) {
@@ -207,7 +196,6 @@ const LibraryContainer = () => {
         if (match) filename = match[1]
       }
 
-      // Create a temporary object URL and click it — saves to Downloads
       const blobUrl = window.URL.createObjectURL(new Blob([response.data]))
       const link = document.createElement('a')
       link.href = blobUrl
@@ -236,6 +224,15 @@ const LibraryContainer = () => {
     }
   }
 
+  const filteredBooks = useMemo(() => {
+    if (!searchQuery.trim()) return purchasedBooks
+    const query = searchQuery.toLowerCase()
+    return purchasedBooks.filter(book =>
+      book.title?.toLowerCase().includes(query) ||
+      book.author?.toLowerCase().includes(query)
+    )
+  }, [purchasedBooks, searchQuery])
+
   const stats = { totalBooks: purchasedBooks.length }
 
   if (loading) return <div>Loading...</div>
@@ -243,11 +240,14 @@ const LibraryContainer = () => {
 
   return (
     <LibraryView
-      books={purchasedBooks}
+      books={filteredBooks}
+      allBooks={purchasedBooks}
       stats={stats}
       onDownload={handleDownload}
       onRead={handleRead}
-      downloadingIds={downloadingIds} // pass this so LibraryView can show a spinner per book
+      downloadingIds={downloadingIds}
+      searchQuery={searchQuery}
+      setSearchQuery={setSearchQuery}
     />
   )
 }

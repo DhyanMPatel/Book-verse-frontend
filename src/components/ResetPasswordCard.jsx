@@ -93,7 +93,7 @@ const handleSubmit = async (values) => {
       theme="resetPassword"
       showForgotPassword={false}
       showSignUpLink={false}
-      showSignInLink={true}
+      showSignInLink={false}
       loading={loading}
     />
   );

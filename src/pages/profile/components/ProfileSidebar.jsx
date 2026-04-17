@@ -48,7 +48,7 @@ const ProfileSidebar = ({
         </div> */}
 
         <h2 className="text-xl font-bold text-gray-800">
-          {profileData.firstName} {profileData.lastName}
+          {profileData.name}
         </h2>
         <p className="text-gray-600 mb-2">{profileData.email}</p>
 

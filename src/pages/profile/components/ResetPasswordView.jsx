@@ -21,7 +21,7 @@ const ResetPasswordView = ({
           <Lock className="w-5 h-5 text-blue-600" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-gray-900">Reset Password</h2>
+          <h2 className="text-xl font-bold text-gray-900">Change Password</h2>
           <p className="text-sm text-gray-600">Change your account password</p>
         </div>
       </div>

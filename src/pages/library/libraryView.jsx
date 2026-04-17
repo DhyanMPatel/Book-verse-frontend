@@ -2,10 +2,8 @@ import React from 'react'
 
 import { motion, AnimatePresence } from 'framer-motion'
 
-import { Book, Download, BookOpen, FileText, Calendar } from 'lucide-react'
+import { Book, Download, BookOpen, FileText, Calendar, Search, X } from 'lucide-react'
 import { toast } from 'react-toastify'
-
-
 
 
 // Smooth spring configuration - higher damping for buttery feel
@@ -21,7 +19,6 @@ const smoothSpring = {
   mass: 1,
 
 }
-
 
 
 // Stagger container animation
@@ -45,7 +42,6 @@ const containerVariants = {
   }
 
 }
-
 
 
 // Smooth card animation
@@ -105,8 +101,7 @@ const cardVariants = {
 }
 
 
-
-const LibraryView = ({ books, onDownload, onRead }) => {
+const LibraryView = ({ books, allBooks, onDownload, onRead, searchQuery, setSearchQuery }) => {
 
 
 
@@ -138,7 +133,7 @@ const LibraryView = ({ books, onDownload, onRead }) => {
 
     >
 
-      {/* Header */}
+      {/* Header with Search */}
 
       <motion.div 
 
@@ -148,21 +143,48 @@ const LibraryView = ({ books, onDownload, onRead }) => {
 
         transition={{ duration: 0.5, ease: 'easeOut', delay: 0.1 }}
 
-        className="flex items-center justify-between mb-6"
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6"
 
       >
 
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        <div>
 
-          My Library
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
 
-        </h2>
+            My Library
 
-        <span className="text-sm text-gray-500">
+          </h2>
 
-          {books.length} {books.length === 1 ? 'book' : 'books'}
+          <span className="text-sm text-gray-500">
 
-        </span>
+            {allBooks?.length || books.length} {allBooks?.length === 1 || books.length === 1 ? 'book' : 'books'} total
+
+          </span>
+
+        </div>
+
+        
+        {/* Search Bar */}
+        <div className="relative">
+          <div className="flex items-center bg-white border border-gray-200 rounded-lg px-3 py-2 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all">
+            <Search className="w-4 h-4 text-gray-400 mr-2" />
+            <input
+              type="text"
+              placeholder="Search books..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="bg-transparent outline-none text-sm text-gray-700 placeholder-gray-400 w-40 sm:w-56"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="ml-2 p-1 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X className="w-3 h-3 text-gray-400" />
+              </button>
+            )}
+          </div>
+        </div>
 
       </motion.div>
 
@@ -190,9 +212,17 @@ const LibraryView = ({ books, onDownload, onRead }) => {
 
           </div>
 
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">Your library is empty</h3>
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">
 
-          <p className="text-gray-500">Purchase books to see them here</p>
+            {searchQuery ? 'No books found' : 'Your library is empty'}
+
+          </h3>
+
+          <p className="text-gray-500">
+
+            {searchQuery ? 'Try a different search term' : 'Purchase books to see them here'}
+
+          </p>
 
         </motion.div>
 
@@ -200,202 +230,59 @@ const LibraryView = ({ books, onDownload, onRead }) => {
 
 
 
-      {/* Books Grid - Premium Animated */}
-
-      <motion.div
-
-        variants={containerVariants}
-
-        initial="hidden"
-
-        animate="show"
-
-        className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
-
-      >
-
-        <AnimatePresence mode="popLayout">
-
-          {books.map((book, index) => (
-
-            <motion.div
-
-              key={book.id}
-
-              variants={cardVariants}
-
-              exit="exit"
-
-              whileHover={{ 
-
-                y: -8, 
-
-                scale: 1.02,
-
-                transition: {
-
-                  type: 'spring',
-
-                  stiffness: 120,
-
-                  damping: 20,
-
-                  mass: 0.5,
-
-                }
-
-              }}
-
-              className="group relative bg-white rounded-2xl p-3 shadow-md hover:shadow-xl transition-shadow duration-500 ease-out overflow-hidden will-change-transform"
-
-              style={{
-
-                background: 'linear-gradient(145deg, #ffffff, #f9fafb)',
-
-              }}
-
-            >
-
-              {/* Subtle glow effect on hover */}
-
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/[0.03] group-hover:to-purple-500/[0.05] transition-all duration-700 ease-out rounded-2xl pointer-events-none" />
-
-              {/* Book Cover */}
-
-              {/* Smooth Book Cover */}
-
-              <div 
-
-                className="relative w-full h-40 bg-gradient-to-br from-blue-50 via-purple-50/50 to-pink-50 rounded-xl mb-3 flex items-center justify-center overflow-hidden group-hover:shadow-inner transition-all duration-500 ease-out"
-
-              >
-
-                {book.cover ? (
-
-                  <img
-
-                    src={book.cover}
-
-                    alt={book.title}
-
-                    className="w-full h-full object-cover rounded-xl transition-transform duration-500 ease-out group-hover:scale-105"
-
-                  />
-
-                ) : (
-
-                  <div className="relative">
-
-                    <Book className="w-12 h-12 text-blue-400/70 transition-all duration-500 group-hover:text-blue-500/80" />
-
-                  </div>
-
-                )}
-
-
-
-                {/* Format Badge - smooth fade */}
-
-                <span 
-
-                  className="absolute top-2 left-2 px-2 py-1 bg-white/90 backdrop-blur-sm rounded-md text-xs font-medium text-gray-700 flex items-center gap-1 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out"
-
-                >
-
-                  {getFormatIcon(book.format)}
-
-                  {book.format}
-
-                </span>
-
-
-
-                {/* Smooth hover overlay */}
-
-                <div
-
-                  className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out rounded-xl pointer-events-none"
-
+      {/* Books Grid - Compact Professional */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        {books.map((book) => (
+          <div
+            key={book.id}
+            className="group relative bg-white rounded-2xl p-3 shadow-md hover:shadow-xl transition-shadow duration-500 overflow-hidden"
+          >
+            {/* Book Cover */}
+            <div className="relative w-full h-48 bg-gradient-to-br from-blue-50 via-purple-50/50 to-pink-50 rounded-xl mb-3 flex items-center justify-center overflow-hidden group-hover:shadow-inner transition-all duration-500">
+              {book.cover ? (
+                <img
+                  src={book.cover}
+                  alt={book.title}
+                  className="w-full h-full object-cover"
                 />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <Book className="w-12 h-12 text-blue-400/70" />
+                </div>
+              )}
+              {/* Format Badge */}
+              <span className="absolute top-2 left-2 px-2 py-1 bg-white/90 backdrop-blur-sm rounded-md text-xs font-medium text-gray-700 shadow-sm">
+                {book.format}
+              </span>
+            </div>
 
-              </div>
+            {/* Book Info */}
+            <h3 className="font-semibold text-gray-800 text-sm mb-1 line-clamp-1 group-hover:text-blue-600 transition-colors duration-300">
+              {book.title}
+            </h3>
+            <p className="text-xs text-gray-500 mb-3">
+              {book.author}
+            </p>
 
-
-
-              {/* Book Info - smooth transitions */}
-
-              <h3 
-
-                className="font-semibold text-gray-800 text-sm mb-1 line-clamp-1 group-hover:text-blue-600 transition-colors duration-300 ease-out"
-
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => onRead(book.id)}
+                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/25 active:scale-95 transition-all duration-300"
               >
-
-                {book.title}
-
-              </h3>
-
-              <p className="text-xs text-gray-500 mb-3">
-
-                {book.author}
-
-              </p>
-
-
-
-              {/* Purchase Date */}
-
-              <div className="flex items-center gap-1 text-xs text-gray-400 mb-3">
-
-                <Calendar className="w-3.5 h-3.5" />
-
-                {new Date(book.purchasedDate).toLocaleDateString('en-US', {
-
-                  month: 'short',
-
-                  day: 'numeric',
-
-                  year: 'numeric'
-
-                })}
-
-              </div>
-
-
-
-              {/* Smooth Action Buttons */}
-
-              <div className="flex items-center gap-2">
-
-                <button
-
-                  onClick={() => onRead(book.id)}
-
-                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/25 active:scale-95 transition-all duration-300 ease-out"
-
-                >
-
-                  <BookOpen className="w-3.5 h-3.5" />
-
-                  Read
-
-                </button>
-
-                <button
-                  onClick={() => handleDownload(book.id, book.title)}
-                  className="flex items-center justify-center p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 hover:shadow-md active:scale-95 transition-all duration-300 ease-out"
-                >
-                  <Download className="w-4 h-4" />
-                </button>
-
-              </div>
-
-            </motion.div>
-
-          ))}
-
-        </AnimatePresence>
-
-      </motion.div>
+                <BookOpen className="w-3.5 h-3.5" />
+                Read
+              </button>
+              <button
+                onClick={() => handleDownload(book.id, book.title)}
+                className="flex items-center justify-center p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 hover:shadow-md active:scale-95 transition-all duration-300"
+              >
+                <Download className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
 
     </motion.div>
 

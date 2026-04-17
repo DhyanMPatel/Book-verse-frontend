@@ -91,7 +91,7 @@ const ProfileContainer = () => {
     if (!userId) return;
 
     const fetchUserData = async () => {
-      console.log("[ProfileContainer] Calling orders API...");
+      // console.log("[ProfileContainer] Calling orders API...");
       try {
         const [wishlistRes, cartRes, ordersRes] = await Promise.allSettled([
           axiosInstance.get('/wishlist/get'),
@@ -99,22 +99,25 @@ const ProfileContainer = () => {
           axiosInstance.get(`order/orders/${userId}`)
         ]);
 
-        console.log("[ProfileContainer] Orders API response:", ordersRes);
+        // console.log("[ProfileContainer] Orders API response:", ordersRes);
 
         // Handle orders response
         if (ordersRes.status === 'fulfilled') {
           const orders = ordersRes.value.data?.data || ordersRes.value.data || [];
-          console.log("[ProfileContainer] Orders data:", orders);
+          // console.log("[ProfileContainer] Orders data:", orders);
           
           setOrderHistory(
             orders.map(order => ({
-              id: order._id,
+              // id: order._id,
+              id: order._id || order.orderId || order.id,
               date: order.createdAt,
+              razorpayPaymentId: order.razorpayPaymentId,
               total: order.totalAmount,
               status: order.status,
               books: order.items || []
             }))
           );
+          // console.log(orders);
         } else {
           console.error("[ProfileContainer] Orders API failed:", ordersRes.reason);
         }

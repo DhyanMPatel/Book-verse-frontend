@@ -7,7 +7,7 @@ import CartView from './cartView';
 const CartContainer = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const user = JSON.parse(localStorage.getItem('user'))
-  const handlePayment = async (amount, cartItems) => {
+  const handlePayment = async (amount, cartItems, onSuccessCallback) => {
     setIsProcessing(true);
     try {
       const res = await axiosInstance.post('/order/create', {totalAmount: amount, cartItems: cartItems, userId: user._id});
@@ -40,8 +40,8 @@ const CartContainer = () => {
               confirmButtonText: 'OK'
             });
             
-            // Refresh page to show empty cart
-            window.location.reload();
+            // Clear cart state without page refresh
+            onSuccessCallback && onSuccessCallback();
           } catch (error) {
             toast.error(error.response?.data?.message || "Payment verification failed");
           }

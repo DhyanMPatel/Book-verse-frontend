@@ -73,11 +73,11 @@ export const formThemes = {
     loadingText: "Sending reset link...",
   },
   resetPassword: {
-  title: "Book Verse",
-  subtitle: "Create a new password for your account",
-  gradient: "from-green-500/20 to-blue-600/20",
-  buttonGradient: "from-green-500 to-blue-600",
-  submitText: "Reset Password",
-  loadingText: "Resetting password...",
+    title: "Book Verse",
+    subtitle: "Create a new password for your account",
+    gradient: "from-blue-500/20 to-purple-600/20",
+    buttonGradient: "from-blue-500 to-purple-600",
+    submitText: "Reset Password",
+    loadingText: "Resetting password...",
   },
 };

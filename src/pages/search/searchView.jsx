@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
+import MuiPagination from "@mui/material/Pagination";
 
 // Animation variants from library page
 const containerVariants = {
@@ -57,6 +58,8 @@ export default function SearchView() {
 
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
 
   const handleBookClick = (id) => {
     navigate(`/book/${id}`);
@@ -175,6 +178,26 @@ export default function SearchView() {
     return filtered;
   }, [books, selectedCategory, query]);
 
+  /* -------------------------
+     Pagination
+  --------------------------*/
+  const totalPages = Math.ceil(filteredBooks.length / itemsPerPage);
+  
+  const paginatedBooks = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredBooks.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredBooks, currentPage]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [query, selectedCategory]);
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       {/* SEARCH BAR */}
@@ -230,7 +253,7 @@ export default function SearchView() {
       {error && <div className="text-center text-red-500 py-10">{error}</div>}
 
       {/* BOOK GRID */}
-      {!loading && !error && filteredBooks.length > 0 && (
+      {!loading && !error && paginatedBooks.length > 0 && (
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -238,7 +261,7 @@ export default function SearchView() {
           className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
         >
           <AnimatePresence mode="popLayout">
-            {filteredBooks.map((book, index) => {
+            {paginatedBooks.map((book, index) => {
               const safeKey = book?.id ?? book?._id ?? `${book?.title}-${index}`;
               const bookId = book._id || book.id;
               const isInWishlist = wishlistMap[bookId] || false;
@@ -338,6 +361,21 @@ export default function SearchView() {
       {/* EMPTY STATE */}
       {!loading && !error && filteredBooks.length === 0 && (
         <div className="text-center text-gray-500 py-20">No books found</div>
+      )}
+
+      {/* PAGINATION */}
+      {!loading && !error && filteredBooks.length > 0 && totalPages > 1 && (
+        <div className="mt-8 flex justify-center">
+          <MuiPagination
+            count={totalPages}
+            page={currentPage}
+            onChange={(e, page) => handlePageChange(page)}
+            color="primary"
+            size="large"
+            showFirstButton
+            showLastButton
+          />
+        </div>
       )}
     </div>
   );
