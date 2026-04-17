@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from "react";
-import axiosInstance from "../../services/axiosInstance";
-import { useParams, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import Reviews from "../../components/Review";
-import { useBooks } from "../../contexts/BookContext";
-import { useReviews } from "../../contexts/ReviewContext";
-import Swal from "sweetalert2";
+import { AnimatePresence, motion } from "framer-motion";
 import { Heart } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
+import Reviews from "../../components/Review";
+import { useReviews } from "../../contexts/ReviewContext";
+import axiosInstance from "../../services/axiosInstance";
 
 export default function BookDetailView(props) {
-   const {handlePayment, isProcessing, handleClickWishlist, liked} = props;
+  const { handlePayment, isProcessing, handleClickWishlist, liked } = props;
   // const { handlePayment, isProcessing, handleClickWishlist, liked } = props;
   //  const [liked, setLiked] = useState(false);
   const [book, setBook] = useState(null);
@@ -21,6 +20,7 @@ export default function BookDetailView(props) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [relatedBooks, setRelatedBooks] = useState([]);
+  const [liked, setLiked] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -68,91 +68,94 @@ export default function BookDetailView(props) {
         ).toFixed(1)
       : 0;
 
-// In BookDetailView — replace the addToCart function
-const addToCart = async () => {
-  try {
-    // 🔹 First check if book already in cart
-    const cartRes = await axiosInstance.get("/cart/get");
-    const cartItems = cartRes.data?.data?.items || [];
-    const alreadyInCart = cartItems.some(
-      (item) => item.bookId === (book._id || book.id)
-    );
+  // In BookDetailView — replace the addToCart function
+  const addToCart = async () => {
+    try {
+      // 🔹 First check if book already in cart
+      const cartRes = await axiosInstance.get("/cart/get");
+      const cartItems = cartRes.data?.data?.items || [];
+      const alreadyInCart = cartItems.some(
+        (item) => item.bookId === (book._id || book.id),
+      );
 
-    if (alreadyInCart) {
-      const result = await Swal.fire({
-        icon: "info",
-        title: "Already in Cart",
-        text: `"${book.title}" is already in your cart.`,
+      if (alreadyInCart) {
+        const result = await Swal.fire({
+          icon: "info",
+          title: "Already in Cart",
+          text: `"${book.title}" is already in your cart.`,
+          showCancelButton: true,
+          confirmButtonText: "Go to Cart",
+          cancelButtonText: "Continue Shopping",
+        });
+        if (result.isConfirmed) navigate("/cart");
+        return; // ✅ stop here — don't add again
+      }
+
+      // 🔹 Not in cart — proceed to add
+      const payload = { bookId: book._id || book.id, quantity };
+      await axiosInstance.post("/cart/add", payload);
+
+      await Swal.fire({
+        icon: "success",
+        title: "Added to Cart 🛒",
+        text: `${book.title} added successfully!`,
         showCancelButton: true,
         confirmButtonText: "Go to Cart",
         cancelButtonText: "Continue Shopping",
+      }).then((result) => {
+        if (result.isConfirmed) navigate("/cart");
+        else navigate("/search");
       });
-      if (result.isConfirmed) navigate("/cart");
-      return; // ✅ stop here — don't add again
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Failed to add book to cart ❌",
+      });
     }
+  };
 
-    // 🔹 Not in cart — proceed to add
-    const payload = { bookId: book._id || book.id, quantity };
-    await axiosInstance.post("/cart/add", payload);
+  //   const addToCart = async () => {
+  //     // Add to cart logic here
+  //     // console.log("Added to cart:", book.title, "Quantity:", quantity);
+  //   try {
+  //     const payload = {
+  //       bookId: book._id || book.id,
+  //       quantity: quantity,
+  //     };
+  //     // await axiosInstance.put("/cart/update", payload);
+  //     const response = await axiosInstance.post("/cart/add", payload);
 
-    await Swal.fire({
-      icon: "success",
-      title: "Added to Cart 🛒",
-      text: `${book.title} added successfully!`,
-      showCancelButton: true,
-      confirmButtonText: "Go to Cart",
-      cancelButtonText: "Continue Shopping",
-    }).then((result) => {
-      if (result.isConfirmed) navigate("/cart");
-      else navigate("/search");
-    });
+  //     console.log("Cart response:", response.data);
 
-  } catch (error) {
-    console.error("Error adding to cart:", error);
-    Swal.fire({ icon: "error", title: "Oops...", text: "Failed to add book to cart ❌" });
-  }
-};
+  //     // ✅ SweetAlert here
+  //    await Swal.fire({
+  //   icon: "success",
+  //   title: "Added to Cart 🛒",
+  //   text: `${book.title} added successfully!`,
+  //   showCancelButton: true,
+  //   confirmButtonText: "Go to Cart",
+  //   cancelButtonText: "Continue Shopping",
+  // }).then((result) => {
+  //   if (result.isConfirmed) {
+  //     navigate("/cart");
+  //   } else if (result.isDismissed) {
+  //     navigate("/search"); // 👈 change "/search" to your actual search page route
+  //   }
+  // });
 
-//   const addToCart = async () => {
-//     // Add to cart logic here
-//     // console.log("Added to cart:", book.title, "Quantity:", quantity);
-//   try {
-//     const payload = {
-//       bookId: book._id || book.id,
-//       quantity: quantity,
-//     };
-//     // await axiosInstance.put("/cart/update", payload);
-//     const response = await axiosInstance.post("/cart/add", payload);
+  //   } catch (error) {
+  //     console.error("Error adding to cart:", error);
 
-//     console.log("Cart response:", response.data);
-
-//     // ✅ SweetAlert here
-//    await Swal.fire({
-//   icon: "success",
-//   title: "Added to Cart 🛒",
-//   text: `${book.title} added successfully!`,
-//   showCancelButton: true,
-//   confirmButtonText: "Go to Cart",
-//   cancelButtonText: "Continue Shopping",
-// }).then((result) => {
-//   if (result.isConfirmed) {
-//     navigate("/cart");
-//   } else if (result.isDismissed) {
-//     navigate("/search"); // 👈 change "/search" to your actual search page route
-//   }
-// });
-
-//   } catch (error) {
-//     console.error("Error adding to cart:", error);
-
-//     // ❌ Error SweetAlert
-//     Swal.fire({
-//       icon: "error",
-//       title: "Oops...",
-//       text: "Failed to add book to cart ❌",
-//     });
-//   }
-// };
+  //     // ❌ Error SweetAlert
+  //     Swal.fire({
+  //       icon: "error",
+  //       title: "Oops...",
+  //       text: "Failed to add book to cart ❌",
+  //     });
+  //   }
+  // };
 
   // const buyNow = () => {
   //   // Buy now logic here
@@ -227,14 +230,13 @@ const addToCart = async () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         {/* MAIN CONTENT GRID */}
-        
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="grid lg:grid-cols-2 gap-8 lg:gap-12"
         >
-          
           {/* IMAGE SECTION */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -242,25 +244,20 @@ const addToCart = async () => {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="space-y-6"
           >
-            
             {/* Main Image */}
-            
-<div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 flex justify-center">
-  <div className="relative w-[260px] sm:w-[300px] lg:w-[320px] h-[380px] sm:h-[420px] lg:h-[460px] flex items-center justify-center bg-gray-50 rounded-xl overflow-hidden">
-    
-    <motion.img
-      src={book.coverImage}
-      alt={book.title}
-      className="w-full h-[300px] sm:h-[360px] lg:h-[420px] object-cover"
-      whileHover={{ scale: 1.05 }}
-      transition={{ duration: 0.5 }}
-    />
 
-    {/* Wishlist Button */}
-    
+            <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 flex justify-center">
+              <div className="relative w-[260px] sm:w-[300px] lg:w-[320px] h-[380px] sm:h-[420px] lg:h-[460px] flex items-center justify-center bg-gray-50 rounded-xl overflow-hidden">
+                <motion.img
+                  src={book.coverImage}
+                  alt={book.title}
+                  className="w-full h-[300px] sm:h-[360px] lg:h-[420px] object-cover"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.5 }}
+                />
 
-  </div>
-
+                {/* Wishlist Button */}
+              </div>
             </div>
 
             {/* Image Gallery */}
@@ -303,24 +300,24 @@ const addToCart = async () => {
           >
             {/* Title and Author */}
             <div className="bg-white rounded-3xl shadow-xl p-6 lg:p-8">
-        
-        
-        {/* wishlist button */}
-           <div>
-      <motion.button
-        whileHover={{ scale: 1.1, rotate: 10 }}
-        whileTap={{ scale: 0.9 }}
-onClick={() => handleClickWishlist(book)}    
-    className="bg-white/90 backdrop-blur-sm p-2 sm:p-3 rounded-full shadow-md sm:shadow-lg cursor-pointer flex items-center justify-center"
-      >
-        <Heart
-          className={`w-4 h-4 sm:w-5 sm:h-5 transition-all duration-300 ${
-            liked ? "fill-red-500 text-red-500 scale-110" : "text-red-500"
-          }`}
-        />
-      </motion.button>
-    </div>
-        
+              {/* wishlist button */}
+              <div>
+                <motion.button
+                  whileHover={{ scale: 1.1, rotate: 10 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => handleClickWishlist(book)}
+                  className="bg-white/90 backdrop-blur-sm p-2 sm:p-3 rounded-full shadow-md sm:shadow-lg cursor-pointer flex items-center justify-center"
+                >
+                  <Heart
+                    className={`w-4 h-4 sm:w-5 sm:h-5 transition-all duration-300 ${
+                      liked
+                        ? "fill-red-500 text-red-500 scale-110"
+                        : "text-red-500"
+                    }`}
+                  />
+                </motion.button>
+              </div>
+
               <motion.h1
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -413,8 +410,7 @@ onClick={() => handleClickWishlist(book)}
                   </motion.span>
                 )}
               </motion.div>
-                
-             
+
               {/* Action Buttons */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -451,7 +447,8 @@ onClick={() => handleClickWishlist(book)}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => {
                     const amountInRupees = book.discount
-                      ? (book.price - (book.price * book.discount) / 100) * quantity
+                      ? (book.price - (book.price * book.discount) / 100) *
+                        quantity
                       : book.price * quantity;
                     handlePayment(
                       amountInRupees, // Convert to paise
@@ -465,7 +462,7 @@ onClick={() => handleClickWishlist(book)}
                           discount: book.discount || 0,
                           coverImage: book.coverImage || book.image,
                         },
-                      ]
+                      ],
                     );
                   }}
                   className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
@@ -491,37 +488,39 @@ onClick={() => handleClickWishlist(book)}
             </div>
 
             {/* Book Details Table */}
-         <motion.div
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ delay: 1.1 }}
-  className="bg-white rounded-3xl shadow-xl p-4 lg:p-6"  // reduced padding
->
-  <h3 className="text-xl lg:text-2xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-    Book Details
-  </h3>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.1 }}
+              className="bg-white rounded-3xl shadow-xl p-4 lg:p-6" // reduced padding
+            >
+              <h3 className="text-xl lg:text-2xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Book Details
+              </h3>
 
-  <div className="space-y-2"> {/* reduced spacing */}
-    {Object.entries(bookDetails || {}).map(
-      ([key, value], index) => (
-        <motion.div
-          key={key}
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 1.2 + index * 0.05 }}
-          className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0" // reduced py
-        >
-          <span className="font-semibold text-gray-700 capitalize text-sm lg:text-base">
-            {key}
-          </span>
-          <span className="text-gray-600 font-medium text-sm lg:text-base">
-            {value || "N/A"}
-          </span>
-        </motion.div>
-      ),
-    )}
-  </div>
-</motion.div>
+              <div className="space-y-2">
+                {" "}
+                {/* reduced spacing */}
+                {Object.entries(bookDetails || {}).map(
+                  ([key, value], index) => (
+                    <motion.div
+                      key={key}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 1.2 + index * 0.05 }}
+                      className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0" // reduced py
+                    >
+                      <span className="font-semibold text-gray-700 capitalize text-sm lg:text-base">
+                        {key}
+                      </span>
+                      <span className="text-gray-600 font-medium text-sm lg:text-base">
+                        {value || "N/A"}
+                      </span>
+                    </motion.div>
+                  ),
+                )}
+              </div>
+            </motion.div>
           </motion.div>
         </motion.div>
 
@@ -556,8 +555,6 @@ onClick={() => handleClickWishlist(book)}
 
         {/* REVIEWS SECTION */}
         <Reviews bookId={id} />
- 
-        
 
         {/* OFFERS SECTION */}
         {book.offers && book.offers.length > 0 && (
@@ -604,8 +601,6 @@ onClick={() => handleClickWishlist(book)}
             </div>
           </motion.div>
         )}
-
-       
       </div>
     </div>
   );
