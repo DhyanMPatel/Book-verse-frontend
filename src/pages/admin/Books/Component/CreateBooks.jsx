@@ -3,27 +3,13 @@ import * as yup from "yup";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
-import axiosInstance from "../../../../services/axiosInstance";
+import CategorySelect from "../../../../common/CategorySelect";
 import "./UpdateBookStyle.css";
 
 const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [coverImagePreview, setCoverImagePreview] = useState(null);
   const [fileUrlPreview, setFileUrlPreview] = useState(null);
-  const [categories, setCategories] = useState([]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await axiosInstance.get("/categories");
-        setCategories(res?.data?.data || []);
-      } catch (error) {
-        console.error("Failed to fetch categories:", error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
 
   const validationSchema = yup.object().shape({
     title: yup
@@ -32,7 +18,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
       .test(
         "no-only-spaces",
         "Cannot be empty or spaces only",
-        (value) => value && value.trim().length > 0
+        (value) => value && value.trim().length > 0,
       ),
     author: yup
       .string()
@@ -40,7 +26,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
       .test(
         "no-only-spaces",
         "Author cannot be empty or spaces only",
-        (value) => value && value.trim().length > 0
+        (value) => value && value.trim().length > 0,
       ),
     description: yup
       .string()
@@ -48,7 +34,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
       .test(
         "no-only-spaces",
         "Description cannot be empty or spaces only",
-        (value) => value && value.trim().length > 0
+        (value) => value && value.trim().length > 0,
       ),
     categoryId: yup.string().required("Category is required"),
     isbn: yup
@@ -93,9 +79,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
       .date()
       .required("Published date is required")
       .max(new Date(), "Published date cannot be in the future"),
-    coverImage: yup
-      .mixed()
-      .required("Cover image is required"),
+    coverImage: yup.mixed().required("Cover image is required"),
     fileUrl: yup
       .mixed()
       .test("fileType", "Only PDF files are allowed", (value) => {
@@ -124,6 +108,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
       publishedDate: "",
       coverImage: null,
       file: null,
+      categoryName: "",
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -135,10 +120,7 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
         formData.append("author", values.author);
         formData.append("description", values.description);
 
-        const selectedCategory = categories.find(
-          (cat) => cat.id === values.categoryId
-        );
-        formData.append("category", selectedCategory?.categoryName || "");
+        formData.append("category", values.categoryName || "");
 
         formData.append("price", values.price);
         formData.append("discount", values.discount || 0);
@@ -277,7 +259,10 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
             </div>
           </div>
 
-          <form onSubmit={formik.handleSubmit} className="flex flex-col flex-1 min-h-0">
+          <form
+            onSubmit={formik.handleSubmit}
+            className="flex flex-col flex-1 min-h-0"
+          >
             <div className="flex-1 overflow-y-auto p-4 min-h-0">
               <div className="space-y-4">
                 <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
@@ -381,21 +366,23 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                         onBlur={formik.handleBlur}
                         rows="3"
                         className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                          formik.errors.description && formik.touched.description
+                          formik.errors.description &&
+                          formik.touched.description
                             ? "border-red-500"
                             : "border-gray-300"
                         }`}
                         placeholder="Enter book description"
                       />
-                      {formik.errors.description && formik.touched.description && (
-                        <motion.p
-                          initial={{ opacity: 0, y: -5 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="mt-1 text-sm text-red-500 text-left"
-                        >
-                          {formik.errors.description}
-                        </motion.p>
-                      )}
+                      {formik.errors.description &&
+                        formik.touched.description && (
+                          <motion.p
+                            initial={{ opacity: 0, y: -5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="mt-1 text-sm text-red-500 text-left"
+                          >
+                            {formik.errors.description}
+                          </motion.p>
+                        )}
                     </div>
                   </div>
                 </div>
@@ -410,33 +397,22 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Category
                       </label>
-                      <select
-                        name="categoryId"
+                      <CategorySelect
                         value={formik.values.categoryId}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                        onChange={(categoryId, categoryName) => {
+                          formik.setFieldValue("categoryId", categoryId);
+                          formik.setFieldValue("categoryName", categoryName);
+                        }}
+                        error={
                           formik.errors.categoryId && formik.touched.categoryId
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        }`}
-                      >
-                        <option value="">Select Category</option>
-                        {categories.map((cat) => (
-                          <option key={cat.id} value={cat.id}>
-                            {cat.categoryName}
-                          </option>
-                        ))}
-                      </select>
-                      {formik.errors.categoryId && formik.touched.categoryId && (
-                        <motion.p
-                          initial={{ opacity: 0, y: -5 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="mt-1 text-sm text-red-500 text-left"
-                        >
-                          {formik.errors.categoryId}
-                        </motion.p>
-                      )}
+                        }
+                        helperText={
+                          formik.errors.categoryId && formik.touched.categoryId
+                            ? formik.errors.categoryId
+                            : ""
+                        }
+                        open={isOpen}
+                      />
                     </div>
 
                     <div>
@@ -673,7 +649,8 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                           accept=".jpg,.jpeg,.png,.webp"
                           multiple={false}
                           className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-                            formik.errors.coverImage && formik.touched.coverImage
+                            formik.errors.coverImage &&
+                            formik.touched.coverImage
                               ? "border-red-500"
                               : "border-gray-300"
                           }`}
@@ -707,15 +684,16 @@ const CreateBooks = ({ isOpen, onClose, onSubmit }) => {
                           </div>
                         )}
                       </div>
-                      {formik.errors.coverImage && formik.touched.coverImage && (
-                        <motion.p
-                          initial={{ opacity: 0, y: -5 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="mt-1 text-sm text-red-500 text-left"
-                        >
-                          {formik.errors.coverImage}
-                        </motion.p>
-                      )}
+                      {formik.errors.coverImage &&
+                        formik.touched.coverImage && (
+                          <motion.p
+                            initial={{ opacity: 0, y: -5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="mt-1 text-sm text-red-500 text-left"
+                          >
+                            {formik.errors.coverImage}
+                          </motion.p>
+                        )}
                     </div>
 
                     <div>

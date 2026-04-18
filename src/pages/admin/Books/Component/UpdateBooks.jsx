@@ -3,30 +3,15 @@ import * as yup from "yup";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
-import axiosInstance from "../../../../services/axiosInstance";
+import CategorySelect from "../../../../common/CategorySelect";
 import "./UpdateBookStyle.css";
 
 const UpdateBooks = ({ isOpen, onClose, onSubmit, bookData }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [coverImagePreview, setCoverImagePreview] = useState(null);
   const [fileUrlPreview, setFileUrlPreview] = useState(null);
-  const [categories, setCategories] = useState([]);
   const [existingCoverImage, setExistingCoverImage] = useState(null);
   const [existingFile, setExistingFile] = useState(null);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await axiosInstance.get("/categories");
-        setCategories(res?.data?.data || []);
-      } catch (error) {
-        console.error("Failed to fetch categories:", error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
   const validationSchema = useMemo(
     () =>
       yup.object().shape({
@@ -121,26 +106,22 @@ const UpdateBooks = ({ isOpen, onClose, onSubmit, bookData }) => {
               return value || existingCoverImage;
             },
           ),
-    //this is for the update book file validation, it allows the file to be optional if an existing file is present, but if a new file is uploaded.
+        //this is for the update book file validation, it allows the file to be optional if an existing file is present, but if a new file is uploaded.
         file: yup
-  .mixed()
-  .nullable()
-  .test(
-    "file-required",
-    "file cannot be null",
-    function (value) {
-      const { existingFile } = this.options.context || {};
-      return value || existingFile; // ✅ passes if existing file exists
-    }
-  )
-  .test("fileType", "Only PDF files are allowed", (value) => {
-    if (!value) return true;
-    return value.type === "application/pdf";
-  })
-  .test("fileSize", "File size must be less than 100MB", (value) => {
-    if (!value) return true;
-    return value.size <= 100 * 1024 * 1024;
-  }),
+          .mixed()
+          .nullable()
+          .test("file-required", "file cannot be null", function (value) {
+            const { existingFile } = this.options.context || {};
+            return value || existingFile; // ✅ passes if existing file exists
+          })
+          .test("fileType", "Only PDF files are allowed", (value) => {
+            if (!value) return true;
+            return value.type === "application/pdf";
+          })
+          .test("fileSize", "File size must be less than 100MB", (value) => {
+            if (!value) return true;
+            return value.size <= 100 * 1024 * 1024;
+          }),
       }),
     [existingCoverImage],
   ); // ✅ closing useMemo
@@ -151,6 +132,7 @@ const UpdateBooks = ({ isOpen, onClose, onSubmit, bookData }) => {
       author: "",
       description: "",
       categoryId: "",
+      categoryName: "",
       isbn: "",
       price: "",
       discount: "",
@@ -172,14 +154,7 @@ const UpdateBooks = ({ isOpen, onClose, onSubmit, bookData }) => {
         formData.append("title", values.title);
         formData.append("author", values.author);
         formData.append("description", values.description);
-
-        const selectedCategory = categories.find(
-          (cat) => (cat.id || cat._id) === values.categoryId,
-        );
-        formData.append(
-          "category",
-          selectedCategory?.categoryName?.toLowerCase() || "",
-        );
+        formData.append("category", values.categoryName || "");
 
         formData.append("price", values.price);
         formData.append("discount", values.discount || 0);
@@ -217,23 +192,23 @@ const UpdateBooks = ({ isOpen, onClose, onSubmit, bookData }) => {
   });
 
   useEffect(() => {
-  if (formik.submitCount > 0 || formik.touched.coverImage) {
-    formik.validateForm();
-  }
-}, [existingCoverImage, existingFile]);
+    if (formik.submitCount > 0 || formik.touched.coverImage) {
+      formik.validateForm();
+    }
+  }, [existingCoverImage, existingFile]);
 
   useEffect(() => {
-    if (isOpen && bookData && categories.length > 0) {
-      const category = categories.find(
-        (cat) =>
-          cat.categoryName?.toLowerCase() === bookData.category?.toLowerCase(),
-      );
-
+    // const category = categories.find(
+    //     (cat) =>
+    //       cat.categoryName?.toLowerCase() === bookData.category?.toLowerCase(),
+    //   );
+    if (isOpen && bookData) {
       formik.setValues({
         title: bookData.title || "",
         author: bookData.author || "",
         description: bookData.description || "",
-        categoryId: category?.id || category?._id || "",
+        categoryId: bookData.categoryId || "",
+        categoryName: bookData.category || "",
         isbn: bookData.isbn || "",
         price: bookData.price || "",
         discount: bookData.discount || "",
@@ -254,7 +229,7 @@ const UpdateBooks = ({ isOpen, onClose, onSubmit, bookData }) => {
       setFileUrlPreview(bookData.fileUrl?.split("/").pop() || null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, bookData, categories]);
+  }, [isOpen, bookData]);
 
   const handleCoverImageChange = (event) => {
     const file = event.currentTarget.files[0];
@@ -489,37 +464,23 @@ const UpdateBooks = ({ isOpen, onClose, onSubmit, bookData }) => {
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Category
                       </label>
-                      <select
-                        name="categoryId"
+                      <CategorySelect
                         value={formik.values.categoryId}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                        displayName={formik.values.categoryName}
+                        onChange={(categoryId, categoryName) => {
+                          formik.setFieldValue("categoryId", categoryId);
+                          formik.setFieldValue("categoryName", categoryName);
+                        }}
+                        error={
                           formik.errors.categoryId && formik.touched.categoryId
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        }`}
-                      >
-                        <option value="">Select Category</option>
-                        {categories.map((cat) => (
-                          <option
-                            key={cat.id || cat._id}
-                            value={cat.id || cat._id}
-                          >
-                            {cat.categoryName}
-                          </option>
-                        ))}
-                      </select>
-                      {formik.errors.categoryId &&
-                        formik.touched.categoryId && (
-                          <motion.p
-                            initial={{ opacity: 0, y: -5 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="mt-1 text-sm text-red-500 text-left"
-                          >
-                            {formik.errors.categoryId}
-                          </motion.p>
-                        )}
+                        }
+                        helperText={
+                          formik.errors.categoryId && formik.touched.categoryId
+                            ? formik.errors.categoryId
+                            : ""
+                        }
+                        open={isOpen}
+                      />
                     </div>
 
                     <div>
