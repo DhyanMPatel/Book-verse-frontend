@@ -11,9 +11,9 @@ import {
   ProfileContainer,
   RegisterContainer,
   SearchContainer,
-  WishlistContainer,
+  // WishlistContainer,
   BooksDetailContainer,
-  SettingsContainer,
+  // SettingsContainer,
 } from "../pages/pageIndex";
 import {
   AdminDashboardContainer,
@@ -138,18 +138,18 @@ export const AppRoutes = [
         ),
       },
       // Wishlist route
-      {
-        path: RouteConstants.wishlist,
-        element: (
-          <PrivateRoute>
-            <Suspense fallback="loading">
-              <div className="page-content">
-                <WishlistContainer />
-              </div>
-            </Suspense>
-          </PrivateRoute>
-        ),
-      },
+      // {
+      //   path: RouteConstants.wishlist,
+      //   element: (
+      //     <PrivateRoute>
+      //       <Suspense fallback="loading">
+      //         <div className="page-content">
+      //           <WishlistContainer />
+      //         </div>
+      //       </Suspense>
+      //     </PrivateRoute>
+      //   ),
+      // },
         {
         path: RouteConstants.booksdetails,
         element: (
@@ -163,18 +163,18 @@ export const AppRoutes = [
         ),
       }, 
       //settings route
-       {
-        path: RouteConstants.settings,
-        element: (
-          <PrivateRoute>
-            <Suspense fallback="loading">
-              <div className="pt-[64px]">
-                <SettingsContainer />
-              </div>
-            </Suspense>
-          </PrivateRoute>
-        ),
-      }, 
+      //  {
+      //   path: RouteConstants.settings,
+      //   element: (
+      //     <PrivateRoute>
+      //       <Suspense fallback="loading">
+      //         <div className="pt-[64px]">
+      //           <SettingsContainer />
+      //         </div>
+      //       </Suspense>
+      //     </PrivateRoute>
+      //   ),
+      // }, 
       
       // Admin routes
       {

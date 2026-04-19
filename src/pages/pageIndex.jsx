@@ -3,13 +3,13 @@ import LoginContainer from "./auth/login/loginContainer";
 import RegisterContainer from "./auth/register/registerContainer";
 import ForgotpasswordContainer from "./auth/forgot-password/forgotpasswordContainer"; 
 import ResetPasswordContainer from "./auth/reset-password/resetPasswordContainer";
-import SettingsContainer from "./setting/settingsContainer"
+// import SettingsContainer from "./setting/settingsContainer"
 import ErrorContainer from "./error/errorContainer";
 import SearchContainer from "./search/searchContainer";
 import LibraryContainer from "./library/libraryContainer";
 import CartContainer from "./cart/cartContainer";
 import ProfileContainer from "./profile/profileContainer";
-import WishlistContainer from "./wishlist/wishlistContainer";
+// import WishlistContainer from "./wishlist/wishlistContainer";
 import BooksDetailContainer from "./booksdetail/booksdetailContainer";
 
 
@@ -22,12 +22,12 @@ export {
   RegisterContainer,
   ForgotpasswordContainer,
   ResetPasswordContainer,
-  SettingsContainer,
+  // SettingsContainer,
   ErrorContainer,
   SearchContainer,
   LibraryContainer,
   CartContainer,
   ProfileContainer,
-  WishlistContainer,
+  // WishlistContainer,
   BooksDetailContainer,
 };

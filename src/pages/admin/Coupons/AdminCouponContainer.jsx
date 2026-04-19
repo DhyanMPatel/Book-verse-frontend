@@ -31,24 +31,6 @@ const AdminCouponContainer = () => {
     fetchCoupons();
   }, []);
 
-  const handleView = async (row) => {
-    try {
-      const response = await axiosInstance.get(`/coupons/${row.id || row._id}`);
-      const couponData = response?.data?.data;
-
-      if (!couponData) {
-        Swal.fire("Error", "Coupon details not found", "error");
-        return;
-      }
-
-      setSelectedCoupon(couponData);
-      setIsViewModalOpen(true);
-    } catch (error) {
-      console.error("Failed to fetch coupon details:", error);
-      Swal.fire("Error", "Failed to load coupon details", "error");
-    }
-  };
-
   const handleCloseViewModal = () => {
     setIsViewModalOpen(false);
     setSelectedCoupon(null);
@@ -59,110 +41,6 @@ const AdminCouponContainer = () => {
     setSelectedCoupon(null);
   };
 
-  const handleEdit = async (row) => {
-    try {
-      const response = await axiosInstance.get(`/coupons/${row._id || row.id}`);
-      const couponData = response?.data?.data;
-
-      setSelectedCoupon({
-        id: couponData._id || couponData.id,
-        couponCode: couponData.couponCode,
-        discountType: couponData.discountType,
-        discount: couponData.discount,
-        categoryId: couponData.categoryId,
-        usageLimit: couponData.usageLimit,
-        validTillDate: couponData.validTillDate,
-        description: couponData.description,
-      });
-
-      setIsEditModalOpen(true);
-    } catch (error) {
-      console.error("Failed to fetch coupon details:", error);
-      Swal.fire("Error", "Failed to load coupon details for editing", "error");
-    }
-  };
-
-  const handleUpdateCoupon = async (formData) => {
-    try {
-      if (!selectedCoupon?.id) {
-        console.error("No coupon selected");
-        return;
-      }
-
-      const response = await axiosInstance.patch(
-        `/coupons/update/${selectedCoupon.id}`,
-        formData
-      );
-      console.log("Update response:", response.data.data);
-
-      Swal.fire({
-        icon: "success",
-        title: "Coupon Updated!",
-        text: response?.data?.message || "Coupon updated successfully",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-
-      await fetchCoupons();
-      handleCloseEditModal();
-    } catch (error) {
-      console.error("Update error:", error);
-
-      Swal.fire(
-        "Error",
-        error?.response?.data?.message || "Failed to update coupon",
-        "error"
-      );
-    }
-  };
-
-  const handleDelete = async (row) => {
-    try {
-      const result = await Swal.fire({
-        title: "Are you sure?",
-        text: "This coupon will be permanently deleted!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
-        confirmButtonText: "Yes, delete it!",
-      });
-
-      if (!result.isConfirmed) return;
-
-      // Get correct ID
-      const couponId = row?._id || row?.id;
-
-      if (!couponId) {
-        console.error("Coupon ID missing:", row);
-        return;
-      }
-
-      // API call
-      await axiosInstance.delete(`/coupons/delete/${couponId}`);
-
-      // Update UI instantly
-      setCouponList((prev) => prev.filter((coupon) => (coupon._id || coupon.id) !== couponId));
-
-      // Success alert
-      Swal.fire({
-        icon: "success",
-        title: "Deleted!",
-        text: "Coupon has been deleted.",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-    } catch (error) {
-      console.error("Delete failed:", error);
-
-      Swal.fire({
-        icon: "error",
-        title: "Error!",
-        text: "Failed to delete coupon",
-      });
-    }
-  };
-
   const handleAddCouponModal = () => {
     setIsModalOpen(true);
   };
@@ -171,21 +49,127 @@ const AdminCouponContainer = () => {
     setIsModalOpen(false);
   };
 
-  const handleCreateCoupon = async (formData) => {
+  const handleCouponAction = async (action, data = null, id = null) => {
     try {
-      await axiosInstance.post("/coupons/create", formData);
+      switch (action) {
+        case "view": {
+          const response = await axiosInstance.get(`/coupons/${id || data.id || data._id}`);
+          const couponData = response?.data?.data;
 
-      Swal.fire({
-        icon: "success",
-        title: "Coupon Created!",
-        timer: 1500,
-        showConfirmButton: false,
-      });
+          if (!couponData) {
+            Swal.fire("Error", "Coupon details not found", "error");
+            return;
+          }
 
-      fetchCoupons(); // refresh list
+          setSelectedCoupon(couponData);
+          setIsViewModalOpen(true);
+          break;
+        }
+
+        case "edit": {
+          const response = await axiosInstance.get(`/coupons/${id || data._id || data.id}`);
+          const couponData = response?.data?.data;
+
+          setSelectedCoupon({
+            id: couponData._id || couponData.id,
+            couponCode: couponData.couponCode,
+            discountType: couponData.discountType,
+            discount: couponData.discount,
+            categoryId: couponData.categoryId,
+            usageLimit: couponData.usageLimit,
+            validTillDate: couponData.validTillDate,
+            description: couponData.description,
+          });
+
+          setIsEditModalOpen(true);
+          break;
+        }
+
+        case "create": {
+          await axiosInstance.post("/coupons/create", data);
+
+          Swal.fire({
+            icon: "success",
+            title: "Coupon Created!",
+            timer: 1500,
+            showConfirmButton: false,
+          });
+
+          await fetchCoupons();
+          handleCloseModal();
+          break;
+        }
+
+        case "update": {
+          if (!selectedCoupon?.id) {
+            console.error("No coupon selected");
+            return;
+          }
+
+          const response = await axiosInstance.patch(
+            `/coupons/update/${selectedCoupon.id}`,
+            data
+          );
+          console.log("Update response:", response.data.data);
+
+          Swal.fire({
+            icon: "success",
+            title: "Coupon Updated!",
+            text: response?.data?.message || "Coupon updated successfully",
+            timer: 1500,
+            showConfirmButton: false,
+          });
+
+          await fetchCoupons();
+          handleCloseEditModal();
+          break;
+        }
+
+        case "delete": {
+          const result = await Swal.fire({
+            title: "Are you sure?",
+            text: "This coupon will be permanently deleted!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, delete it!",
+          });
+
+          if (!result.isConfirmed) return;
+
+          const couponId = id || data?._id || data?.id;
+
+          if (!couponId) {
+            console.error("Coupon ID missing:", data);
+            return;
+          }
+
+          await axiosInstance.delete(`/coupons/delete/${couponId}`);
+
+          setCouponList((prev) => prev.filter((coupon) => (coupon._id || coupon.id) !== couponId));
+
+          Swal.fire({
+            icon: "success",
+            title: "Deleted!",
+            text: "Coupon has been deleted.",
+            timer: 1500,
+            showConfirmButton: false,
+          });
+          break;
+        }
+
+        default:
+          console.error("Unknown action:", action);
+      }
     } catch (error) {
-      console.error(error);
-      Swal.fire("Error", "Failed to create coupon", "error");
+      console.error(`${action} error:`, error);
+
+      Swal.fire(
+        "Error",
+        error?.response?.data?.message || `Failed to ${action} coupon`,
+        "error"
+      );
     }
   };
 
@@ -193,20 +177,20 @@ const AdminCouponContainer = () => {
     <>
       <AdminCouponView
         couponList={couponList}
-        handleView={handleView}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
+        handleView={(row) => handleCouponAction("view", row)}
+        handleEdit={(row) => handleCouponAction("edit", row)}
+        handleDelete={(row) => handleCouponAction("delete", row)}
         handleAddCouponModal={handleAddCouponModal}
       />
       <CreateCoupon
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        onSubmit={handleCreateCoupon}
+        onSubmit={(formData) => handleCouponAction("create", formData)}
       />
       <UpdateCoupon
         isOpen={isEditModalOpen}
         onClose={handleCloseEditModal}
-        onSubmit={handleUpdateCoupon}
+        onSubmit={(formData) => handleCouponAction("update", formData)}
         couponData={selectedCoupon}
       />
       <ViewCoupon

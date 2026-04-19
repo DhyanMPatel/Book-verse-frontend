@@ -29,10 +29,3 @@ export const mainDesktopNavItems = [
   ];
 
   
-// export const adminDesktopNavItems = [
-//     { href: RouteConstants.adminDashboard, icon:LayoutDashboard  , label: "Dashboard" },
-//     { href: RouteConstants.adminUsers, icon: User, label: "Users" },
-//     { href: RouteConstants.adminBooks, icon: Book, label: "Books" },
-//     { href: RouteConstants.adminOrders, icon: ShoppingCart, label: "Orders" },
-//     { href: RouteConstants.adminSettings, icon: Settings, label: "Settings" },
-//   ];

@@ -22,6 +22,7 @@ const CategorySelect = ({
   name = "categoryId",
   open = false,
   displayName = "",
+  readOnly = false,
 }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -223,7 +224,7 @@ const CategorySelect = ({
       );
     }
 
-    // Render regular category with edit/delete
+    // Render regular category with edit/delete (only if not readOnly)
     const categoryId = option.id || option._id;
 
     return (
@@ -256,32 +257,34 @@ const CategorySelect = ({
           >
             {toTitleCase(option.categoryName)}
           </Typography>
-          <Box sx={{ display: "flex", gap: 0.5 }}>
-            <IconButton
-              size="small"
-              onClick={(e) => handleEditClick(option, e)}
-              onMouseDown={(e) => e.preventDefault()}
-              sx={{
-                p: 0.5,
-                color: "#6b7280",
-                "&:hover": { color: "#2563eb" },
-              }}
-            >
-              <Edit fontSize="small" sx={{ fontSize: "16px" }} />
-            </IconButton>
-            <IconButton
-              size="small"
-              onClick={(e) => handleDeleteCategory(categoryId, e)}
-              onMouseDown={(e) => e.preventDefault()}
-              sx={{
-                p: 0.5,
-                color: "#6b7280",
-                "&:hover": { color: "#ef4444" },
-              }}
-            >
-              <Delete fontSize="small" sx={{ fontSize: "16px" }} />
-            </IconButton>
-          </Box>
+          {!readOnly && (
+            <Box sx={{ display: "flex", gap: 0.5 }}>
+              <IconButton
+                size="small"
+                onClick={(e) => handleEditClick(option, e)}
+                onMouseDown={(e) => e.preventDefault()}
+                sx={{
+                  p: 0.5,
+                  color: "#6b7280",
+                  "&:hover": { color: "#2563eb" },
+                }}
+              >
+                <Edit fontSize="small" sx={{ fontSize: "16px" }} />
+              </IconButton>
+              <IconButton
+                size="small"
+                onClick={(e) => handleDeleteCategory(categoryId, e)}
+                onMouseDown={(e) => e.preventDefault()}
+                sx={{
+                  p: 0.5,
+                  color: "#6b7280",
+                  "&:hover": { color: "#ef4444" },
+                }}
+              >
+                <Delete fontSize="small" sx={{ fontSize: "16px" }} />
+              </IconButton>
+            </Box>
+          )}
         </Box>
       </MenuItem>
     );
@@ -295,8 +298,8 @@ const CategorySelect = ({
         )
       : categories;
 
-    // Add create option if input exists and doesn't match any category
-    if (inputValue && !categoryExists(inputValue)) {
+    // Add create option if input exists and doesn't match any category (only if not readOnly)
+    if (!readOnly && inputValue && !categoryExists(inputValue)) {
       return [
         ...filtered,
         { isCreateOption: true, inputValue, id: "create-option" },
@@ -383,15 +386,17 @@ const CategorySelect = ({
         fullWidth
       />
 
-      <EditCategoryModal
-        open={editModalOpen}
-        onClose={() => {
-          setEditModalOpen(false);
-          setEditingCategory(null);
-        }}
-        category={editingCategory}
-        onUpdate={handleUpdateCategory}
-      />
+      {!readOnly && (
+        <EditCategoryModal
+          open={editModalOpen}
+          onClose={() => {
+            setEditModalOpen(false);
+            setEditingCategory(null);
+          }}
+          category={editingCategory}
+          onUpdate={handleUpdateCategory}
+        />
+      )}
     </>
   );
 };

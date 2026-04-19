@@ -480,6 +480,7 @@ const UpdateBooks = ({ isOpen, onClose, onSubmit, bookData }) => {
                             : ""
                         }
                         open={isOpen}
+                        readOnly={true}
                       />
                     </div>
 

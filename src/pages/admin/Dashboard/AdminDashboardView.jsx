@@ -1,15 +1,39 @@
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
+import {
+  Activity,
+  BookOpen,
+  Crown,
+  DollarSign,
+  Eye,
+  TrendingDown,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 // ============ ANIMATION CONFIG ============
 const springTransition = {
-  type: 'spring',
+  type: "spring",
   stiffness: 100,
   damping: 15,
   mass: 1,
 };
 
 const hoverTransition = {
-  type: 'spring',
+  type: "spring",
   stiffness: 400,
   damping: 25,
 };
@@ -54,34 +78,10 @@ const headerFade = {
     },
   },
 };
-import {
-  Users,
-  BookOpen,
-  Activity,
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  Eye,
-  Crown,
-} from 'lucide-react';
-import {
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from 'recharts';
 
 // ============ SUB-COMPONENTS ============
 
-const AnimatedCard = ({ children, className = '', delay = 0 }) => (
+const AnimatedCard = ({ children, className = "", delay = 0 }) => (
   <motion.div
     variants={fadeInUp}
     whileHover={{
@@ -95,16 +95,26 @@ const AnimatedCard = ({ children, className = '', delay = 0 }) => (
   </motion.div>
 );
 
-const StatCard = ({ title, value, subtitle, icon: Icon, trend, isHero = false, children }) => (
+const StatCard = ({
+  title,
+  value,
+  subtitle,
+  icon: Icon,
+  trend,
+  isHero = false,
+  children,
+}) => (
   <AnimatedCard
     className={`bg-white rounded-2xl p-6 shadow-sm border border-slate-100 transition-shadow hover:shadow-lg ${
-      isHero ? 'ring-2 ring-indigo-500/20' : ''
+      isHero ? "ring-2 ring-indigo-500/20" : ""
     }`}
   >
     <div className="flex items-start justify-between">
       <div className="flex-1">
         <p className="text-sm font-medium text-slate-500 mb-1">{title}</p>
-        <h3 className={`font-bold text-slate-900 ${isHero ? 'text-3xl' : 'text-2xl'}`}>
+        <h3
+          className={`font-bold text-slate-900 ${isHero ? "text-3xl" : "text-2xl"}`}
+        >
           {value}
         </h3>
         {subtitle && <p className="text-xs text-slate-400 mt-1">{subtitle}</p>}
@@ -118,12 +128,16 @@ const StatCard = ({ title, value, subtitle, icon: Icon, trend, isHero = false, c
             {trend >= 0 ? (
               <>
                 <TrendingUp size={16} className="text-emerald-500" />
-                <span className="text-sm font-medium text-emerald-500">+{trend}%</span>
+                <span className="text-sm font-medium text-emerald-500">
+                  +{trend}%
+                </span>
               </>
             ) : (
               <>
                 <TrendingDown size={16} className="text-rose-500" />
-                <span className="text-sm font-medium text-rose-500">{trend}%</span>
+                <span className="text-sm font-medium text-rose-500">
+                  {trend}%
+                </span>
               </>
             )}
             <span className="text-xs text-slate-400 ml-1">vs last month</span>
@@ -135,11 +149,11 @@ const StatCard = ({ title, value, subtitle, icon: Icon, trend, isHero = false, c
         transition={hoverTransition}
         className={`p-3 rounded-xl ${
           isHero
-            ? 'bg-gradient-to-br from-indigo-500 to-purple-600'
-            : 'bg-slate-50'
+            ? "bg-gradient-to-br from-indigo-500 to-purple-600"
+            : "bg-slate-50"
         }`}
       >
-        <Icon size={24} className={isHero ? 'text-white' : 'text-slate-600'} />
+        <Icon size={24} className={isHero ? "text-white" : "text-slate-600"} />
       </motion.div>
     </div>
     {children}
@@ -150,7 +164,9 @@ const ActiveReadersCard = ({ stats }) => (
   <AnimatedCard className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
     <div className="flex items-start justify-between mb-4">
       <div>
-        <p className="text-sm font-medium text-slate-500 mb-1">Active Readers</p>
+        <p className="text-sm font-medium text-slate-500 mb-1">
+          Active Readers
+        </p>
         <motion.h3
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -215,7 +231,12 @@ const BooksCard = ({ stats }) => (
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          transition={{ delay: 0.4, type: 'spring', stiffness: 500, damping: 20 }}
+          transition={{
+            delay: 0.4,
+            type: "spring",
+            stiffness: 500,
+            damping: 20,
+          }}
           className="w-2 h-2 rounded-full bg-emerald-500"
         ></motion.div>
         <span className="text-sm text-slate-600">
@@ -226,7 +247,12 @@ const BooksCard = ({ stats }) => (
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          transition={{ delay: 0.5, type: 'spring', stiffness: 500, damping: 20 }}
+          transition={{
+            delay: 0.5,
+            type: "spring",
+            stiffness: 500,
+            damping: 20,
+          }}
           className="w-2 h-2 rounded-full bg-amber-500"
         ></motion.div>
         <span className="text-sm text-slate-600">
@@ -237,7 +263,7 @@ const BooksCard = ({ stats }) => (
   </AnimatedCard>
 );
 
-const ChartCard = ({ title, children, className = '' }) => (
+const ChartCard = ({ title, children, className = "" }) => (
   <motion.div
     variants={scaleIn}
     whileHover={{
@@ -294,7 +320,9 @@ const ConversionRate = ({ rate }) => {
         <motion.div whileHover={{ rotate: 360 }} transition={{ duration: 0.5 }}>
           <Crown size={20} className="text-amber-500" />
         </motion.div>
-        <h4 className="text-lg font-semibold text-slate-800">Conversion Rate</h4>
+        <h4 className="text-lg font-semibold text-slate-800">
+          Conversion Rate
+        </h4>
       </motion.div>
       <div className="flex items-center justify-center">
         <div className="relative w-32 h-32">
@@ -317,7 +345,7 @@ const ConversionRate = ({ rate }) => {
               strokeLinecap="round"
               initial={{ strokeDashoffset: circumference }}
               animate={{ strokeDashoffset }}
-              transition={{ duration: 2, ease: 'easeOut', delay: 0.5 }}
+              transition={{ duration: 2, ease: "easeOut", delay: 0.5 }}
               style={{ strokeDasharray: circumference }}
             />
             <defs>
@@ -363,7 +391,10 @@ const TopPerformersTable = ({ topReadBooks, topEarningBooks }) => (
       transition={springTransition}
       className="flex items-center gap-2 mb-4"
     >
-      <motion.div whileHover={{ scale: 1.2, rotate: 15 }} transition={hoverTransition}>
+      <motion.div
+        whileHover={{ scale: 1.2, rotate: 15 }}
+        transition={hoverTransition}
+      >
         <Eye size={20} className="text-indigo-500" />
       </motion.div>
       <h4 className="text-lg font-semibold text-slate-800">Top Performers</h4>
@@ -387,15 +418,19 @@ const TopPerformersTable = ({ topReadBooks, topEarningBooks }) => (
                 <motion.span
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ delay: index * 0.1, type: 'spring', stiffness: 400 }}
+                  transition={{
+                    delay: index * 0.1,
+                    type: "spring",
+                    stiffness: 400,
+                  }}
                   className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold ${
                     index === 0
-                      ? 'bg-amber-100 text-amber-600'
+                      ? "bg-amber-100 text-amber-600"
                       : index === 1
-                      ? 'bg-slate-200 text-slate-600'
-                      : index === 2
-                      ? 'bg-orange-100 text-orange-600'
-                      : 'bg-slate-100 text-slate-500'
+                        ? "bg-slate-200 text-slate-600"
+                        : index === 2
+                          ? "bg-orange-100 text-orange-600"
+                          : "bg-slate-100 text-slate-500"
                   }`}
                 >
                   {index + 1}
@@ -430,15 +465,19 @@ const TopPerformersTable = ({ topReadBooks, topEarningBooks }) => (
                 <motion.span
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ delay: index * 0.1, type: 'spring', stiffness: 400 }}
+                  transition={{
+                    delay: index * 0.1,
+                    type: "spring",
+                    stiffness: 400,
+                  }}
                   className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold ${
                     index === 0
-                      ? 'bg-emerald-100 text-emerald-600'
+                      ? "bg-emerald-100 text-emerald-600"
                       : index === 1
-                      ? 'bg-slate-200 text-slate-600'
-                      : index === 2
-                      ? 'bg-emerald-50 text-emerald-500'
-                      : 'bg-slate-100 text-slate-500'
+                        ? "bg-slate-200 text-slate-600"
+                        : index === 2
+                          ? "bg-emerald-50 text-emerald-500"
+                          : "bg-slate-100 text-slate-500"
                   }`}
                 >
                   {index + 1}
@@ -532,18 +571,23 @@ const AdminDashboardView = ({ loading, data }) => {
         />
         <BooksCard stats={stats} />
         <ActiveReadersCard stats={stats} />
-      <StatCard
-  title="Total Revenue"
-  value={`₹${stats.totalRevenue.value?.toLocaleString() || 0}`}
-  icon={DollarSign}
-  trend={stats.totalRevenue.growth}
-  isHero
->
-  <div className="mt-3 text-xs text-slate-500 space-y-1">
-    <p>Monthly: ₹{stats.totalRevenue.monthlyRevenue?.toLocaleString()}</p>
-    <p>Last Month: ₹{stats.totalRevenue.lastMonthRevenue?.toLocaleString()}</p>
-  </div>
-</StatCard>
+        <StatCard
+          title="Total Revenue"
+          value={`₹${stats.totalRevenue.value?.toLocaleString() || 0}`}
+          icon={DollarSign}
+          trend={stats.totalRevenue.growth}
+          isHero
+        >
+          <div className="mt-3 text-xs text-slate-500 space-y-1">
+            <p>
+              Monthly: ₹{stats.totalRevenue.monthlyRevenue?.toLocaleString()}
+            </p>
+            <p>
+              Last Month: ₹
+              {stats.totalRevenue.lastMonthRevenue?.toLocaleString()}
+            </p>
+          </div>
+        </StatCard>
       </motion.div>
 
       {/* Section 2: Visualizations */}
@@ -558,8 +602,16 @@ const AdminDashboardView = ({ loading, data }) => {
             <LineChart data={userTrendData}>
               <defs>
                 <linearGradient id="userGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={CHART_THEME.primary} stopOpacity={0.3} />
-                  <stop offset="95%" stopColor={CHART_THEME.primary} stopOpacity={0} />
+                  <stop
+                    offset="5%"
+                    stopColor={CHART_THEME.primary}
+                    stopOpacity={0.3}
+                  />
+                  <stop
+                    offset="95%"
+                    stopColor={CHART_THEME.primary}
+                    stopOpacity={0}
+                  />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
@@ -592,7 +644,10 @@ const AdminDashboardView = ({ loading, data }) => {
                 dataKey="value"
               >
                 {genreData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Pie>
               <Tooltip content={<CustomTooltip />} />
@@ -630,7 +685,11 @@ const AdminDashboardView = ({ loading, data }) => {
                   <stop offset="100%" stopColor="#8b5cf6" />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} vertical={false} />
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke={CHART_THEME.grid}
+                vertical={false}
+              />
               <XAxis dataKey="day" stroke={CHART_THEME.text} fontSize={12} />
               <YAxis
                 stroke={CHART_THEME.text}
@@ -639,7 +698,7 @@ const AdminDashboardView = ({ loading, data }) => {
               />
               <Tooltip
                 content={<CustomTooltip />}
-                formatter={(value) => [`₹${value}`, 'Revenue']}
+                formatter={(value) => [`₹${value}`, "Revenue"]}
               />
               <Bar
                 dataKey="revenue"
@@ -656,11 +715,15 @@ const AdminDashboardView = ({ loading, data }) => {
       <motion.div
         variants={staggerContainer}
         initial="hidden"
-        animate="show"
-        className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.3 }}
+        className="grid grid-cols-1 gap-6"
       >
-        <ConversionRate rate={conversionRate} />
-        <TopPerformersTable topReadBooks={topReadBooks} topEarningBooks={topEarningBooks} />
+        {/* <ConversionRate rate={conversionRate} /> */}         
+        <TopPerformersTable
+          topReadBooks={topReadBooks}
+          topEarningBooks={topEarningBooks}
+        />
       </motion.div>
     </div>
   );

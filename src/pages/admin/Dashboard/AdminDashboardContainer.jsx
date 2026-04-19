@@ -88,7 +88,7 @@ const AdminDashboardContainer = () => {
 
 const fetchAnalytics = async () => {
   try {
-    const res = await axiosInstance.get("/order/analytics/dashboard");
+    const res = await axiosInstance.get("/order/dashboard-analytics");
     const { topPerformers } = res.data.data;
 
     setTopPerformers({

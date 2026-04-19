@@ -12,9 +12,9 @@ const RouteConstants = {
   booksdetails: "/book/:id",
   library: "/library",
   cart: "/cart",
-  wishlist: "/wishlist",
+  // wishlist: "/wishlist",
   profile: "/profile",
-  settings: "/settings",
+  // settings: "/settings",
 
   // Admin routes
   adminDashboard: "/admin/dashboard",
