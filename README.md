@@ -18,6 +18,7 @@ A modern, feature-rich **Book E-Commerce & Reading Platform** built with React 1
 ## Features
 
 ### User Features
+
 - **Authentication**: JWT-based login, registration, forgot/reset password
 - **Home Page**: Browse featured books, categories, and active coupons
 - **Book Discovery**: Search books with filters, view detailed book information
@@ -28,6 +29,7 @@ A modern, feature-rich **Book E-Commerce & Reading Platform** built with React 1
 - **Settings**: Update password and account preferences
 
 ### Admin Features
+
 - **Dashboard**: Analytics with charts (Revenue, Orders, User Stats, Top Books)
 - **User Management**: View and manage registered users
 - **Book Management**: Add, edit, delete books
@@ -35,6 +37,7 @@ A modern, feature-rich **Book E-Commerce & Reading Platform** built with React 1
 - **Coupon Management**: Create and manage discount coupons
 
 ### UI/UX Features
+
 - **Responsive Design**: Mobile-first approach with Tailwind CSS
 - **Smooth Animations**: Framer Motion for page transitions and scroll animations
 - **Data Visualization**: Recharts for admin dashboard analytics
@@ -44,23 +47,25 @@ A modern, feature-rich **Book E-Commerce & Reading Platform** built with React 1
 
 ## Tech Stack
 
-| Category | Technology |
-|----------|------------|
-| **Framework** | React 19 + Vite 7 |
-| **Styling** | Tailwind CSS 4 + Material UI 7 |
+| Category             | Technology                     |
+| -------------------- | ------------------------------ |
+| **Framework**        | React 19 + Vite 7              |
+| **Styling**          | Tailwind CSS 4 + Material UI 7 |
 | **State Management** | React Context API + useReducer |
-| **Routing** | React Router DOM 7 |
-| **HTTP Client** | Axios |
-| **Animations** | Framer Motion |
-| **Charts** | Recharts |
-| **3D Graphics** | Three.js + React Three Fiber |
-| **Forms** | Formik + Yup |
-| **Notifications** | React-Toastify + SweetAlert2 |
-| **Icons** | Lucide React + React Icons |
-| **Carousel** | React Slick |
-| **Rating** | @smastrom/react-rating |
-| **Date** | Day.js |
-| **Linting** | ESLint 9 + Prettier |
+| **Routing**          | React Router DOM 7             |
+| **HTTP Client**      | Axios                          |
+| **Animations**       | Framer Motion                  |
+| **Charts**           | Recharts                       |
+| **3D Graphics**      | Three.js + React Three Fiber   |
+| **Forms**            | Formik + Yup                   |
+| **Notifications**    | React-Toastify + SweetAlert2   |
+| **Icons**            | Lucide React + React Icons     |
+| **Carousel**         | React Slick                    |
+| **Rating**           | @smastrom/react-rating         |
+| **Date**             | Day.js                         |
+| **Linting**          | ESLint 9 + Prettier            |
+| **Runtime**          | Node.js v24.x.x                |
+| **Package Manager**  | npm v10.x.x                    |
 
 ## Project Structure
 
@@ -119,22 +124,27 @@ src/
 ## Installation & Setup
 
 ### Prerequisites
+
 - **Node.js**: v24.x.x (as specified in package.json engines)
 - **npm**: v10.x.x
 
 ### Step 1: Clone the Repository
+
 ```bash
-git clone <repository-url>
+git clone https://github.com/nisargsureshbhaipatel/bookverse-Frountend.git
 cd Book-verse-frontend
 ```
 
 ### Step 2: Install Dependencies
+
 ```bash
 npm install
 ```
 
 ### Step 3: Configure Environment Variables
+
 Create a `.env` file in the root directory:
+
 ```env
 VITE_API_URL=http://localhost:5000/api
 VITE_LIVE_API_URL=https://your-production-api.com/api
@@ -142,35 +152,41 @@ VITE_NODE_ENV=development
 ```
 
 ### Step 4: Start Development Server
+
 ```bash
 npm run dev
 ```
-The app will be available at `http://localhost:5173`
+
+The app will be available at `http://localhost:3000`
 
 ### Step 5: Build for Production
+
 ```bash
 npm run build
 ```
 
 ### Step 6: Preview Production Build
+
 ```bash
 npm run preview
 ```
 
 ## Environment Variables
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `VITE_API_URL` | Local/Development API URL | `http://localhost:5000/api` |
-| `VITE_LIVE_API_URL` | Production API URL | `https://api.bookverse.com/api` |
-| `VITE_NODE_ENV` | Environment mode | `development` or `production` |
+| Variable            | Description               | Example                         |
+| ------------------- | ------------------------- | ------------------------------- |
+| `VITE_API_URL`      | Local/Development API URL | `http://localhost:5000/api`     |
+| `VITE_LIVE_API_URL` | Production API URL        | `https://api.bookverse.com/api` |
+| `VITE_NODE_ENV`     | Environment mode          | `development` or `production`   |
 
 ## Core Functions
 
 ### 1. Authentication Functions (`AuthContext.jsx`)
 
 #### `login(email, password)`
+
 Authenticates user and stores tokens in localStorage/sessionStorage.
+
 ```javascript
 const { login } = useContext(AuthContext);
 const result = await login("user@example.com", "password123");
@@ -178,21 +194,32 @@ const result = await login("user@example.com", "password123");
 ```
 
 #### `register(name, email, password, phone)`
+
 Registers a new user and automatically logs them in.
+
 ```javascript
 const { register } = useContext(AuthContext);
-const result = await register("John Doe", "john@example.com", "password", "1234567890");
+const result = await register(
+  "John Doe",
+  "john@example.com",
+  "password",
+  "1234567890",
+);
 ```
 
 #### `logout()`
+
 Clears all auth state and storage.
+
 ```javascript
 const { logout } = useContext(AuthContext);
 logout();
 ```
 
 #### `isAdmin()`
+
 Checks if current user has admin role.
+
 ```javascript
 const { isAdmin } = useContext(AuthContext);
 const adminStatus = isAdmin(); // Returns boolean
@@ -201,17 +228,18 @@ const adminStatus = isAdmin(); // Returns boolean
 ### 2. Axios Instance (`axiosInstance.js`)
 
 Pre-configured Axios instance with interceptors for:
+
 - **Request Interceptor**: Automatically attaches JWT token to headers
 - **Response Interceptor**: Handles 401 errors by redirecting to login
 
 ```javascript
-import axiosInstance from './services/axiosInstance';
+import axiosInstance from "./services/axiosInstance";
 
 // GET request
-const response = await axiosInstance.get('/books/all');
+const response = await axiosInstance.get("/books/all");
 
 // POST request
-const response = await axiosInstance.post('/wishlist/add', { bookId });
+const response = await axiosInstance.post("/wishlist/add", { bookId });
 
 // DELETE request
 const response = await axiosInstance.delete(`/wishlist/remove/${bookId}`);
@@ -220,7 +248,9 @@ const response = await axiosInstance.delete(`/wishlist/remove/${bookId}`);
 ### 3. Wishlist Handler (`booksdetailContainer.jsx`)
 
 #### `handleClickWishlist(book)`
+
 Toggles a book in the user's wishlist with SweetAlert2 notifications.
+
 ```javascript
 const handleClickWishlist = async (book) => {
   // 1. Validates user authentication
@@ -235,6 +265,7 @@ const handleClickWishlist = async (book) => {
 ### 4. Home Page Data Fetching (`homeContainer.jsx`)
 
 Fetches and manages:
+
 - **Books**: `GET /books/all` - All available books
 - **Categories**: Derived from books data (unique categories)
 - **Coupons**: `GET /coupons/list` - Active discount coupons
@@ -242,8 +273,8 @@ Fetches and manages:
 ```javascript
 // Usage in HomeContainer
 useEffect(() => {
-  fetchBooks();    // Populates books[] and categories[]
-  fetchCoupons();  // Populates coupons[]
+  fetchBooks(); // Populates books[] and categories[]
+  fetchCoupons(); // Populates coupons[]
 }, []);
 ```
 
@@ -252,7 +283,9 @@ useEffect(() => {
 ### Route Protection Components
 
 #### `PublicRoute`
+
 Prevents authenticated users from accessing auth pages (login, register).
+
 ```jsx
 <PublicRoute>
   <LoginContainer />
@@ -260,7 +293,9 @@ Prevents authenticated users from accessing auth pages (login, register).
 ```
 
 #### `PrivateRoute`
+
 Redirects unauthenticated users to login with return path preserved.
+
 ```jsx
 <PrivateRoute>
   <CartContainer />
@@ -268,7 +303,9 @@ Redirects unauthenticated users to login with return path preserved.
 ```
 
 #### `AdminRoute`
+
 Restricts access to admin-only pages, redirects non-admins to home.
+
 ```jsx
 <AdminRoute>
   <AdminDashboardContainer />
@@ -303,6 +340,7 @@ RouteConstants = {
 ## State Management
 
 ### Auth State Structure
+
 ```javascript
 {
   user: null | { _id, name, email, role, ... },
@@ -314,6 +352,7 @@ RouteConstants = {
 ```
 
 ### Context Hierarchy (`AppContext.jsx`)
+
 ```
 AuthProvider
   └── BooksProvider
@@ -322,23 +361,26 @@ AuthProvider
 ```
 
 ### Auth Actions
-| Action | Description |
-|--------|-------------|
-| `LOGIN_START` | Sets loading state |
-| `LOGIN_SUCCESS` | Stores user, token, sets authenticated |
-| `LOGIN_FAILURE` | Stores error, clears auth |
-| `REGISTER_START/SUCCESS/FAILURE` | Same pattern as login |
-| `LOGOUT` | Clears all auth state |
-| `CLEAR_ERROR` | Resets error to null |
+
+| Action                           | Description                            |
+| -------------------------------- | -------------------------------------- |
+| `LOGIN_START`                    | Sets loading state                     |
+| `LOGIN_SUCCESS`                  | Stores user, token, sets authenticated |
+| `LOGIN_FAILURE`                  | Stores error, clears auth              |
+| `REGISTER_START/SUCCESS/FAILURE` | Same pattern as login                  |
+| `LOGOUT`                         | Clears all auth state                  |
+| `CLEAR_ERROR`                    | Resets error to null                   |
 
 ## API Integration
 
 ### Base Configuration
+
 - **Base URL**: Determined by environment (`VITE_API_URL` or `VITE_LIVE_API_URL`)
 - **Timeout**: 10 seconds
 - **Content-Type**: `application/json`
 
 ### Authentication Flow
+
 1. User logs in with credentials
 2. Backend returns `authToken` and `refreshToken`
 3. `authToken` stored in `localStorage`
@@ -347,23 +389,24 @@ AuthProvider
 6. On 401 response, user is redirected to login
 
 ### API Endpoints Used
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/auth/login` | POST | User authentication |
-| `/auth/register` | POST | User registration |
-| `/books/all` | GET | Fetch all books |
-| `/wishlist/add` | POST | Add to wishlist |
+
+| Endpoint               | Method | Description          |
+| ---------------------- | ------ | -------------------- |
+| `/auth/login`          | POST   | User authentication  |
+| `/auth/register`       | POST   | User registration    |
+| `/books/all`           | GET    | Fetch all books      |
+| `/wishlist/add`        | POST   | Add to wishlist      |
 | `/wishlist/remove/:id` | DELETE | Remove from wishlist |
-| `/coupons/list` | GET | Fetch active coupons |
+| `/coupons/list`        | GET    | Fetch active coupons |
 
 ## Available Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start Vite dev server with host (`--host`) |
-| `npm run build` | Create production build |
-| `npm run preview` | Preview production build locally |
-| `npm run lint` | Run ESLint on all files |
+| Command           | Description                                |
+| ----------------- | ------------------------------------------ |
+| `npm run dev`     | Start Vite dev server with host (`--host`) |
+| `npm run build`   | Create production build                    |
+| `npm run preview` | Preview production build locally           |
+| `npm run lint`    | Run ESLint on all files                    |
 
 ## Browser Support
 
