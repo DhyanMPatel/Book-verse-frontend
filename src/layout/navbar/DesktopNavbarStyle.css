@@ -386,6 +386,33 @@
   color: #ef4444;
 }
 
+/* Help / Tour Button */
+.tour-help-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: #f3f4f6;
+  border-radius: 8px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 2px 4px;
+  padding: 0;
+}
+
+.tour-help-btn:hover {
+  background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
+  color: #0284c7;
+  transform: scale(1.1);
+}
+
+.tour-help-btn:active {
+  transform: scale(0.95);
+}
+
 /* Login Button */
 .login-btn {
   padding: 0.5rem 1rem;

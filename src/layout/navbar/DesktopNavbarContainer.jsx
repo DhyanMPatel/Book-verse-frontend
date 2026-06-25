@@ -1,15 +1,24 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import DesktopNavbarView from "./DesktopNavbarView";
+import JoyrideTutorial from "../../components/JoyrideTutorial";
+import { getNavbarTutorialSteps } from "../../utils/tutorialSteps";
 
 const DesktopNavbarContainer = ({ onToggleAdminSidebar }) => {
-  const { logout } = useAuth();
+  const { logout, isAuthenticated } = useAuth();
   const location = useLocation();
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [showTour, setShowTour] = useState(false);
   const dropdownRef = useRef(null);
 
   const isActive = (path) => location.pathname === path;
+
+  // Generate tutorial steps based on auth state
+  const tutorialSteps = useMemo(
+    () => getNavbarTutorialSteps(isAuthenticated),
+    [isAuthenticated]
+  );
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -27,6 +36,15 @@ const DesktopNavbarContainer = ({ onToggleAdminSidebar }) => {
     logout();
     setProfileDropdownOpen(false);
   };
+
+  const handleStartTour = () => {
+    setShowTour(true);
+  };
+
+  const handleTourFinish = () => {
+    setShowTour(false);
+  };
+
   return (
     <>
       <DesktopNavbarView
@@ -36,6 +54,12 @@ const DesktopNavbarContainer = ({ onToggleAdminSidebar }) => {
         onToggleAdminSidebar={onToggleAdminSidebar}
         dropdownRef={dropdownRef}
         setProfileDropdownOpen={setProfileDropdownOpen}
+        onStartTour={handleStartTour}
+      />
+      <JoyrideTutorial
+        steps={tutorialSteps}
+        run={showTour ? true : undefined}
+        onFinish={handleTourFinish}
       />
     </>
   );
